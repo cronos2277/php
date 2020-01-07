@@ -1,5 +1,6 @@
 {
     "name": "cronos2277/composer",
+    "minimum-stability":"stable",
     "authors": [
         {
             "name": "JotaPe",
