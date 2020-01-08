@@ -30,5 +30,11 @@ return [
     'Zend\Db',
     'Zend\Router',
     'Zend\Validator',
+    'Core', //O Modulo que criamos.
     'Application',
 ];
+/*
+    Aqui fica todos os modulos que o Zend deve implementar, repare
+    que tambem esta registrado ali o Core e o Application, ou seja
+    cada modulo novo que criarmos devemos registrar aqui.
+*/
