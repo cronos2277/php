@@ -20,3 +20,10 @@ return [
         'display_exceptions' => true,
     ],
 ];
+/*
+Aqui fica as configuracoes para modo em desenvolvimento, ou seja nao
+vai para o cliente final, so se recomenda por codigo aqui caso,
+voce esteja trabalhando sozinho, se houve trabalho em equipe, coloque
+os codigos no local.php que no caso sendo esse ultimo especifico para
+a sua maquina, ou seja por padrao ele vai pro gitignore.
+*/

@@ -12,5 +12,15 @@
  */
 
 return [
-    // ...
+    'db' =>[
+        'driver' => 'Pdo_Mysql',
+        'host' => '127.0.0.1',
+        'database' => 'zf3_helpdesk',
+        'username' => 'root',
+        'password' => '123456'
+    ]
 ];
+/**
+ * Aqui fica toda as configuracoes no ambiente de producao, ou seja
+ * no projeto que vai ao cliente final.
+ */
