@@ -1,74 +1,78 @@
-<div class="jumbotron">
-    <h1>Welcome to <span class="zf-green">Zend Framework</span></h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+            <h1>Dashboard</h1>
+        </section>
+        
+        <!-- Main content -->
+        <section class="content">
+        
+            <!-- Default box -->
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Meus Tickets</h3>
+        
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                            <i class="fa fa-minus"></i></button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                            <i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">        
+                    <table class="table table-bordered table-striped table-hover table-condensed">
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Titulo</th>
+                            <th>Prioridade</th>
+                            <th>Data</th>
+                            <th>Ação</th>
+                        </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Primeiro Ticket</td>
+                                    <td><span class="badge bg-blue">Baixa</span></td>          
+                                <td>01/01/2019</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="edit.html" class="btn btn-warning"><i class="fa fa-edit"></i> Editar</a>
+                                        <a href="delete.html" class="btn btn-danger"><i class="fa fa-trash-o"></i> Excluir</a>
+                                    </div>
+                                </td>
+                            </tr>   
+                            
+                            <tr>
+                                <td>2</td>
+                                <td>Segundo Ticket</td>
 
-    <p>
-        Congratulations! You have successfully installed the
-        <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank">ZF Skeleton Application</a>.
-        You are currently running Zend Framework version <?= \Application\Module::VERSION ?>.
-        This skeleton can serve as a simple starting point for you to begin
-        building your application on ZF.
-    </p>
+                                    <td><span class="badge bg-yellow">Médio</span></td>         
+                                <td>01/01/2019</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="edit.html" class="btn btn-warning"><i class="fa fa-edit"></i> Editar</a>
+                                        <a href="delete.html" class="btn btn-danger"><i class="fa fa-trash-o"></i> Excluir</a>
+                                    </div>
+                                </td>
+                            </tr>    
 
-    <p><a class="btn btn-success btn-lg" href="https://github.com/zendframework/zendframework" target="_blank">Fork Zend Framework on GitHub &raquo;</a></p>
-</div>
-
-<div class="row">
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Follow Development</h2>
+                        <tr>
+                            <td>3</td>
+                            <td>Terceiro Ticket</td>
+                                <td><span class="badge bg-red">Alto</span></td>            
+                            <td>01/01/2019</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="edit.html" class="btn btn-warning"><i class="fa fa-edit"></i> Editar</a>
+                                    <a href="delete.html" class="btn btn-danger"><i class="fa fa-trash-o"></i> Excluir</a>
+                                </div>
+                            </td>
+                        </tr>    
+                    </table>        
+                </div>
+                <!-- /.box-body -->
+        
             </div>
-            <div class="card-body">
-                <p>
-                    Zend Framework is under active development. If you are
-                    interested in following the development of ZF, you can check
-                    <a href="http://framework.zend.com/blog/">ZF dev blog</a>,
-                    and <a href="https://github.com/issues?utf8=%E2%9C%93&amp;q=is:issue+org:zendframework">ZF issue tracker</a>
-                    (link requires a GitHub account). This is a great resource
-                    for staying up to date with the latest developments!
-                </p>
-
-                <p><a class="btn btn-success pull-right" href="http://framework.zend.com/" target="_blank">ZF Development Portal &raquo;</a></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Discover Modules</h2>
-            </div>
-            <div class="card-body">
-                <p>
-                    The community is working on developing a community site to
-                    serve as a repository and gallery for ZF modules. The
-                    project is available <a href="https://github.com/zendframework/modules.zendframework.com">on GitHub</a>.
-                    The site is currently live and currently contains a list of
-                    some of the modules already available for ZF.
-                </p>
-
-                <p><a class="btn btn-success pull-right" href="http://modules.zendframework.com/" target="_blank">Explore ZF Modules &raquo;</a></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Help &amp; Support</h2>
-            </div>
-            <div class="card-body">
-                <p>
-                    If you need any help or support while developing with ZF,
-                    you may reach us via IRC: <a href="irc://irc.freenode.net/zftalk">#zftalk on Freenode</a>.
-                    We'd love to hear any questions or feedback you may have
-                    regarding this release. Alternatively, you may subscribe
-                    and post questions to the <a href="http://framework.zend.com/archives/">mailing lists</a>.
-                </p>
-
-                <p><a class="btn btn-success pull-right" href="http://webchat.freenode.net?channels=zftalk" target="_blank">Ping us on IRC &raquo;</a></p>
-            </div>
-        </div>
-    </div>
-</div>
+            <!-- /.box -->
+        
+        </section>
+        <!-- /.content -->
