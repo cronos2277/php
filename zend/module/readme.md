@@ -20,7 +20,7 @@ primeiro o namespace e depois o diretorio src, ficaria algo assim: ' <b>"NAMESPA
 Toda vez que voce atualiza o autoload do arquivo composer.json, eh necessario dar um comando de terminal ou fazer uma
 alteracao no arquivo de autolad do composer, o comando de terminal em questao eh:'<b>composer dumpautoload</b>', ira
 incluir, nesse caso em especifico a seguinte entrada no arquivo de loader referente ao psr-4:<br>
-<img src="autoload" />
+<img src="autoload.png" />
 <br>
 Esse arquivo esta no diretorio '<b>/vendor/composer/</b>' sendo o seu nome '<b>autoload_psr4.php</b>'
 </p>
