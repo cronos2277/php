@@ -1,4 +1,9 @@
 <?php
+/*
+    Classe generica para envio de email, essa eh a classe responsavel
+    por fazer o envio de email.
+*/
+
 namespace Core\Mail;
 use Zend\View\View;
 use Zend\Mail\Message;
