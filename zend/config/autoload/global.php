@@ -18,6 +18,19 @@ return [
         'database' => 'zf3_helpdesk',
         'username' => 'root',
         'password' => '123456'
+    ],
+    'mail' =>[
+        'name' => 'smtp.mailtrap.io', //SMTP do servidor de e-mail
+        'host' => 'smtp.mailtrap.io', //No google so repetir o SMTP
+        'port' => 2525, //Porta do servidor do gmail 465.
+        'connection_class' => 'login', //diz que sera feito autenticacao para disparar emails
+        'connection_config' => array(
+            'from' => 'cronos2277-a3e2b0@inbox.mailtrap.io', //Remetente
+            'username' => '3e972b27046065', //Email de autenticacao
+            'password' => '6d872d256045da', //Senha autenticacao.
+            //'ssl' => 'ssl' //Tipo de envio SSL para Gmail.
+            'auth' => 'CRAM-MD5', //Forma de criptografia
+        ),
     ]
 ];
 /**
