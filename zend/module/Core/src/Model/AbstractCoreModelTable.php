@@ -2,7 +2,6 @@
 namespace Core\Model;
 use RuntimeException;
 use Zend\Db\TableGateway\TableGatewayInterface;
-
 abstract class AbstractCoreModelTable
 {
     protected $tableGateway;
@@ -31,6 +30,7 @@ abstract class AbstractCoreModelTable
         }
 
         $this->tableGateway->insert($data);
+        //Metodo obscuro arrume isso se der problema.
         return $this->getBy(['id'=>$this->tableGateway->getLastInsertValue()]);
     }
 
