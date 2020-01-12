@@ -6,8 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ComposerAutoloaderInit2aba1948de728103d53e7a123f0a10a6' => $vendorDir . '/composer/autoload_real.php',
-    'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
-    'Composer\\Autoload\\ComposerStaticInit2aba1948de728103d53e7a123f0a10a6' => $vendorDir . '/composer/autoload_static.php',
-    'SEU_NAME_SPACE\\Classe' => $baseDir . '/public/index.php',
+    'SEU_NAME_SPACE\\Classe' => $baseDir . '/classmap/index.php',
 );

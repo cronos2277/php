@@ -7,32 +7,16 @@ namespace Composer\Autoload;
 class ComposerStaticInit2aba1948de728103d53e7a123f0a10a6
 {
     public static $prefixLengthsPsr4 = array (
-        'V' => 
-        array (
-            'Vendor\\Namespace\\' => 17,
-        ),
-        'S' => 
-        array (
-            'SEU_NAME_SPACE\\' => 15,
-        ),
         'A' => 
         array (
-            'APELIDO\\' => 8,
+            'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Vendor\\Namespace\\' => 
+        'App\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/',
-        ),
-        'SEU_NAME_SPACE\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/APELIDO',
-        ),
-        'APELIDO\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/public/index.php',
+            0 => __DIR__ . '/../..' . '/App',
         ),
     );
 
@@ -58,10 +42,7 @@ class ComposerStaticInit2aba1948de728103d53e7a123f0a10a6
     );
 
     public static $classMap = array (
-        'ComposerAutoloaderInit2aba1948de728103d53e7a123f0a10a6' => __DIR__ . '/..' . '/composer/autoload_real.php',
-        'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
-        'Composer\\Autoload\\ComposerStaticInit2aba1948de728103d53e7a123f0a10a6' => __DIR__ . '/..' . '/composer/autoload_static.php',
-        'SEU_NAME_SPACE\\Classe' => __DIR__ . '/../..' . '/public/index.php',
+        'SEU_NAME_SPACE\\Classe' => __DIR__ . '/../..' . '/classmap/index.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
