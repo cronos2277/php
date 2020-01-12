@@ -1,13 +1,50 @@
 {
     "name": "cronos2277/composer",
+    "description":"Exemplo Composer",
     "minimum-stability":"stable",
     "authors": [
         {
             "name": "JotaPe",
-            "email": "cronos2277@gmail.com"
+            "email": "cronos2277@gmail.com",
+            "homepage": "https://www.github/cronos2277",
+            "role": "Developer"
+        },
+        {
+            "name": "Exemplo de Multiplos autores",
+            "email": "email@email.com",
+            "homepage": "https://www.github/cronos2277",
+            "role": "Developer"
         }
     ],
+    "support": {
+        "email": "support@example.org",
+        "irc": "irc://irc.freenode.org/composer"
+    },
     "require": {
+        "php":"^5.5 || ^7.0"
+    },
+    "suggest": {
+        "PHP 5.5 || 7.0": "Para atender a exigencia do require acima: (>= 5.5 && <6) || (>= 7.0 && <8)"        
+    },
+    "autoload":{
+        "psr-0": {
+            "Monolog\\": "src/",
+            "Vendor\\Namespace\\": "src/",
+            "Vendor_Namespace_": "src/"
+        },
+        "psr-4":{
+            "SEU_NAME_SPACE\\":"APELIDO",
+            "APELIDO\\":"public/index.php",
+            "Vendor\\Namespace\\": ""
+        }
+        
+    },
+    "autoload-dev":{
+        "classmap": ["vendor/", "./vendor/composer/", "./public/index.php"]
+    },
+    "scripts":{
+        "msg":"echo 'Ao digitar composer msg no terminal, exibe essa mensagem.'",
+        "run": "composer dump-autoload && php -S localhost:8090 -t . index.php"
         
     }
 }

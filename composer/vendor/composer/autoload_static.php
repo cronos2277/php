@@ -6,9 +6,71 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit2aba1948de728103d53e7a123f0a10a6
 {
+    public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'Vendor\\Namespace\\' => 17,
+        ),
+        'S' => 
+        array (
+            'SEU_NAME_SPACE\\' => 15,
+        ),
+        'A' => 
+        array (
+            'APELIDO\\' => 8,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Vendor\\Namespace\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/',
+        ),
+        'SEU_NAME_SPACE\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/APELIDO',
+        ),
+        'APELIDO\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/public/index.php',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'V' => 
+        array (
+            'Vendor_Namespace_' => 
+            array (
+                0 => __DIR__ . '/../..' . '/src',
+            ),
+            'Vendor\\Namespace\\' => 
+            array (
+                0 => __DIR__ . '/../..' . '/src',
+            ),
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 
+            array (
+                0 => __DIR__ . '/../..' . '/src',
+            ),
+        ),
+    );
+
+    public static $classMap = array (
+        'ComposerAutoloaderInit2aba1948de728103d53e7a123f0a10a6' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
+        'Composer\\Autoload\\ComposerStaticInit2aba1948de728103d53e7a123f0a10a6' => __DIR__ . '/..' . '/composer/autoload_static.php',
+        'SEU_NAME_SPACE\\Classe' => __DIR__ . '/../..' . '/public/index.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2aba1948de728103d53e7a123f0a10a6::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2aba1948de728103d53e7a123f0a10a6::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2aba1948de728103d53e7a123f0a10a6::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2aba1948de728103d53e7a123f0a10a6::$classMap;
 
         }, null, ClassLoader::class);
     }
