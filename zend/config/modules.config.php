@@ -31,6 +31,7 @@ return [
     'Zend\Router',
     'Zend\Validator',
     'Core', //O Modulo que criamos.
+    'User',
     'Application',
 ];
 /*

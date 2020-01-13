@@ -32,9 +32,10 @@
         "zendframework/zend-i18n-resources": "^2.6"
     },
     "autoload": {
-        "psr-4": {
-            "Application\\": "module/Application/src/",
-            "Core\\": "module/Core/src/"
+        "psr-4": {            
+            "Core\\": "module/Core/src/",
+            "User\\":"module/User/src",
+            "Application\\": "module/Application/src/"
         }
     },
     "autoload-dev": {
@@ -52,7 +53,7 @@
             "@development-enable",
             "php bin/update-gitignore.php"
         ],
-        "serve": "php -S 0.0.0.0:8080 -t public",
+        "serve": "php -S localhost:8090 -t public/ public/index.php",
         "test": "phpunit"
     }
 }
