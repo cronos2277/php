@@ -30,8 +30,7 @@ return [
     'Zend\Db',
     'Zend\Router',
     'Zend\Validator',
-    'Core', //O Modulo que criamos.
-    'User',
+    'Core', //O Modulo que criamos.    
     'Application',
 ];
 /*
