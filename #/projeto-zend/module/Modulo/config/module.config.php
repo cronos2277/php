@@ -52,8 +52,18 @@ return [
                     //Aqui eh definido as acoes padroes da URL, ou seja caso a url seja
                     //validado pela constraints mas nao se aplica as excecoes especificadas.
                     'defaults' => [
-                        //O controlador => \Namespace\Classe
+                        //O controlador => \Namespace\Classe, essa classe esta dentro da pasta
+                        //src, dentro de controller, arquivo chamado ModuloController.php com uma
+                        //classe chamada ModuloController, repare que tanto no nome do arquivo, como
+                        //no nome da classe tem o nome <nomedomodulo>Controller, nesse caso ModuloController
+                        //Esse eh outro padrao do Zend, mantenha-o.
                         'controller' => Controller\ModuloController::class,
+                        //Esse eo metodo criado la na classe em questao, que eh o metodo padrao.
+                        //No caso esse metodo nao estara como index la na classe ModuloController,
+                        //Esse metodo estara como indexAction, ou seja esse action eh padrao do Zend,
+                        //como aqui definimos um metodo index, o mesmo eh uma acao e por isso esse padrao.
+                        //Siga esse padrao quando for criar esse metodo, para que o Zend o encontre-o.
+                        //Entao indexAction.
                         'action' => 'index',
                     ],
                 ],
