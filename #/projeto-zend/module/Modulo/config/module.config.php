@@ -1,5 +1,8 @@
 <?php
 namespace Modulo;
+
+use Zend\ServiceManager\Factory\InvokableFactory;
+
 return [
     //aqui dentro fica as configuracoes.
     /* 
@@ -69,6 +72,30 @@ return [
                 ],
             ],
         ],
+    ],
+    'controllers' =>[
+        /*
+            Aqui dentro dos Controllers nos vamos dizer ao Zend como
+            as nossas Views devem ser renderizadas.
+        */
+        'factories' => [
+            /*
+                Aqui nos vamos dizer qual eh o metodo construtor. 
+                Repare que o controller acima ele chama a classe:
+                'controller' => Controller\ModuloController::class                
+                logo aqui precisamos dizer, qual eh a classe que ele 
+                esta procurando, a classe abstrata: AbstractActionController
+                do Zend meio que facilita isso, por isso eh bom extender,
+                alguma classe como essa que permite essa facilitacao.
+                Justamente por usarmos essa classe, a outra classe que eh
+                a responsavel por informar a classe construtura eh a classe
+                InvokableFactory, logo para que ela possa funcionar, se faz
+                necessario que tenha Action apos o nome do metodo.
+                Repare que dentro do InvokableFactory tem um metodo magico
+                __invoke, ou seja eh esse metodo que faz toda a regra de negocios.
+            */
+            Controller\ModuloController::class => InvokableFactory::class,
+        ]
     ],
     //Aqui sera configurado, aonde estao as nossa Views.
     'view_manager' => [

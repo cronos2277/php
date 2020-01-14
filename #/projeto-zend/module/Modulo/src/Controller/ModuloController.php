@@ -4,8 +4,8 @@ namespace Modulo\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 //Recomenda-se extender AbstractActionController ou alguma classe
-//como essa ou implementar uma interface como essa, para que 
-//seja feito coisas como tratamento de errose etc... 
+//como essa ou implementar uma interface com essa funcionalidade, 
+//para que seja feito coisas como tratamento de errose etc... 
 class ModuloController extends AbstractActionController{
     /* 
         Todo o metodo controller deve retornar uma view.
