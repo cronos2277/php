@@ -2,10 +2,11 @@
 //Lembre-se sempre de seguir o padrao PSR4 para o Zend 3.
 namespace Modulo;
 //Interface para que as rotas funcionem bem.
-
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\ResultSet\ResultSet;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
+//O Unico metodo obrigatódio dessa interface é o getConfig
+use Zend\ModuleManager\Feature\ConfigProviderInterface; 
 //Nao precisa implementar essa interface ou pode implementar outra,
 //mas o nome da classe dentro desse arquivo deve ser esse e o metodo
 //getConfig deve existir, para o funcionamento das rotas, esse eh um
@@ -83,13 +84,52 @@ class Module implements ConfigProviderInterface{
                         quando a factory anterior eh solicitada, por exemplo.
                         Aqui nas linhas abaixo estamos pedindo uma classe ao container.
                         que executara uma funcao construtora como essa, ou nao.
-                    */                    
+                    */      
+                    /*
+                        O AdapterInterface é uma interface que retorna dois metodos,
+                        getDriver e getPlatform. Quando voce informa dentro do metodo
+                        get(), voce pega um objeto ao qual tenha essa interface 
+                        implementada.
+                    */              
                     $dbAdapter = $container->get(AdapterInterface::class); 
+                    /*
+                        O setArrayObjectPrototype é um metodo que inicialmente 
+                        analiza se é um objeto ou se o mesmo é do tipo um array
+                         de objeto valido, sendo o mesmo prossegue e prepara
+                         o objeto ResultSetPrototype para que o Zend faça acesso
+                         ao banco de dados. Por isso é bom implementar as interfaces
+                         do zend ou extender as classes, pois isso permitirá
+                         que métodos como esse tenha condições de continuar.
+                    */
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Modelo());
+                    //Para ter um TableGateway, você precisará de um:
+                    //Modelo de Tabela(ModelTabel), um objeto adpter e um ResultSet.
+                    /*
+                        Ao todo esse objeto precisa de 5 parametros mas 2 deles estão
+                        em desuso aqui, o primeiro deles é esse terceiro parametro como
+                        nulo, ele seria as features. Essas feature é um array de confugurações
+                        que permite a mudança no funcionamento do TableGateway, que aqui esta
+                        nulo, e o outro, que seria o quinto parametro, que não existe aqui
+                        seria o SQL, que seria para mandar uma query customizada para a instancia.
+                        Esse quinto parametro seria usado para que fosse executado o SQL do 
+                        parametro, ao inves de executar o SQL padrão do Zend, porém parece 
+                        que esse paratro foi descontinuado, uma vez que o desvio condicional dele
+                        não trata o Sql customizado.
+                    */
                     return new TableGateway('modelo',$dbAdapter,null,$resultSetPrototype);
                 },
             ]
+        ];
+    }
+    public function getControllerConfig(){
+        return[
+            'factories' => [
+                Controller\ModuloController::class => function($container){
+                    $tableGateway = $container->get(Model\ModeloTable::class);
+                    return new Controller\ModuloController($tableGateway);
+                }
+            ],
         ];
     }
 }

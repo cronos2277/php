@@ -19,10 +19,28 @@ class ModuloController extends AbstractActionController{
         Esse eh o metodo que esta la nas configuracoes de rotas,
         mencionado como index.
     */
+
+    private $table;
+
+    public function __construct($table)
+    {
+        $this->table = $table;
+    }
     public function indexAction()
     { //rota http://URL:porta/modulo
-        //regras de negocio...
-        return new ViewModel();
+        //regras de negocio...   
+        /*
+            Aqui temos um exemplo de como passar parametro, quando
+            for instanciado uma view, o mesmo deve seguir o padrão
+            de array, no caso temos o modelo, que vai passar todos
+            os valores retornado com o metodo getAll();
+            A chave desse array estará disponível como variável
+            lá no view, para pode ser usado como objeto la no
+            phtml, contendo os valores passados aqui no array.
+            Logo lá na view terá um objeto chamado $modelo, que
+            terá os valores de: $this->table->getAll();
+        */     
+        return new ViewModel(['modelo' => $this->table->getAll()]);
         /*
             Quando voce nao passa nenhum parametro dentro
             desse novo objeto ViewModel acima, o Zend

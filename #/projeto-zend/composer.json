@@ -39,6 +39,7 @@
             "php bin/update-gitignore.php"
         ],
         "serve": "php -S localhost:8090 -t public/ public/index.php",
+        "mysql":"mysql -u root -p123456 -e zend.sql",
         "test": "phpunit"
     }
 }

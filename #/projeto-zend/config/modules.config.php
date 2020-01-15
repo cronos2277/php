@@ -11,8 +11,8 @@
  * This should be an array of module namespaces used in the application.
  */
 return [
-    'Zend\Db',
-    'Zend\Router', //Modulos da Zend.
+    'Zend\Db', //Banco de dados do Zend.
+    'Zend\Router', //Rota do Zend.
     'Zend\Validator', //Modulos da Zend.
     'Application', //Esse ja vem por padrao. Serve como exemplo no eskeleton.
     'Modulo', // Esse eh o metodo criado aqui, e aqui eh feito o registro do mesmo

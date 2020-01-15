@@ -95,7 +95,7 @@ return [
                 Repare que dentro do InvokableFactory tem um metodo magico
                 __invoke, ou seja eh esse metodo que faz toda a regra de negocios.
             */
-            Controller\ModuloController::class => InvokableFactory::class,
+            //Controller\ModuloController::class => InvokableFactory::class,
         ]
     ],
     //Aqui sera configurado, aonde estao as nossa Views.
@@ -105,7 +105,16 @@ return [
             //Aqui o caminho do seu view, no caso eh informado a raiz do modulo, view.
             'modulo' => __DIR__.'/../view/',
         ]
-    ]
+    ],
+    'db' => [ //Configuração para a conexão com banco de dados.
+        'driver' => 'Pdo_Mysql', //Driver PHP do banco de dados
+        'database' => 'zend', //DB
+        'username' => 'root',
+        'password' => '123456',
+        'hostname' => '' //Host.
+        //Tambem tem o campo port e charset se precisar
+        //para mais informações: https://docs.zendframework.com/zend-db/adapter/
+    ],
 ];
 /*
     Esse e um arquivo de configuracao dentro do modulo, 
