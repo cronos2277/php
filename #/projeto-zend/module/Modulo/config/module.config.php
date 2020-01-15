@@ -111,7 +111,7 @@ return [
         'database' => 'zend', //DB
         'username' => 'root',
         'password' => '123456',
-        'hostname' => '' //Host.
+        'hostname' => 'localhost' //Host.
         //Tambem tem o campo port e charset se precisar
         //para mais informações: https://docs.zendframework.com/zend-db/adapter/
     ],

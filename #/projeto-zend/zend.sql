@@ -6,7 +6,8 @@
 -- Tempo de geração: 15/01/2020 às 18:08
 -- Versão do servidor: 10.4.10-MariaDB
 -- Versão do PHP: 7.3.12
-
+CREATE DATABASE IF NOT EXISTS `zend`;
+USE `zend`;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
