@@ -28,4 +28,10 @@ class Modelo{
     public function setId(int $id){
         $this->id = $id;
     }
+    public function setValor($valor){
+        $this->valor = $valor;
+    }
+    public function setDataRegistro($data){
+        $this->dataRegistro = $data;
+    }
 }
