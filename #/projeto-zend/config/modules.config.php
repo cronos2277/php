@@ -11,6 +11,7 @@
  * This should be an array of module namespaces used in the application.
  */
 return [
+    'Zend\Db',
     'Zend\Router', //Modulos da Zend.
     'Zend\Validator', //Modulos da Zend.
     'Application', //Esse ja vem por padrao. Serve como exemplo no eskeleton.
