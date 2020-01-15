@@ -40,6 +40,7 @@
         ],
         "serve": "php -S localhost:8090 -t public/ public/index.php",
         "mysql":"mysql -u root -p123456 < zend.sql",
+        "prepare":"composer install && composer update && composer mysql",
         "test": "phpunit"
     }
 }
