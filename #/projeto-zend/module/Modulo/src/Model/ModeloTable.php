@@ -27,6 +27,10 @@ class ModeloTable{
     public function getAll(){
         //Esse metodo do TableGateway sem criterios,
         //retorna todos os dados que ele gerencia no BD. 
+        //seria mais ou menos um, "select * from MODELO".
+        //Porem mais otimizado, pois o Zend ele tem mais ou menos
+        //uma ideia da estrutura, ficando: 
+        //select id,valor,dataRegistro from MODELO;
         return $this->tableGateway->select();
     }
 
