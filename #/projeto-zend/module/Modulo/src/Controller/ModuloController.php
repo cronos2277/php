@@ -24,6 +24,23 @@ class ModuloController extends AbstractActionController{
             nesse caso index.
         */
     }
+    public function addAction()
+    {
+        /*
+            Aqui esta o add action, que pode ser acessado
+            na seguinte URL, localhost:porta/modulo/add,
+            repare que esta sub-rota nao esta cadastrada
+            no 'module.config.php', justamente por ser uma 
+            sub-rota nao se faz necessario cadastrar a 
+            sub-rota la, e repare tambem que abaixo existe 
+            a chamada para view tambem. No caso como tambem
+            nao eh passado parametro, sera procurado um arquivo
+            chamado add.phtml dentro de 
+            /view/[pasta-modulo-nome]/[pasta-controller-nome]
+            seguindo essa ordem claro.
+        */
+        return new ViewModel();
+    }
 }
 /*
     Essa eh a classe que eh mencionada nas rotas padrao la no 

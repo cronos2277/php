@@ -68,6 +68,7 @@ return [
                         //Siga esse padrao quando for criar esse metodo, para que o Zend o encontre-o.
                         //Entao indexAction.
                         'action' => 'index',
+                        'id' => 0, //ID padrao quando nao informado, zero
                     ],
                 ],
             ],
