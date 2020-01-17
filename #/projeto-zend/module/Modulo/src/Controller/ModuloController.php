@@ -37,10 +37,10 @@ class ModuloController extends AbstractActionController{
             A chave desse array estará disponível como variável
             lá no view, para pode ser usado como objeto la no
             phtml, contendo os valores passados aqui no array.
-            Logo lá na view terá um objeto chamado $modelo, que
+            Logo lá na view terá um objeto chamado $modulo, que
             terá os valores de: $this->table->getAll();
         */     
-        return new ViewModel(['modelo' => $this->table->getAll()]);
+        return new ViewModel(['modulo' => $this->table->getAll()]);
         /*
             Quando voce nao passa nenhum parametro dentro
             desse novo objeto ViewModel acima, o Zend
