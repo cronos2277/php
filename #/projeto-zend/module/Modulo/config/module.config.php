@@ -110,7 +110,7 @@ return [
         'driver' => 'Pdo_Mysql', //Driver PHP do banco de dados
         'database' => 'zend', //DB
         'username' => 'root',
-        'password' => '',
+        'password' => '123456',
         'hostname' => 'localhost' //Host.
         //Tambem tem o campo port e charset se precisar
         //para mais informações: https://docs.zendframework.com/zend-db/adapter/
