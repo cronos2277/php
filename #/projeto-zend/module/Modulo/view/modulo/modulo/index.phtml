@@ -1,9 +1,21 @@
-<?php $var = "<br>Exemplo do codigo PHP"; ?>
-<h1>Minha view do Controller '<b>modulo</b>' do modulo '<b>modulo</b>'</h1>
-<?= $var; ?>
+
+<h1>Exemplo de listas.</h1>
+<table class="table table-stripped">
+    <tr>
+        <th>Codigo</th>
+        <th>Valor</th>
+        <th>Data Registro</th>
+    </tr>
 <hr>
 <?php
-    var_dump($modulo);
-    echo "<hr>";
-    
+    foreach($modulo as $key => $value){
+            ?>
+                <tr>
+                    <td><?= $value->getId(); ?></td>
+                    <td><?= $value->getValor(); ?></td>
+                    <td><?= $value->getDataRegistro(); ?></td>
+                </tr>
+            <?php
+    }
 ?>
+</table>
