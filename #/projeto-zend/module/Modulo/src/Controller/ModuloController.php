@@ -25,8 +25,7 @@ class ModuloController extends AbstractActionController{
         mencionado como index.
     */
 
-    private $table;
-    private $req;
+    private $table;    
     public function __construct($table)
     {
         /*
@@ -53,7 +52,7 @@ class ModuloController extends AbstractActionController{
             phtml, contendo os valores passados aqui no array.
             Logo lá na view terá um objeto chamado $modulo, que
             terá os valores de: $this->table->getAll();
-        */     
+        */             
         return new ViewModel(['modulo' => $this->table->getAll(),"request"=>$this->getRequest()]);
         /*
             Quando voce nao passa nenhum parametro dentro
@@ -90,7 +89,7 @@ class ModuloController extends AbstractActionController{
         $form->get('submit')->setValue('Add');
         //Aqui eh pego uma requisicao, as classes ou metodos superiores a esse tratam a requisicao,
         //e o AbstractActionController te permite acesso a requisicao através desse metodo abaixo.
-        $request = $this->getRequest();        
+        $request = $this->getRequest();   
         if(!$request->isPost()){ //O metodo isPost() verifica se o array $_POST[] esta vazio.
             //Caso o array post esteja vazio, será renderizado o formulario. aqui e codigo para de ser executado aqui.
             //O ViewModel vai criar uma variavel form, colocando nela os valores do $form daqui.
@@ -193,7 +192,7 @@ class ModuloController extends AbstractActionController{
     }
     
     return ['id'=>$id,'modulo' => $this->table->getModel($id)];
-        return new ViewModel();
+        
     }
    
 }
