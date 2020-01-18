@@ -163,7 +163,7 @@ class ModuloController extends AbstractActionController{
             //equivale return new ViewModel(['viewData' => $viewData]);
             return $viewData;
         }        
-        $this->table->save($modulo->getData());
+        $this->table->save($modulo);
         return $this->redirect()->toRoute('modulo');
         return new ViewModel();
     }
