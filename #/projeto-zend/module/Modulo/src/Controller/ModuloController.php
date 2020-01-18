@@ -6,7 +6,7 @@ use Modulo\Form\ModuloForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Modulo\Model\Modelo;
-// use Zend\Http\Request; //<-Modulo do Objeto request se precisar
+
 //Recomenda-se extender AbstractActionController ou alguma classe
 //como essa ou implementar uma interface com essa funcionalidade, 
 //para que seja feito coisas como tratamento de errose etc... 
@@ -26,7 +26,7 @@ class ModuloController extends AbstractActionController{
     */
 
     private $table;
-
+    private $req;
     public function __construct($table)
     {
         /*
@@ -35,7 +35,8 @@ class ModuloController extends AbstractActionController{
             do ModeloTable.            
         */
 
-        $this->table = $table;
+        $this->table = $table;    
+        
     }
     public function indexAction()
     {         
@@ -53,7 +54,7 @@ class ModuloController extends AbstractActionController{
             Logo lá na view terá um objeto chamado $modulo, que
             terá os valores de: $this->table->getAll();
         */     
-        return new ViewModel(['modulo' => $this->table->getAll()]);
+        return new ViewModel(['modulo' => $this->table->getAll(),"request"=>$this->getRequest()]);
         /*
             Quando voce nao passa nenhum parametro dentro
             desse novo objeto ViewModel acima, o Zend
@@ -172,6 +173,9 @@ class ModuloController extends AbstractActionController{
     public function removeAction(){
     //rota http://URL:porta/modulo/remove    
     // Arquivo de view: modulo/src/view/modulo/modulo/remove.html
+
+    
+
     $id = (int) $this->params()->fromRoute('id',0);
     if($id === 0){        
         //Se o id nao for valido, eh redirecionado para:
