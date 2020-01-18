@@ -29,6 +29,12 @@ class ModuloController extends AbstractActionController{
 
     public function __construct($table)
     {
+        /*
+            Aqui trabalha-se com o dependency injection, 
+            o $this->table nesse caso eh uma instancia
+            do ModeloTable.            
+        */
+
         $this->table = $table;
     }
     public function indexAction()
