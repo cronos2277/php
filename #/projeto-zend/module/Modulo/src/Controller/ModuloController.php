@@ -1,7 +1,10 @@
 <?php
 namespace Modulo\Controller;
+
+use Modulo\Form\ModuloForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Modulo\Model\Modelo;
 //Recomenda-se extender AbstractActionController ou alguma classe
 //como essa ou implementar uma interface com essa funcionalidade, 
 //para que seja feito coisas como tratamento de errose etc... 
@@ -27,7 +30,9 @@ class ModuloController extends AbstractActionController{
         $this->table = $table;
     }
     public function indexAction()
-    { //rota http://URL:porta/modulo
+    {         
+        
+        //rota http://URL:porta/modulo
         //regras de negocio...   
         /*
             Aqui temos um exemplo de como passar parametro, quando
@@ -70,7 +75,34 @@ class ModuloController extends AbstractActionController{
             controller, se chama Modulo.
 
         */
-        return new ViewModel();
+        //Instanciando um formulario, No caso ModuloForm();
+        $form = new ModuloForm(); 
+        //Aqui eh pego um elemento com o id informado no get, e seta um novo valor chamado 'add'.
+        $form->get('submit')->setValue('Add');
+        //Aqui eh pego uma requisicao, as classes ou metodos superiores a esse tratam a requisicao,
+        //e o AbstractActionController te permite acesso a requisicao através desse metodo abaixo.
+        $request = $this->getRequest();        
+        if(!$request->isPost()){ //O metodo isPost() verifica se o array $_POST[] esta vazio.
+            //Caso o array post esteja vazio, será renderizado o formulario. aqui e codigo para de ser executado aqui.
+            //O ViewModel vai criar uma variavel form, colocando nela os valores do $form daqui.
+            return new ViewModel(['form' => $form]);
+        }
+        $modulo = new Modelo();
+        //Caso o codigo continue, a requisicao sera inserida dentro do objeto $form usando o metodo setData(),
+        //Pegando os valores da requisicao, tendo um metodo abaixo que peda dados do metodo Post, com o getPost();
+        $form->setData($request->getPost());
+        //O metodo isValid() faz as verificacoes para ver se o formulario eh valido do dados inserido através do metodo
+        //setData() acima. A validacao verica se os dados sao validos com os tipos de dados definidos no ModuloForm.        
+        if(!$form->isValid()){ 
+        //Caso os dados nao sejam validos, entramos novamente no formulario, enterrompendo o codigo aqui.
+        //O ViewModel vai criar uma variavel form, colocando nela os valores do $form daqui.
+            return new ViewModel(['form' => $form]);
+        }
+        $modulo->exchangeArray($form->getData());
+        $this->table->save($modulo);
+        //Aqui estamos trabalhando com rotas. Se tudo certo o usuario eh redirecionado para a rota 'modulo',
+        //Essas rotas são definidos no arquivo 'modulo.config.php'
+        return $this->redirect()->toRoute('modulo');
     }
     public function saveAction(){
     //rota http://URL:porta/modulo/save   
@@ -90,7 +122,7 @@ class ModuloController extends AbstractActionController{
     public function confirmAction(){
     //rota http://URL:porta/modulo/confirm    
     // Arquivo de view: modulo/src/view/modulo/modulo/confirm.phtml
-        return new ViewModel();
+        return new ViewModel();       
     }
 }
 /*
