@@ -1,6 +1,7 @@
 <?php
 namespace Modulo\Controller;
 
+use Exception;
 use Modulo\Form\ModuloForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -103,6 +104,7 @@ class ModuloController extends AbstractActionController{
         $this->table->save($modulo);
         //Aqui estamos trabalhando com rotas. Se tudo certo o usuario eh redirecionado para a rota 'modulo',
         //Essas rotas são definidos no arquivo 'modulo.config.php'
+        //redireciona para: https://URL:porta/modulo
         return $this->redirect()->toRoute('modulo');
     }
     public function saveAction(){
@@ -112,7 +114,57 @@ class ModuloController extends AbstractActionController{
     }
     public function editAction(){
     //rota http://URL:porta/modulo/edit    
-    // Arquivo de view: modulo/src/view/modulo/modulo/edit.phtml
+    /* 
+        Arquivo de view: modulo/src/view/modulo/modulo/edit.phtml
+    Aqui abaixo eh pego o id, no caso o mesmo eh pego via $_GET.
+    Porem caso nao seja passado um valor na url, o valor padrao,
+    fica como 0. O params eh um metodo herdado, e o fromRoute faz
+    referencia a rota, ou seja a URL, como nesse caso eh via GET.
+    A rota ela aceita que seja pego valores depois da /, por exemplo.
+    https://URL:porta/modulo/[acoes]/[parametros],
+    no caso aqui nesse metodo estamos definindo caso o usuario digite
+    https://URL:porta/modulo/edit.
+    e o metodo abaixo trabalha em cima dos valores de [parametros].
+    */
+        $id = (int) $this->params()->fromRoute('id',0);
+        if($id === 0){
+            //redireciona para: https://URL:porta/modulo/add
+            return $this->redirect()->toRoute('modulo',['action' => 'add']);
+        }
+        try{
+            //Esse metodo vai retornar um Bean preenchido com base no $id.
+            //Caso tenha duvidas: Modulo\Model\ModeloTable
+            $modulo = $this->table->getModel($id);
+        }catch(Exception $ex){
+            //Se por algum modo estiver na url o ID de alguma pessoa que nao existe,
+            //O que de alguma forma passe pela primeira validação, provavelmente dará erro,
+            //No caso aqui, se acontecer será redirecionado ao index.
+            //redireciona para: https://URL:porta/modulo/index
+            return $this->redirect()->toRoute('modulo',['action' => 'index']);
+        }
+        $form = new ModuloForm();
+        //para o bind funcionar precisa ter getArrayCopy implementado, junto da interface
+        //Zend\Stdlib\ArraySerializableInterface; Pois esse metodo vai ter um array que,
+        //ira retornar um array no par chave e valor, sendo essa chave o nome do atributo,
+        //e o valor o que o get dele retorna.
+        $form->bind($modulo); //Ele pega os valores de um Bean e transforma em array.
+        $form->get('submit')->setAttribute('value','salvar');
+        $request = $this->getRequest();
+        $viewData = ['id'=>$id,'form'=>$form];
+        if(!$request->isPost()){
+            //Caso o $request nao seja post, o metodo sera chamado novamente passando o array $viewData como valor.
+            //No caso esse desvio chama o proprio metodoto passando esse array como valor, quando voce retorna
+            //dados no model, ele chama a mesmo metodo, porem com esses dados embutidos. 
+            //equivale return new ViewModel(['viewData' => $viewData]);
+            return $viewData;
+        }
+        $form->setData($request->getPost());
+        if(!$form->isValid()){             
+            //equivale return new ViewModel(['viewData' => $viewData]);
+            return $viewData;
+        }        
+        $this->table->save($modulo->getData());
+        return $this->redirect()->toRoute('modulo');
         return new ViewModel();
     }
     public function removeAction(){

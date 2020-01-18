@@ -4,7 +4,8 @@ namespace Modulo\Model;
     Essa eh a classe de modelo seguindo o padrao PSR4
     O TableGateway ira manipular essa classe.
 */
-class Modelo{
+use Zend\Stdlib\ArraySerializableInterface;
+class Modelo implements ArraySerializableInterface{
     private $id;
     private $valor;
     private $dataRegistro;
@@ -33,5 +34,13 @@ class Modelo{
     }
     public function setDataRegistro($data){
         $this->dataRegistro = $data;
+    }
+    public function getArrayCopy():array{
+        return[
+            'id' => $this->id,
+            'valor' => $this->valor,
+            'dataRegistro' => $this->dataRegistro
+        ];
+
     }
 }
