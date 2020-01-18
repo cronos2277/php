@@ -5,6 +5,7 @@ use Modulo\Form\ModuloForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Modulo\Model\Modelo;
+// use Zend\Http\Request; //<-Modulo do Objeto request se precisar
 //Recomenda-se extender AbstractActionController ou alguma classe
 //como essa ou implementar uma interface com essa funcionalidade, 
 //para que seja feito coisas como tratamento de errose etc... 
