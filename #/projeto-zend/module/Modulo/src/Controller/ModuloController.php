@@ -113,11 +113,7 @@ class ModuloController extends AbstractActionController{
         //redireciona para: https://URL:porta/modulo
         return $this->redirect()->toRoute('modulo');
     }
-    public function saveAction(){
-    //rota http://URL:porta/modulo/save   
-    // Arquivo de view: modulo/src/view/modulo/modulo/save.phtml
-        return new ViewModel();
-    }
+    
     public function editAction(){
     //rota http://URL:porta/modulo/edit    
     /* 
@@ -176,13 +172,26 @@ class ModuloController extends AbstractActionController{
     public function removeAction(){
     //rota http://URL:porta/modulo/remove    
     // Arquivo de view: modulo/src/view/modulo/modulo/remove.html
+    $id = (int) $this->params()->fromRoute('id',0);
+    if($id === 0){        
+        //Se o id nao for valido, eh redirecionado para:
+        //http://localhost:porta/modulo    
+        return $this->redirect()->toRoute('modulo');
+    }
+    $request = $this->getRequest();
+    if($request->isPost()){
+        $del = $request->getPost('del');        
+        if($del == "Yes"){
+            $id = (int) $request->getPost('id');
+            $this->table->delete($id);
+        }
+        return $this->redirect()->toRoute('modulo');
+    }
+    
+    return ['id'=>$id,'modulo' => $this->table->getModel($id)];
         return new ViewModel();
     }
-    public function confirmAction(){
-    //rota http://URL:porta/modulo/confirm    
-    // Arquivo de view: modulo/src/view/modulo/modulo/confirm.phtml
-        return new ViewModel();       
-    }
+   
 }
 /*
     Essa eh a classe que eh mencionada nas rotas padrao la no 

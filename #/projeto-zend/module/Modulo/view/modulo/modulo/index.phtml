@@ -15,7 +15,8 @@
                     <td><?= $value->getId(); ?></td>
                     <td><?= $value->getValor(); ?></td>
                     <td><?= $value->getDataRegistro(); ?></td>
-                    <td><a href="<?= $this->url('modulo',['action' => 'edit','id' => $value->getId()]); ?>" class="btn btn-info"><i class="glyphicon glyficon-edit"></i></a></td>                    
+                    <td><a href="<?= $this->url('modulo',['action' => 'edit','id' => $value->getId()]); ?>" class="btn btn-info">Modify</a></td>                    
+                    <td><a href="<?= $this->url('modulo',['action' => 'remove','id' => $value->getId()]); ?>" class="btn btn-danger">Delete</i></a></td>                    
                 </tr>
             <?php
     }

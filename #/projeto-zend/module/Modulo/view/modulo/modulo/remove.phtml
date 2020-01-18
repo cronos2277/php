@@ -1,1 +1,26 @@
-remover
+<?php
+/*
+    Por $this entenda como o objeto da classe ViewModel do Zend que foi
+    renderizado, ou seja todos os metodos e atributos do ViewModel estara
+    presente assim, assim como o as variaveis passados dentro de um array
+    quando essa ViewModel foi renderizada.
+*/
+$title = "Removendo dados";
+$this->headTitle(); //Altera o <title>Altera aqui</title> da pagina.
+?>
+<h1><?=$this->escapeHtml($title) ?></h1>
+Voce deseja realmente excluir: <br>
+<table class="table table-stripped">
+    <tr>    
+        <td><?= $this->escapeHtml($modulo->getValor()); ?></td>
+        <td><?= $this->escapeHtml($modulo->getDataRegistro()); ?></td>
+    </tr>
+</table>
+<form action="<?= $this->url('modulo',['action'=>'remove']); ?>" method="post">
+    <div class="form-group">
+        <input type="hidden" name="id" value="<?= $id ?>"/>
+        <input type="submit" class="btn btn-danger" name="del" value="Yes" />
+        <input type="submit" class="btn btn-warning" name="del" value="No" />
+    </div>
+
+</form>
