@@ -17,6 +17,7 @@ justamente o nome da classe.
 </p>
 <p>
 Logo, é dessa forma engenhosa que o PHP consegue carregar as classes que precisa na hora certa, evitando com que as
-mesmas estejam na memória sem a necessidade delas estarem em uso. No caso é usado o padrão PSR4, ou seja uma classe
-por arquivo e com esse arquivo tendo o nome da classe e o seu PATH sendo usado como namespace.
+mesmas estejam na memória sem a necessidade delas estarem em uso. Assim o autoload só é chamado quando tiver uma classe
+que o PHP não conhece e ali dentro nas regras de negócio, é verificado se o arquivo existe, se existe ele carrega o arquivo
+com o mesmo nome que a própria classe.
 </p>
