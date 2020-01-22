@@ -19,5 +19,6 @@ justamente o nome da classe.
 Logo, é dessa forma engenhosa que o PHP consegue carregar as classes que precisa na hora certa, evitando com que as
 mesmas estejam na memória sem a necessidade delas estarem em uso. Assim o autoload só é chamado quando tiver uma classe
 que o PHP não conhece e ali dentro nas regras de negócio, é verificado se o arquivo existe, se existe ele carrega o arquivo
-com o mesmo nome que a própria classe.
+com o mesmo nome que a própria classe. As classes Exibir1 e Exibir2 estão dentro da pasta public, dentro do arquivo
+Exibir1 e Exibir2 respectivamente.
 </p>
