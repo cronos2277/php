@@ -7,11 +7,6 @@
     <br> Sendo a forma acima a assinatura dela.
 </p>
 <img src="./.@imgs/img0.png" /><br>
-<p> Toda funcao __autoload no php é invocada,
-no momento que você usa o require, eh uma função padrão, funciona como um metodo mágico, sendo esses
-ultimos chamados quando um envento do objeto ocorre
-como instanciar, destruir objetos e etc...
-</p>
 <p>
 a função precisa ter o exato mesmo nome do que a imagem, assim sendo você escreve as regras de negócios
 quando for dado um require nesse arquivo ao qual a função está contida, nesse caso é o '<b>autoload.php</b>',
