@@ -1,8 +1,24 @@
-<?php $var = "<br>Exemplo do codigo PHP"; ?>
-<h1>Minha view do Controller '<b>modulo</b>' do modulo '<b>modulo</b>'</h1>
-<?= $var; ?>
+
+<h1>Exemplo de listas.</h1>
+<a href="<?= $this->url('modulo',['action'=>'add']); ?>" class='btn btn-primary'> Add</a>
+<table class="table table-stripped">
+    <tr>
+        <th>Codigo</th>
+        <th>Valor</th>
+        <th>Dados de Registro</th>
+    </tr>
 <hr>
 <?php
-    echo "Exemplo do objeto module criado no controller: ".var_dump($modulo);
-    echo "<hr>";
+    foreach($modulo as $key => $value){
+            ?>
+                <tr>
+                    <td><?= $value->getId(); ?></td>
+                    <td><?= $value->getValor(); ?></td>
+                    <td><?= $value->getDataRegistro(); ?></td>
+                    <td><a href="<?= $this->url('modulo',['action' => 'edit','id' => $value->getId()]); ?>" class="btn btn-info">Modify</a></td>                    
+                    <td><a href="<?= $this->url('modulo',['action' => 'remove','id' => $value->getId()]); ?>" class="btn btn-danger">Delete</i></a></td>                    
+                </tr>
+            <?php
+    }
 ?>
+</table>

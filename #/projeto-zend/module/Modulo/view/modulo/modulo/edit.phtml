@@ -1,1 +1,54 @@
-Editar
+<?php
+/*
+    Por $this entenda como o objeto da classe ViewModel do Zend que foi
+    renderizado, ou seja todos os metodos e atributos do ViewModel estara
+    presente assim, assim como o as variaveis passados dentro de um array
+    quando essa ViewModel foi renderizada.
+*/
+$title = "Editando Dados";
+$this->headTitle(); //Altera o <title>Altera aqui</title> da pagina.
+?>
+<h1><?=$this->escapeHtml($title) ?></h1>
+<?php
+//Nessa linha abaixo seta o action do Formulario, impondo a ele a nossa rota add.
+$form->setAttribute('action',$this->url('modulo',['action' => 'edit','id' => $id]));
+//Ele ira configurar internamente o necessario para renderizar, ou seja atualizar o objeto.
+$form->prepare();
+//Aqui sera renderizado o formulario, no caso aqui, o form vai pegar os dados do objeto Formulario
+//Passado la no controller quando essa view foi renderizada.
+echo $this->form()->openTag($form);
+$id = $this->form->get('id'); //Pegando ID no formulario
+$valor = $this->form->get('valor'); //Pegando um campo chamado valor.
+$dataRegistro = $this->form->get('dataRegistro'); //Pegando um campo chamado dataRegistro.
+/*
+    SetAttribute no singular sem o 's', ele permite
+    alterar um atributo em específico do elemento html    
+*/
+$valor->setAttribute('class','form-control'); //Colocando uma classe do bootstrap.
+$valor->setAttribute('autofocus','autofocus'); //Colocando o atributo focus no elemento html.
+$dataRegistro->setAttribute('class','form-control'); //Colocando o atributo focus no elemento html.
+
+$submit = $this->form->get('submit'); //Pegando o botao submit.
+$submit->setAttribute('class','btn btn-primary btn-lg'); //Definindo classes bootstrap ao botao submit.
+?>
+<?= $this->formElement($id); ?>
+
+<div class='form-group'>
+    <div class="col-md-6">
+        <?= $this->formLabel($valor); ?>
+        <?= $this->formElement($valor); ?>
+        <?= $this->formElementErrors()->render($valor,['class' => 'help-block']); ?>
+    </div>
+</div>
+<div class='form-group'>
+    <div class="col-md-6">
+        <?= $this->formLabel($dataRegistro); ?>
+        <?= $this->formElement($dataRegistro); ?>
+        <?= $this->formElementErrors()->render($dataRegistro,['class' => 'help-block']); ?>
+    </div>
+</div>
+<div class="row">
+    <?= $this->formElement($submit); ?>
+    <a href="<?= $this->url('modulo',['action'=>'index']); ?>" class='btn btn-warning'> Back</a>
+</div>
+<hr>
