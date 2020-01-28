@@ -6,8 +6,21 @@ use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
-    public function indexAction()
+    public function registerAction()
     {
         return new ViewModel();
     }
+    public function recoveredPasswordAction()
+    {
+        return new ViewModel();
+    }
+    public function newPasswordAction()
+    {
+        return new ViewModel();
+    }
+    public function confirmedEmailAction()
+    {
+        return new ViewModel();
+    }
+
 }
