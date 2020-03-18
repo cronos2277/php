@@ -53,11 +53,27 @@
 
 `ucwords($valor)` *Apenas o primeiro caractere da primeira palavra em maiusculo, resultado: "Qualquer String é"*
 
-*Para resolver qualquer problemas com codificacao do UTF-8 use o "mb_" na frente da funcao, colocando como segundo parametro a codificacao, dessa forma evita esse problema.*
+**Para resolver qualquer problemas com codificacao do UTF-8 use o "mb_" na frente da funcao, colocando como segundo parametro a codificacao, dessa forma evita esse problema.**
 
-*Ao invés de "strlen($valor)" use "mb_strlen($valor), assim como ao inves de strtolower($valor) e strtoupper($valor), use mb_strtolower($valor) e mb_strtoupper($valor)". Em termos gerais as funcões com mb_ na frente são modernizações dessas funções.*
+**Ao invés de "strlen($valor)" use "mb_strlen($valor), assim como ao inves de strtolower($valor) e strtoupper($valor), use mb_strtolower($valor) e mb_strtoupper($valor)". Em termos gerais as funcões com mb_ na frente são modernizações dessas funções.**
 
-*Lembrando que o segundo parametro sao opcionais para as 3 funcoes, e por padrao elas usam a codificacao moderna, porem se quiser garantir use informe a codificacao no segundo paremetro.*
+**Lembrando que o segundo parametro sao opcionais para as 3 funcoes, e por padrao elas usam a codificacao moderna, porem se quiser garantir use informe a codificacao no segundo paremetro.**
 
+## Booleano
+**No caso do boleano você pode transformar qualquer valor um boleano de três formas básicas, dando um cast, negando ou dupla negação.**
+
+### Exemplos
+`echo (bool) 1;` *Vai imprimir true. CAST*
+
+`echo !1;` *Vai imprimir false. NegaçãoS*
+
+`echo !!1` *Vai imprimir true, pois está negando a negação, logo esta afirmando. dupla negação.*
+
+*Zero é o unico numero seja ele em formato de ponto flutuante ou não que quando String vira falso, qualquer outro número é verdadeiro quando convertido.*
+
+*Strings vazias(String com espaço não é vazia, digo "" ou ''), são falsas, ou strings contendo um e apenas um zero, por exemplo "0" ou '0', no caso "00" seria verdadeiro.*
+
+*Existe as funções "is_" que verificam, retornando um verdadeiro caso o dado seja daquele tipo, por exemplo is_bool($dado) se  conteudo de $dado for booleano retornará true, senão false.*
+*assim como temos o is_bool, temos o is_int, is_string, is_array, etc...*
 
 
