@@ -6,13 +6,13 @@
     echo $conjunto;
 */
 
-$a = 2;
-$b = 3;
-$c = 6;
-$d = 1;
-$e = 5;
-$f = 7;
-$g = 10;
+$a = 2; #padrao 2
+$b = 3; #padrao 3
+$c = 6; #padrao 6
+$d = 1; #padrao 1
+$e = 5; #padrao 5
+$f = 7; #padrao 7
+$g = 10; #padrao 10
 
 $etapa1 = (($c*($b+$a))**$a)/($b*$a);
 $etapa2 = ((($d-$e)*($a-$f))/$a)**$a;
