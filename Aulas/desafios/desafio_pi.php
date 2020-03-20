@@ -1,7 +1,3 @@
 <?php
 $pi = 3.14;
-if((int) $pi == (int)pi()){
-    echo "igual";
-}else{
-    echo "diferente";
-}
+echo (round($pi,1) == round(pi(),1))?"PI correto!":"Pi incorreto!";
