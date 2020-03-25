@@ -76,6 +76,16 @@ Strings vazias(String com espaço não é vazia, digo "" ou ''), são falsas, ou
 Existe as funções "is_" que verificam, retornando um verdadeiro caso o dado seja daquele tipo, por exemplo is_bool($dado) se  conteudo de $dado for booleano retornará true, senão false.
 assim como temos o is_bool, temos o is_int, is_string, is_array, etc...
 
+## Função anonima
+Aqui abaixo temos um exemplo de uma funcao anonima, podendo atribuir a mesma dentro de uma variavel.
+
+`$anonima = function($a="valor Padrao"){` *Nesse caso o argumento tem um valor padrao.*
+
+    `echo "Exemplo de funcao Clousure, com $a";`
+
+`};`
+
+`$anonima();` *A funcao anonima deve ser chamada dessa forma.*
 
 
 
