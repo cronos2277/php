@@ -76,18 +76,42 @@ Strings vazias(String com espaço não é vazia, digo "" ou ''), são falsas, ou
 Existe as funções "is_" que verificam, retornando um verdadeiro caso o dado seja daquele tipo, por exemplo is_bool($dado) se  conteudo de $dado for booleano retornará true, senão false.
 assim como temos o is_bool, temos o is_int, is_string, is_array, etc...
 
+## Array
+
+`$meuArray = [0,1,2,3,4,5,6,7,8,9];` *O Array a ser usado no exemplo.*
+
+*o operador "..." ele tem duas funções, ou junta tudo ou separa tudo.*
+
+`function somarTudo(int ...$valores){` *Aqui tudo é juntado, ou seja todos os parametros dentro de um array.*
+
+    `$resultado = 0;`
+
+    `foreach($valores as $valor){`
+
+        `$resultado += $valor;`    
+
+    `}`
+
+    `return $resultado;`   
+
+`}`
+
+*Aqui é pego o array acima e espalhado ele, no caso ao invés de ser passado um array, se é passado cada valor individualmente, no caso eh passado 10 parametros separados ao inves de um único array com esse operador abaixo, se ele vai espalhar um array, ou juntar valores em um array, como no exemplo acima, tudo depende do contexto.*
+
+`echo somarTudo(...$meuArray);`
+
 ## Funções
 
-### Função anonima
+### Função Anonima
 Aqui abaixo temos um exemplo de uma funcao anonima, podendo atribuir a mesma dentro de uma variavel.
 
-    `$anonima = function($a="valor Padrao"){` *Nesse caso o argumento tem um valor padrao.*
+    `$anonima = function($a="valor Padrao"){` //Nesse caso o argumento tem um valor padrao.
 
         `echo "Exemplo de funcao Clousure, com $a";`
 
     `};`
 
-    `$anonima();` *A funcao anonima deve ser chamada dessa forma.*
+    `$anonima();` //A funcao anonima deve ser chamada dessa forma.
 
 ### Função Tipada
 
@@ -97,6 +121,6 @@ Aqui abaixo temos um exemplo de uma funcao anonima, podendo atribuir a mesma den
         `return $a/$b;`
     `}`
 
-    `echo comParametros(4,3);`
+    `echo comParametros(4,3);` //Chamando a funcao acima
 
 

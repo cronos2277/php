@@ -46,3 +46,13 @@ function comParametros(int $a, int $b):float{
 }
 
 echo comParametros(4,3);
+
+$meuArray = [0,1,2,3,4,5,6,7,8,9];
+function somarTudo(int ...$valores){
+    $resultado = 0;
+    foreach($valores as $valor){
+        $resultado += $valor;
+    }
+    return $resultado;
+}
+echo somarTudo(...$meuArray);
