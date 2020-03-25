@@ -30,3 +30,19 @@ $anonima = function($a="valor Padrao"){  # Nesse caso o argumento tem um valor p
     echo "Exemplo de funcao Clousure, com $a";
 };
 $anonima(); # A funcao anonima deve ser chamada dessa forma.
+
+# Aqui nos temos um exemplo de funcao tipada, tanto os argumentos, como o retorno.
+function comParametros(int $a, int $b):float{
+/*
+    voce pode definir o tipo de dados de entrada e ou o tipo
+    de dado de saida, a sintaxe eh semelhante ao do Typescript.
+    Caso o valor de entrada nao seja do tipo especificado, o PHP
+    fara um cast transformando-a no tipo especificado, nesse
+    exemplo o PHP converterá o valor para inteiro quando entrar
+    e convertera o valor para float na saida, a garantia existe
+    e caso o dado de saida ou entrada nao seja esse, havera um cast.
+*/
+    return $a/$b;
+}
+
+echo comParametros(4,3);
