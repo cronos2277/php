@@ -56,3 +56,26 @@ function somarTudo(int ...$valores){
     return $resultado;
 }
 echo somarTudo(...$meuArray);
+
+$par = function($arg){
+    if($arg % 2 == 0){
+        return true;
+    }else{
+        return false;
+    }
+};
+
+$impar = function($arg){
+    if($arg % 2 != 0){
+        return true;
+    }else{
+        return false;
+    }
+};
+echo "\n";
+$pares = array_filter($meuArray,$par);
+$impares = array_map($impar,$meuArray);
+echo "Valores pares usando array_filter \n";
+print_r($pares);
+echo "\n Valores impares usando array_map \n";
+print_r($impares);

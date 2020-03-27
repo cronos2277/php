@@ -123,4 +123,62 @@ Aqui abaixo temos um exemplo de uma funcao anonima, podendo atribuir a mesma den
 
     `echo comParametros(4,3);` //Chamando a funcao acima
 
+### Array Map e Filter
+
+ `$meuArray = [0,1,2,3,4,5,6,7,8,9];` *Esse é o array que será analisado.*
+
+ **Função Par.**
+
+    `$par = function($arg){
+        if($arg % 2 == 0){
+            return true;
+        }else{
+            return false;
+        }
+    };`
+
+**Usando o array_filter.**
+
+`$pares = array_filter($meuArray,$par);` *Nessa função você passa o array e a função nessa ordem.*
+
+**Saida com o print_r() do array_filter, repare que a mesma retorna apenas os valores selecionados.**
+
+    `Array
+    (
+        [0] => 0
+        [2] => 2
+        [4] => 4
+        [6] => 6
+        [8] => 8
+    )`
+
+**Agora a função Impar.**
+
+    `$impar = function($arg){
+        if($arg % 2 != 0){
+            return true;
+        }else{
+            return false;
+        }
+    };`
+
+**Usando o array_map**
+
+`$impares = array_map($impar,$meuArray);` *Nessa função os parametros são invertidos se comparado com o array_filter, no caso a função e o array como parametro como parametros nessa ordem.*
+
+**Saida com o print_r() do array_filter, repare que a função retorna retorna o exato mesmo valor do return.**
+
+    `Array
+    (
+        [0] => 
+        [1] => 1
+        [2] => 
+        [3] => 1
+        [4] => 
+        [5] => 1
+        [6] => 
+        [7] => 1
+        [8] => 
+        [9] => 1
+    )`
 
