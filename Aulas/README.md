@@ -1,6 +1,8 @@
 # PHP Basico
 ## Habilitando erros no PHP.
+
 **Ao colocar esse comando no arquivo php, assim que carregado, os erros serão exibidos, desabilite depois de necessário em ambiente de produção.**
+
     `ini_set('display_errors',1);
     ini_set('display_startup_erros',1);
     error_reporting(E_ALL);`
