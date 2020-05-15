@@ -8,9 +8,6 @@ $dados = [
     "", // Senha
     "test" //Nome do Banco de dados.
 ];
-function setGet(&$conexao){
-   
-}
 /*
     Operador Spread de espalhar, ele pega um array 
     e transforma em varias variaveis, por exemplo:
@@ -42,7 +39,7 @@ if($estruturado){
     */
     if(mysqli_query($estruturado,'CREATE TABLE if not exists teste (id integer primary key auto_increment, valor varchar(30) not null)')){
         echo "<br>","<b>criado a tabela, senão existe</b>";
-        //Inserindo dados vindo do GET.
+        //Inserindo dados vindo do GET. Para funcionar passe o novo valor no parametro V na url
         if(isset($_GET['v']) && !empty($_GET['v'])){
             $sql_insert = "insert into teste(valor) values('";            
             $sql_insert .= $_GET['v'];
@@ -54,10 +51,11 @@ if($estruturado){
             }
         } 
 
+        //Excluido dados via GET. Para funcionar passe o novo valor no parametro d na url
         if(isset($_GET['d']) && !empty($_GET['d'])){
-            $sql_insert = "DELETE FROM teste where id = ";            
-            $sql_insert .= $_GET['d'];            
-            if($mysqli_query($estruturado,$sql_insert)){
+            $sql_delete = "DELETE FROM teste where id = ";            
+            $sql_delete .= $_GET['d'];            
+            if(mysqli_query($estruturado,$sql_delete)){
                 echo '<br>',"Dados excluídos com sucesso!";
             }else{
                 echo "<br>","Erro ao excluir na tabela!","<br>",$estruturado->error;                
