@@ -1,9 +1,12 @@
 <?php
 require_once(dirname(__FILE__,2).'/src/config/config.php');
-require_once(CONTROLLER_PATH.'/login.php');
+$uri = urldecode($_SERVER['REQUEST_URI']);
 
+echo $uri;
 
+if($uri === '/' || $uri === '' || $uri === 'index.php'){
+    $uri = '/login.php';
+}
 
-
-
+require_once(dirname(__FILE__,2)."/src/controllers/{$uri}");
 

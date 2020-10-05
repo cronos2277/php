@@ -10,9 +10,9 @@ if($exception){
         $errors = $exception->getErrors();
     }
 }    
-$alertType = $message['type'] === 'error'?'danger':'success';
+$alertType = (isset($message['type']) and $message['type'] === 'error')?'danger':'success';
 ?>
-<?php if($message): ?>
+<?php if(isset($message) and $message): ?>
 <div class="alert alert-<?= $alertType; ?> my-3" role="alert">
     <?= $message['message']; ?>
 </div>
