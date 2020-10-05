@@ -23,11 +23,19 @@
             <?php include(TEMPLATE_PATH.'/messages.php'); ?>
                 <div class="form-group">
                     <label for="email">E-mail:</label>
-                        <input type="email" name="email" id="email" class="form-control" value="<?php if(isset($email))echo $email; ?>" placeholder="Informe o e-mail" autofocus>
+                        <input type="email" name="email" id="email" class="form-control <?= $errors['email'] ? 'is-invalid': '' ?>" 
+                        value="<?php if(isset($email))echo $email; ?>" placeholder="Informe o e-mail" autofocus>
+                    <div class="invalid-feedback">
+                        <?= $errors['email']; ?>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Informe o password">
+                        <input type="password" name="password" id="password" class="form-control <?= $errors['password'] ? 'is-invalid': '' ?>" 
+                        placeholder="Informe o password">
+                        <div class="invalid-feedback">
+                        <?= $errors['password']; ?>
+                    </div>
                 </div>
             </div>
             <div class="card-footer">
