@@ -32,7 +32,7 @@
                             <a href="logout.php" class="">
                                 <i class="icofont-logout mr-2">Sair</i>
                             </a>                        
-                        </li>
+                        </li>                        
                     </ul>
                 </div>
             </div>
