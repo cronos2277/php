@@ -24,17 +24,17 @@
         <div class="spacer"></div>
         <div class="dropdown">
             <div class="dropdown-button">
-                <span>Usuário Mock</span>
-                <i class="icofont-simple-down ml-2"></i>
-            </div>
-            <div class="dropdown-content">
-                <ul class="nav-list">
-                    <li class="nav-item">
-                        <a href="logout.php" class="">
-                            <i class="icofont-logout mr-2"></i>
-                        </a>                        
-                    </li>
-                </ul>
+                <span class="ml-3">Usuário Mock</span>
+                <i class="icofont-simple-down mx-2"></i>
+                <div class="dropdown-content mb-3">
+                    <ul class="nav-list mt-1">
+                        <li class="nav-item">
+                            <a href="logout.php" class="">
+                                <i class="icofont-logout mr-2">Sair</i>
+                            </a>                        
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </header>
