@@ -16,7 +16,7 @@ body.hide-sidebar{
     grid-template-areas: "header""content""footer";
 }
 
-header.header{
+header.header{    
     grid-area:header;
     display: flex;
     background-color:#01796F;
@@ -25,7 +25,7 @@ header.header{
     box-shadow: 
     0 2px 4px -1px rgba(0,0,0,.2),
     0 4px 4px 0px rgba(0,0,0,.14),
-    0 1px 10px 0px rgba(0,0,0,.12);
+    0 1px 10px 0px rgba(0,0,0,.12);    
 }
 
 header.header .logo{
@@ -62,7 +62,7 @@ header.header .dropdown-content{
     display: none;
     position: absolute;
     min-width: 100%;
-    background-color:#1976d2;
+    background-color:#99BBCC;
     padding: 5px 0px;
     z-index: 100;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,.2);
