@@ -5,7 +5,7 @@ body{
     grid-template-areas: 
     "header header"
     "sidebar content"
-    "sidebar footer";
+    "footer footer";
     height:100vh;
     margin:0;
     background-color: #DDD;
@@ -19,7 +19,7 @@ body.hide-sidebar{
 header.header{
     grid-area:header;
     display: flex;
-    background-color: #1976d2;
+    background-color:#01796F;
     align-items: center;
     z-index: 10;        
     box-shadow: 
@@ -62,11 +62,11 @@ header.header .dropdown-content{
     display: none;
     position: absolute;
     min-width: 100%;
-    background-color: #f9f9f9;
+    background-color:#1976d2;
     padding: 5px 0px;
     z-index: 100;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,.2);
-    top:25px;    
+    top:25px;        
 }
 
 header.header .dropdown:hover .dropdown-content{
@@ -87,7 +87,7 @@ header.header .dropdown-content ul{
 header.header .dropdown-content a{
     display: flex;
     text-decoration: none;
-    color:#111;
+    color:white;
     padding: 10px;
     font-size: 1.1rem;
 }
@@ -98,7 +98,14 @@ header.header .dropdown-content a:hover{
 
 
 footer.footer{
+    display: flex;
+    background-color: #01796F;
     grid-area: footer;
+    color:white;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+    font-size: 1.2rem;
 }
 
 main.content{
@@ -111,7 +118,7 @@ aside.sidebar{
     grid-area:sidebar;
     align-items: center;
     box-shadow: -5px 0px 25px 1px rgba(0,0,0,.4);
-    background-color: white;
+    background-color: #99BBCC
 }
 aside.sidebar .menu{
     width:100%;
@@ -135,7 +142,7 @@ aside.sidebar .menu li.nav-item:hover{
 
 aside.sidebar .menu li.nav-item a{    
     font-size: 1.2rem;
-    color:#555;
+    color:black;
     text-decoration: none;
 }
 
