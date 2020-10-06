@@ -7,7 +7,7 @@
     <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="assets/css/comum.css" rel="stylesheet"/>
     <link href="assets/css/icofont.min.css" rel="stylesheet"/>
-    <link href="assets/css/template.css" rel="stylesheet"/>
+    <link href="assets/css/template.css" rel="stylesheet"/>    
 </head>
 <body>
     <header class="header">
