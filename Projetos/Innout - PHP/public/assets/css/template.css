@@ -109,7 +109,35 @@ footer.footer{
 }
 
 main.content{
+    background-color: white;
+    margin: 20px;
+    padding: 20px;
     grid-area:content;
+    border-radius: 5px;
+    box-shadow: 0px 0px 25px 0px rgba(0, 0, 0, 0.2);
+}
+
+main.content .content-title{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 20px;
+}
+
+main.content .content-title .icon{
+    font-size: 3rem;
+}
+
+main.content .content-title h1{
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin:0;
+}
+
+main.content .content-title h2{
+    color:#777;
+    font-size: 1.2rem;
+    font-weight: 400;
 }
 
 aside.sidebar{
@@ -178,4 +206,8 @@ aside.sidebar .sidebar-widget{
 .division{
     widows: 80%;
     border: solid 1px #555;
+}
+
+.record{
+    font-size: 2.2rem;
 }
