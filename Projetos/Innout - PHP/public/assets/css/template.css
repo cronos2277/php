@@ -1,0 +1,37 @@
+body{
+    display: grid;
+    grid-template-columns: 1fr 9fr;
+    grid-template-rows: 1fr 8fr 1fr;
+    grid-template-areas: 
+    "header header"
+    "sidebar content"
+    "footer footer";
+    height:100vh;
+    margin:0;
+    background-color: #DDD;
+}
+
+body.hide-sidebar{
+    grid-template-columns: 1fr;
+    grid-template-areas: "header""content""footer";
+}
+
+header.header{
+    grid-area:header;
+}
+
+footer.footer{
+    grid-area: footer;
+}
+
+main.content{
+    grid-area:content;
+}
+
+aside.sidebar{
+    grid-area:sidebar;
+}
+
+body.hide-sidebar aside.sidebar{
+    display:none;
+}
