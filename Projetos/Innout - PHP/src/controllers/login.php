@@ -8,6 +8,8 @@ if(count($_POST) > 0){
     try{
         $user = $login->checkLogin();
         $_SESSION['user'] = $user;
+        $_SESSION['name'] = $user->name;
+        $_SESSION['email'] = $user->email;
         header("Location: day_records.php");
     }catch(Exception $ex){
         $exception = $ex;
