@@ -47,7 +47,7 @@ class WorkingHours extends Model {
     public function innout($time) {
         $timeColumn = $this->getNextTime();
         if(!$timeColumn) {
-            throw new AppException("Você já fez os 4 batimentos do dia!");
+            throw new AppException("Você já fez todos os batimentos do dia!");
         }
         $this->$timeColumn = $time;
         $this->worked_time = getSecondsFromDateInterval($this->getWorkedInterval());
