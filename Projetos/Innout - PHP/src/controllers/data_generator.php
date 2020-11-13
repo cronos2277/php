@@ -1,11 +1,8 @@
 <?php
-loadModel('workingHours');
-
-
-//Database::executeSQL('DELETE FROM WORKING_HOURS');
-//Database::executeSQL('DELETE FROM USERS WHERE ID > 5');
-
-function getDayTemplateByOdds($regularRate, $extraRate, $lazyRate){
+Database::executeSQL('DELETE FROM working_hours');
+Database::executeSQL('DELETE FROM users WHERE id > 5');
+loadModel("WorkingHours");
+function getDayTemplateByOdds($regularRate, $extraRate, $lazyRate) {
     $regularDayTemplate = [
         'time1' => '08:00:00',
         'time2' => '12:00:00',
@@ -29,32 +26,39 @@ function getDayTemplateByOdds($regularRate, $extraRate, $lazyRate){
         'time4' => '17:00:00',
         'worked_time' => DAILY_TIME - 1800
     ];
-
-    $value = rand(0,100);
-    if($value <= $regularRate){
+    
+    $value = rand(0, 100);
+    if($value <= $regularRate) {
         return $regularDayTemplate;
-    }else if($value <= $regularRate + $extraRate){
+    } elseif($value <= $regularRate + $extraRate) {
         return $extraHourDayTemplate;
-    }else{
+    } else {
         return $lazyDayTemplate;
-    }    
-};
+    }
+}
 
-function populateWorkingHours($userId,$initialDate,$regularRate, $extraRate,$lazyRate){
+function populateWorkingHours($userId, $initialDate, $regularRate, $extraRate, $lazyRate) {
     $currentDate = $initialDate;
-    $today = new DateTime();
-    $columns = ['user_id'=>$userId,'work_date' => $currentDate];
-    while(isBefore($currentDate,$today)){
-        if(!isWeekend($currentDate)){
-            $template = getDayTemplateByOdds($regularRate,$extraRate,$lazyRate);
-            $columns = array_merge($columns,$template);
+    $yesterday = new DateTime();
+    $yesterday->modify('-1 day');
+    $columns = ['user_id' => $userId, 'work_date' => $currentDate];
+
+    while(isBefore($currentDate, $yesterday)) {
+        if(!isWeekend($currentDate)) {
+            $template = getDayTemplateByOdds($regularRate, $extraRate, $lazyRate);
+            $columns = array_merge($columns, $template);
             $workingHours = new WorkingHours($columns);
-            $workingHours->save();
+            $workingHours->insert();
         }
         $currentDate = getNextDay($currentDate)->format('Y-m-d');
         $columns['work_date'] = $currentDate;
     }
 }
 
-populateWorkingHours(1,date('Y-m-1'),70,20,10);
-echo "tudo certo";
+$lastMonth = strtotime('first day of last month');
+populateWorkingHours(1, date('Y-m-1'), 70, 20, 10);
+populateWorkingHours(1, date('Y-m-d'), 70, 20, 10);
+populateWorkingHours(3, date('Y-m-d', $lastMonth), 20, 75, 5);
+populateWorkingHours(4, date('Y-m-d', $lastMonth), 20, 10, 70);
+
+echo 'Tudo certo :)';
