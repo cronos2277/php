@@ -10,23 +10,20 @@ class Model {
     }
 
     public function loadFromArray($arr, $sanitize = true) {
-        if($arr) {
-            // $conn = Database::getConnection();
+        if($arr) {            
             foreach($arr as $key => $value) {
                 $cleanValue = $value;
                 if($sanitize && isset($cleanValue)) {
                     $cleanValue = strip_tags(trim($cleanValue));
-                    $cleanValue = htmlentities($cleanValue, ENT_NOQUOTES);
-                    // $cleanValue = mysqli_real_escape_string($conn, $cleanValue);
+                    $cleanValue = htmlentities($cleanValue, ENT_NOQUOTES);                   
                 }
                 $this->$key = $cleanValue;
-            }
-            // $conn->close();
+            }            
         }
     }
 
     public function __get($key) {
-        return $this->values[$key];
+        return @$this->values[$key];
     }
 
     public function __set($key, $value) {
