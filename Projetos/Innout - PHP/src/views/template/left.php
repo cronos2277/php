@@ -11,7 +11,7 @@
         <div class="sidebar-widget">
             <i class="icon icofont-hour-glass"></i>
             <div class="info">
-                <span class="main">
+                <span class="main" <?= $activeClock === 'workedInterval' ? 'active-clock' : '' ?>>
                     <?= $workedInterval; ?>
                 </span>
                 <span class="label">Horas Trabalhadas</span>
@@ -21,7 +21,7 @@
         <div class="sidebar-widget">
             <i class="icon icofont-ui-alarm"></i>
             <div class="info">
-                <span class="main">
+                <span class="main" <?= $activeClock === 'exitTime' ? 'active-clock' : '' ?>>
                     <?= $exitTime ?>
                 </span>
                 <span class="label">Hora de Saída</span>
