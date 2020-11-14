@@ -1,1 +1,1 @@
-<h1>Mes</h1>
+<h1><?= print_r($registries) ?></h1>
