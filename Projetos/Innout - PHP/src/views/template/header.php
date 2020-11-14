@@ -25,8 +25,8 @@
         <div class="dropdown">
             <div class="dropdown-button">
             <img  alt="user" class="avatar"
-                src=<?= @"http://www.gravatar.com/avatar.php?gravatar_id=".md5(strtolower(trim($_SESSION['user']['email']))) ?> />         
-            <span class="ml-3"><?= @$_SESSION['user']['name'] ?></span>                         
+                src=<?= @"http://www.gravatar.com/avatar.php?gravatar_id=".md5(strtolower(trim($_SESSION['user']->email))) ?> />         
+            <span class="ml-3"><?= @$_SESSION['user']->name ?></span>                         
                 <i class="icofont-simple-down mx-2"></i>
                 <div class="dropdown-content mb-3">
                     <ul class="nav-list mt-1">

@@ -2,7 +2,7 @@
 session_start();
 requireValidSession();
 loadModel('WorkingHours');
-$records = WorkingHours::loadFromUserAndDate($_SESSION['user']['id'],date('Y-m-d'));
+$records = WorkingHours::loadFromUserAndDate($_SESSION['user']->id,date('Y-m-d'));
 try{
     $currentTime = strftime('%H:%M:%S',time());
     $records->innout($currentTime);    
