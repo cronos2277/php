@@ -24,7 +24,7 @@
             const parts = active.innerHTML.split(':');
             active.innerHTML = addOneSecond(parts[0],parts[1],parts[2]);
         },1000);
-    }
+    }     
 })();
 
 
