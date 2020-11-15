@@ -8,6 +8,14 @@
     ?>
     <div>
         <table class="table table-striped table-hover">
+            <tr>
+                    <td>Horas trabalhadas</td>
+                    <td><?= $sumOfWorkedTime; ?></td>                    
+                    <td>Saldo Mensal</td>
+                    <td><?= $balance; ?></td>
+            </tr>
+        </table>
+        <table class="table table-striped table-hover">
             <thead class="bg-dark text-white">
                 <th>Dia</th>
                 <th>Entrada 1</th>
@@ -19,20 +27,14 @@
             <tbody>
                 <?php foreach($report as $register): ?>
                     <tr>
-                        <td><?= $register->work_date; ?></td>
+                        <td><?= formatDateWithLocale($register->work_date,'%A, %d de %B de %Y'); ?></td>
                         <td><?= $register->time1; ?></td>
                         <td><?= $register->time2; ?></td>
                         <td><?= $register->time3; ?></td>
                         <td><?= $register->time4; ?></td>
-                        <td>Saldo</td>                        
+                        <td><?= $register->getBalance(); ?></td>                        
                     </tr>
-                <?php endforeach; ?>
-                <tr class="bg-dark text-white">
-                    <td>Horas trabalhadas</td>
-                    <td colspan="3"><?= $sumOfWorkedTime; ?></td>
-                    <td>Saldo Mensal</td>
-                    <td><?= $balance; ?></td>
-                </tr>
+                <?php endforeach; ?>               
             </tbody>
         </table>
     </div>
