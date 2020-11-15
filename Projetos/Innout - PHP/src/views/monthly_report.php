@@ -15,6 +15,14 @@
                     <td><?= $balance; ?></td>
             </tr>
         </table>
+            <form action="#" method="post" class="my-4">
+                <select name="period" class="form-control ml-1" placeholder="Selecione um periodo">
+                    <?php foreach($periods as $key => $month){
+                        $selected = ($key == $_POST['period'])?'selected':'';
+                        echo "<option value='{$key}' {$selected}>{$month}</option>";
+                    } ?>
+                </select>
+            </form>    
         <table class="table table-striped table-hover">
             <thead class="bg-dark text-white">
                 <th>Dia</th>
