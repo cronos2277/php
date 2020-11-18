@@ -24,7 +24,7 @@
                     <td><?= $user->start_date; ?></td>
                     <td><?= $user->end_date; ?></td>
                     <td>
-                        <a href="save.user.php?update=<?= $user->id ?>" class="ml-4 btn btn-dark rounded-circle mr-4">
+                        <a href="save_user.php?update=<?= $user->id ?>" class="ml-4 btn btn-dark rounded-circle mr-4">
                             <i class="icofont-edit"></i>
                         </a>
                         <a href="?delete=<?= $user->id ?>" class="btn btn-dark rounded-circle">
