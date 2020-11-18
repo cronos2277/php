@@ -30,6 +30,7 @@
                         <a href="?delete=<?= $user->id ?>" class="btn btn-dark rounded-circle">
                             <i class="icofont-trash"></i>
                         </a>
+                        <span class="ml-4 text-dark"><?= (@$user->is_admin) ? 'ADM':'USR' ?></span>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -18,6 +18,7 @@ class User extends Model {
     public function insert() {
         $this->validate();
         $this->is_admin = $this->is_admin ? 1 : 0;
+        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
         if(!$this->end_date) $this->end_date = null;
         return parent::insert();
     }
