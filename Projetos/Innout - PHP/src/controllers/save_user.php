@@ -8,7 +8,7 @@ $userData = [];
 if(count($_POST) === 0 && isset($_GET['update'])) {
     $user = User::getOne(['id' => $_GET['update']]);
     $userData = $user->getValues();
-    $userData['password'] = null;
+    $userData['password'] = null;    
 } elseif(count($_POST) > 0) {
     try {
         $dbUser = new User($_POST);
@@ -29,4 +29,4 @@ if(count($_POST) === 0 && isset($_GET['update'])) {
     }
 }
 
-loadTemplateView('save_user', $userData + ['exception' => $exception]);
+loadTemplateView('save_user', $userData + ['exception' => $exception, 'userData' => $userData]);
