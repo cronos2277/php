@@ -15,7 +15,7 @@ De forma prática, aqui você pode ajustar as rotas. Tudo que estiver configurad
 
     Route::get('/', function () {
         return view('welcome');
-    });
+    })->name('index');
 
 Esse é o exemplo mais básico de rota, que no caso vem por padrão na instalação do Laravel inclusive, é válido ressaltar que existe no router suporte a cada método *HTTP* e que o mesmo recebe como argumento uma String para a definição da rota, e uma callback, que pode retornar uma *view* a ser renderizada, assim como pode dar um simples *echo* na tela.
 
@@ -81,6 +81,25 @@ Aqui é criado um grupo de rotas, usando o `Route::group`, no caso o primeiro pa
     ;
 
 Lembrando que cada regra deve estar dentro do where, como demonstrado acima. O primeiro que é o parametro nome, apenas aceita letras, hífem e espaço e o segundo dígitos. No caso o `\` não deu problema pelo fato das aspas simples tratar o valor de forma literal, se fosse aspas duplas deveria ser: `"[A-z\\s\\-]+"` e `"[\\d]+"`, ou seja a primeira `\` seria o escape e o segundo indicaria meta-caracter.
+
+#### Nomeando as rotas
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('index');
+
+É possível nomear as rotas para evitar que a mesma seja informado de maneira estática nos links, por exemplo ao invés de você se referenciar a essa rota pelo link direto você pode fazer da seguinte forma:
+
+    <a href="{{route('index')}}">Ir a Página inicial</a>
+
+##### a ligação route('nome') e ->name('nome')
+Repare que ao invés de colocar de maneira estática o link até a página eu posso fazer isso através do `route()`, assim como acontece no angular por exemplo, aqui é usado a sintaxe de double mustache, ou seja de bigode duplo. Você envolve certas funções dentro desse double mustache e o laravel vai interpolar, porém isso apenas acontece com arquivos `.blade.php`, que são arquivos que o laravel interpola, resolvendo o resultado quando o mesmo for renderizado. a String passado como parametro deve ser igual ao `->name('')` de alguma rota informada. Ou seja se aqui for `->name('nome')`, no route do arquivo blade deve ficar `{{route('nome')}}`. [Arquivo exemplo](./basico/resources/views/rotas.blade.php).
+
+##### view
+O método `view` renderiza um arquivo blade. no caso aqui `view('welcome');` estamos passando o *welcome* como parametro para a função *view*, logo será procurado um arquivo chamado *welcome.blade.php* dentro de *resources/views/*, o arquivo correspondente a essa string deve ser terminado em *blade.php* e deve estar dentro da [pasta de views](./basico/resources/views).
+
+
+
+
 
 ### Artisan
 #### Executando um projeto no laravel

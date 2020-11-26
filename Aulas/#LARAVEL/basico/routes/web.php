@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('index');
 
 //Exemplo basico de rota
 Route::get('/rotaexemplo', function () {
@@ -50,5 +50,9 @@ Route::group(['prefix' => 'route'], function () {
     ->where('nome','[A-z\s\-]+')
     ->where('repetir','[\d]+')
     ;
+
+    Route::get('/', function () {
+        return view('rotas');
+    });
 
 });
