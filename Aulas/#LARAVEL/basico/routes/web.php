@@ -31,3 +31,24 @@ Route::get('/rotaexemplo/{param1?}', function ($par=null) {
 Route::get('/rotaexemplo/{param1}/{param2}', function ($p,$q) {
     echo "ola mundo, parametro: ".$p.", ".$q;
 });
+
+//Exemplo de rotas com regras
+Route::get('/numero/{n}',function($n){
+    echo '<h1>O Número da URL é: '.$n.'</h1>';
+})->where(
+    'n','[0-9]+'
+);
+
+//grupos de rotas
+Route::group(['prefix' => 'route'], function () {
+    
+    Route::get('{nome}/{repetir?}', function ($nome,$repetir = 1) {
+        for($i = 0;$i<$repetir;$i++):
+            echo "<h3>$nome</h3>";
+        endfor;
+    })
+    ->where('nome','[A-z\s\-]+')
+    ->where('repetir','[\d]+')
+    ;
+
+});

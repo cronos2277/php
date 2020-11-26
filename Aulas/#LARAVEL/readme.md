@@ -42,6 +42,46 @@ Nesse caso estamos lidando com um parametro que pode ou não existir na url, cas
     });
 
 No caso de uma callback com *N* parametros o Laravel vai injetar-los dentro da callback conforme a ordem que foram definidos na rota, começando da esquerda para a direita. Nesse caso ambos os parametros seriam obrigatórios se não fosse definido a rota com um ou zero parametros acima, dando o erro *404*.
+
+#### Rotas com regras
+    //Exemplo de rotas com regras
+    Route::get('/numero/{n}',function($n){
+        echo '<h1>O Número da URL é: '.$n.'</h1>';
+    })->where(
+        'n','[0-9]+'
+    );
+
+Nesse caso existe uma regra na rota, ou seja se além de digitar a rota o parametro informado não for condizente com a regex, é exibido um erro *404*. Isso é feito através do método *where*
+##### Método where que vem do método http de Route.
+    })->where(
+        'n','[0-9]+'
+    );
+
+O primeiro argumento é o parametro a ser analizado, nesse caso essa regra se aplica ao parametro *N*, o segundo é a regex sem as `\\` e cuidado quando for usar metacaracteres uma vez que aqui temos uma string. Essa regex apenas é valida quando o parametro *N* da url é válida.
+
+#### Grupo de Rotas
+    Route::group(['prefix' => 'route'], function () {
+    
+        Route::get('{nome}/{repetir?}', function ($nome,$repetir = 1) {
+            for($i = 0;$i<$repetir;$i++):
+                echo "<h3>$nome</h3>";
+            endfor;
+        })
+        ->where('nome','[A-z\s\-]+')
+        ->where('repetir','[\d]+')
+        ;
+
+    });
+
+Aqui é criado um grupo de rotas, usando o `Route::group`, no caso o primeiro parametro dele é um array de opções sendo o *prefix* o prefixo da url que ele vai abranger, no caso qualquer url que esteja dentro de `http://localhost/route` ele vai atender dentro da callback no argumento de `Route::group`, dentro da callback, você tem prefixos que trabalham dentro do escopo definido pelo `Route::group`, sendo o `http://localhost/route` o prefixo raiz para todas as rotas definidas dentro daquela callback. Nesse exemplo básico, pega-se um valor exibido em `{nome}` e exibe *N* vezes de acordo com o parametro `{reperir}`
+
+##### Multiplas regras
+    ->where('nome','[A-z\s\-]+')
+    ->where('repetir','[\d]+')
+    ;
+
+Lembrando que cada regra deve estar dentro do where, como demonstrado acima. O primeiro que é o parametro nome, apenas aceita letras, hífem e espaço e o segundo dígitos. No caso o `\` não deu problema pelo fato das aspas simples tratar o valor de forma literal, se fosse aspas duplas deveria ser: `"[A-z\\s\\-]+"` e `"[\\d]+"`, ou seja a primeira `\` seria o escape e o segundo indicaria meta-caracter.
+
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
