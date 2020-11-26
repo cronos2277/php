@@ -97,17 +97,84 @@ Repare que ao invés de colocar de maneira estática o link até a página eu po
 ##### view
 O método `view` renderiza um arquivo blade. no caso aqui `view('welcome');` estamos passando o *welcome* como parametro para a função *view*, logo será procurado um arquivo chamado *welcome.blade.php* dentro de *resources/views/*, o arquivo correspondente a essa string deve ser terminado em *blade.php* e deve estar dentro da [pasta de views](./basico/resources/views).
 
+#### Redirecionando
+[Arquivo exemplo, rotas com o /api no caso](./basico/routes/api.php)
 
+Existe basicamente duas formas de fazer o redirecionamento, no caso após ser feito o redirecionamento é carregado a [view](./basico/resources/views/rotas.blade.php), porem como esse exemplo está no [arquivo de api](./basico/routes/api.php), logo deve-se colocar o /api na url:
 
+    //Redirecionamento com o metodo redirect.
+    Route::redirect('redirect', 'redirecionar', 301);
 
+    //Redirecionamento com a funcao redirect.
+    Route::get('redirecionar', function () {
+        redirect()->route('nomedarota');
+    });
 
+    // Renderizando view
+    Route::get('index', function () {
+        return view('rotas');
+    })->name('nomedarota');
+
+##### Route::redirect
+Usando o método redirect dentro do route é a forma mais simples, caso não queira tratar o redirecionamento com nenhuma callback, ele exige 3 parametros, o primeiro e a qual prefixo ele vai tomar essa ação, ou seja em qual URL será o gatilho do redirecionamento, o segundo parametro é para onde vai, qual seria a url de destino e por fim o terceiro parametro é o status http a ser retornado para o navegador, caso tenha uma requisição ajax ou algo assim, recomenda-se usar status na casa dos 300, se for redirecionar. Exemplo: `Route::redirect('redirect', 'redirecionar', 301);`
+
+##### redirect()->route();
+Esse já é mais recomendado caso você queira fazer alguma operação antes de redirecionar, no caso essa função deve estar dentro da callback e sendo executada ao final de toda a lógica, ou route aceita como argumento o nome da rota, [conforme explicado aqui.](#nomeando-as-rotas)
+
+#### Outros Métodos além do GET
+Para todos os métodos além do GET o Laravel implementa a proteção contra [Cross-site request forgery](https://pt.wikipedia.org/wiki/Cross-site_request_forgery#:~:text=O%20cross%2Dsite%20request%20forgery,a%20partir%20de%20um%20usu%C3%A1rio), logo se faz necessário se ter um token para que esses métodos tenham acesso ao sistema, sendo a exceção apenas os métodos GET e o que for definido explicitamente como exceção no Laravel, porém a exceção deve ser feita de maneira manual.
+##### Adicionando as Exceções
+Para adicionar uma URL a exceção, você deve cadastrar-la nesse array
+
+    class VerifyCsrfToken extends Middleware
+    {
+        /**
+        * The URIs that should be excluded from CSRF verification.
+        *
+        * @var array
+        */
+        protected $except = [
+            'api/test' //url cadastrada
+        ];
+    }
+
+Esse arquivo é o [VerifyCsrfToken.php](./basico/app/Http/Middleware/VerifyCsrfToken.php) e todas as url cadastradas dentro desse array terão todos os seus métodos abertos ao público e sussetíveis a ataques [Cross-site request forgery](https://pt.wikipedia.org/wiki/Cross-site_request_forgery#:~:text=O%20cross%2Dsite%20request%20forgery,a%20partir%20de%20um%20usu%C3%A1rio), se não for tomado o devido cuidado. Dentro do arquivo [arquivo de rotas api](./basico/routes/api.php), estão cadastrados os métodos envolvendo essa rota:
+    
+    //Outras requisições
+    Route::post('test', function (Request $request) {
+        return $request;
+    });
+
+    Route::put('test', function (Request $request) {
+        return $request;
+    });
+
+    Route::patch('test', function (Request $request) {
+        return $request;
+    });
+
+    Route::delete('test', function (Request $request) {
+        return $request;
+    });
+
+    Route::get('test', function (Request $request) {
+        var_dump($request);
+    });
+
+Todos os métodos são parecidos com exceção do *GET*, no caso todos aceitam uma callback e eles podem processar as requisições do usuário se assinado da seguinte forma:
+
+    Route::post('test', function (Request $request) {
+        return $request;
+    });
+
+Esse *Request* que tipifica o *$request* vem de: `Illuminate\Http\Request` e dentro dele está toda a requisição do usuário, ou seja cada *name* dos inputs que o usuário preencheu em um formulário tem o seu correspondente como atributo dentro desse objeto.
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
 #### Exibindo listas de todas as rotas
     php artisan route:list
 ## Instalação
-## Problema com o PHP ini ou a versão do PHP
+### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 
 
      Your requirements could not be resolved to an installable set of packages.

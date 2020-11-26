@@ -18,3 +18,36 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Redirecionamento com o metodo redirect.
+Route::redirect('redirect', 'redirecionar', 301);
+
+//Redirecionamento com a funcao redirect.
+Route::get('redirecionar', function () {
+    redirect()->route('nomedarota');
+});
+
+// Renderizando view
+Route::get('index', function () {
+    return view('rotas');
+})->name('nomedarota');
+
+//Outras requisições
+Route::post('test', function (Request $request) {
+    return $request;
+});
+
+Route::put('test', function (Request $request) {
+    return $request;
+});
+
+Route::patch('test', function (Request $request) {
+    return $request;
+});
+
+Route::delete('test', function (Request $request) {
+    return $request;
+});
+
+Route::get('test', function (Request $request) {
+    var_dump($request);
+});
