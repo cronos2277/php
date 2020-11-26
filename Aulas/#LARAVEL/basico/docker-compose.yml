@@ -8,6 +8,8 @@ services:
     volumes:
       - ./public:/var/www/html
       - .:/var/www/
+      - ./apache/httpd.conf:/etc/httpd/conf/httpd.conf
+      - ./apache/.htaccess:/var/www/html/.htaccess
     links:
       - mysql    
   mysql:
