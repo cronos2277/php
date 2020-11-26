@@ -4,12 +4,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Mailer
+    | Mailer padrão
     |--------------------------------------------------------------------------
     |
-    | This option controls the default mailer that is used to send any email
-    | messages sent by your application. Alternative mailers may be setup
-    | and used as needed; however, this mailer will be used by default.
+    | Esta opção controla o mailer padrão que é usado para enviar qualquer e-mail
+    | mensagens enviadas por seu aplicativo. Mailers alternativos podem ser configurados
+    | e usado conforme necessário; entretanto, este mailer será usado por padrão.
     |
     */
 
@@ -17,18 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Mailer Configurations
+    | Configurações do Mailer
     |--------------------------------------------------------------------------
     |
-    | Here you may configure all of the mailers used by your application plus
-    | their respective settings. Several examples have been configured for
-    | you and you are free to add your own as your application requires.
+    | Aqui você pode configurar todos os mailers usados ​​por seu aplicativo mais
+    | suas respectivas configurações. Vários exemplos foram configurados para
+    | você e você são livres para adicionar os seus, conforme necessário.
     |
-    | Laravel supports a variety of mail "transport" drivers to be used while
-    | sending an e-mail. You will specify which one you are using for your
-    | mailers below. You are free to add additional mailers as required.
-    |
-    | Supported: "smtp", "sendmail", "mailgun", "ses",
+    | O Laravel suporta uma variedade de drivers de "transporte" de e-mail para serem usados ​​enquanto
+    | enviando um e-mail. Você irá especificar qual você está usando para o seu
+
+    | mailers abaixo. Você é livre para adicionar mailers adicionais conforme necessário.
+    || Com suporte: "smtp", "sendmail", "mailgun", "ses",
     |            "postmark", "log", "array"
     |
     */
@@ -74,12 +74,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global "From" Address
+    |Endereço "from" global
     |--------------------------------------------------------------------------
     |
-    | You may wish for all e-mails sent by your application to be sent from
-    | the same address. Here, you may specify a name and address that is
-    | used globally for all e-mails that are sent by your application.
+    | Você pode desejar que todos os e-mails enviados por seu aplicativo sejam enviados de
+    | o mesmo endereço. Aqui, você pode especificar um nome e endereço que seja
+    | usado globalmente para todos os e-mails enviados por seu aplicativo.
     |
     */
 
@@ -90,12 +90,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Markdown Mail Settings
+    | Configurações de Markdown Mail
     |--------------------------------------------------------------------------
     |
-    | If you are using Markdown based email rendering, you may configure your
-    | theme and component paths here, allowing you to customize the design
-    | of the emails. Or, you may simply stick with the Laravel defaults!
+    | Se você estiver usando renderização de e-mail baseada em Markdown, você pode configurar seu
+    | caminhos de tema e componente aqui, permitindo que você personalize o design
+    | dos e-mails. Ou você pode simplesmente ficar com os padrões do Laravel!
     |
     */
 

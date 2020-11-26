@@ -4,12 +4,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Filesystem Disk
+    | Disco do sistema de arquivos padrão
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the default filesystem disk that should be used
-    | by the framework. The "local" disk, as well as a variety of cloud
-    | based disks are available to your application. Just store away!
+    | Aqui você pode especificar o disco padrão do sistema de arquivos que deve ser usado
+    | pela estrutura. O disco "local", bem como uma variedade de nuvem
+    | discos baseados estão disponíveis para seu aplicativo. Basta guardar!
     |
     */
 
@@ -17,12 +17,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Cloud Filesystem Disk
+    | Disco de sistema de arquivos em nuvem padrão
     |--------------------------------------------------------------------------
     |
-    | Many applications store files both locally and in the cloud. For this
-    | reason, you may specify a default "cloud" driver here. This driver
-    | will be bound as the Cloud disk implementation in the container.
+    | Muitos aplicativos armazenam arquivos localmente e na nuvem. Por esta
+    | razão, você pode especificar um driver "nuvem" padrão aqui. Este motorista
+    | será vinculado como a implementação do disco em nuvem no contêiner.
     |
     */
 
@@ -30,14 +30,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Filesystem Disks
+    | Discos de sistema de arquivos
     |--------------------------------------------------------------------------
     |
-    | Here you may configure as many filesystem "disks" as you wish, and you
-    | may even configure multiple disks of the same driver. Defaults have
-    | been setup for each driver as an example of the required options.
+    | Aqui você pode configurar quantos "discos" de sistema de arquivos desejar, e você
+    | pode até configurar vários discos do mesmo driver. Padrões têm
+    | foi configurado para cada driver como um exemplo das opções necessárias.
     |
-    | Supported Drivers: "local", "ftp", "sftp", "s3"
+    | Drivers Suportados: "local", "ftp", "sftp", "s3"
     |
     */
 
@@ -69,12 +69,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Symbolic Links
+    | Links Simbólicos
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the symbolic links that will be created when the
-    | `storage:link` Artisan command is executed. The array keys should be
-    | the locations of the links and the values should be their targets.
+    | Aqui você pode configurar os links simbólicos que serão criados quando o
+    | O comando `storage: link` Artisan é executado. As chaves do array devem ser
+    | as localizações dos links e os valores devem ser seus alvos.
     |
     */
 

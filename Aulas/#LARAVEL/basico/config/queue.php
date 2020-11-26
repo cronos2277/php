@@ -4,12 +4,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Queue Connection Name
+    | Nome de conexão de fila padrão
     |--------------------------------------------------------------------------
     |
-    | Laravel's queue API supports an assortment of back-ends via a single
-    | API, giving you convenient access to each back-end using the same
-    | syntax for every one. Here you may define a default connection.
+    | A API de fila do Laravel suporta uma variedade de back-ends por meio de um único
+    | API, fornecendo acesso conveniente a cada back-end usando o mesmo
+    | sintaxe para cada um. Aqui você pode definir uma conexão padrão.
     |
     */
 
@@ -17,12 +17,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Queue Connections
+    | Conexões de fila
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the connection information for each server that
-    | is used by your application. A default configuration has been added
-    | for each back-end shipped with Laravel. You are free to add more.
+    | Aqui você pode configurar as informações de conexão para cada servidor que
+    | é usado por seu aplicativo. Uma configuração padrão foi adicionada
+    | para cada back-end enviado com o Laravel. Você está livre para adicionar mais.
     |
     | Drivers: "sync", "database", "beanstalkd", "sqs", "redis", "null"
     |
@@ -71,12 +71,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Failed Queue Jobs
+    | Trabalhos de fila falhados
     |--------------------------------------------------------------------------
     |
-    | These options configure the behavior of failed queue job logging so you
-    | can control which database and table are used to store the jobs that
-    | have failed. You may change them to any database / table you wish.
+    | Essas opções configuram o comportamento do registro de trabalho da fila com falha para que você
+    | pode controlar qual banco de dados e tabela são usados ​​para armazenar os trabalhos que
+    | Falhou. Você pode alterá-los para qualquer banco de dados / tabela que desejar.
     |
     */
 

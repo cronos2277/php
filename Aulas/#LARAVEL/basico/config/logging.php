@@ -8,12 +8,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Log Channel
+    | Canal de registro padrão
     |--------------------------------------------------------------------------
     |
-    | This option defines the default log channel that gets used when writing
-    | messages to the logs. The name specified in this option should match
-    | one of the channels defined in the "channels" configuration array.
+    | Esta opção define o canal de registro padrão que é usado ao escrever
+    | mensagens para os logs. O nome especificado nesta opção deve corresponder
+    | um dos canais definidos na matriz de configuração "canais".
     |
     */
 
@@ -21,14 +21,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Log Channels
+    | Canais de registro
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the log channels for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
+    | Aqui você pode configurar os canais de log para sua aplicação. Fora de
+    | na caixa, o Laravel usa a biblioteca de registro Monolog PHP. Isto dá
+    | uma variedade de manipuladores / formatadores de log poderosos para utilizar.
     |
-    | Available Drivers: "single", "daily", "slack", "syslog",
+    | Drivers Disponíveis: "single", "daily", "slack", "syslog",
     |                    "errorlog", "monolog",
     |                    "custom", "stack"
     |
