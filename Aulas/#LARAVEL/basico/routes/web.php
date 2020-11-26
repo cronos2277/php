@@ -16,3 +16,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+//Exemplo basico de rota
+Route::get('/rotaexemplo', function () {
+    echo "ola mundo,sem parametro";
+});
+
+//Exemplo com um único parametro opcinal
+Route::get('/rotaexemplo/{param1?}', function ($par=null) {
+    return "ola mundo, parametro: ".$par;
+});
+
+//Exemplo com mais parametros
+Route::get('/rotaexemplo/{param1}/{param2}', function ($p,$q) {
+    echo "ola mundo, parametro: ".$p.", ".$q;
+});
