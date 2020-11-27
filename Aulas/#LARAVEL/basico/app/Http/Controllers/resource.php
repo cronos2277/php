@@ -6,12 +6,20 @@ use Illuminate\Http\Request;
 
 class resource extends Controller
 {
-    private static $id = 4;
-    public static $clientes = [
-        '1' => 'João',
-        '2' => 'Paulo',
-        '3' => 'Pedro'
+    public $clientes = [
+        1 => 'João',
+        2 => 'Paulo',
+        3 => 'Pedro'
     ];
+
+    public function __construct()
+    {
+        if(!isset($_SESSION['clientes'])){
+            session(['clientes' => $this->clientes]); 
+        }
+        
+    }
+
     /**
      * Mostra uma lista do recurso.
      *
@@ -21,7 +29,7 @@ class resource extends Controller
     {
         echo '<a href="./controller/create">adicionar novo</a>';
         echo "<table id='resource' class='resource'border=2px width=50% height=10% align=center>";
-        foreach(self::$clientes as $key=>$value){
+        foreach(session('clientes') as $key=>$value){
             echo "<tr class='tr-resource'>";
                 echo "<td class='td-key'>".$key."</td>";
                 echo "<td class='td-value'>".$value."</td>";
@@ -55,11 +63,12 @@ class resource extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        self::$clientes[self::$id++] = [
-            self::$id => $request->nome
-        ];
-        dd($request);        
+    {    
+        $clientes = session('clientes');
+        $id = count($clientes) +1;        
+        $clientes[$id] = $request->nome;
+        session(['clientes' => $clientes]);
+        return redirect()->route('controller.index');        
     }
 
     /**
