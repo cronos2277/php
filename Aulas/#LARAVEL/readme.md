@@ -168,11 +168,52 @@ Todos os métodos são parecidos com exceção do *GET*, no caso todos aceitam u
     });
 
 Esse *Request* que tipifica o *$request* vem de: `Illuminate\Http\Request` e dentro dele está toda a requisição do usuário, ou seja cada *name* dos inputs que o usuário preencheu em um formulário tem o seu correspondente como atributo dentro desse objeto.
+
+### Controller
+Para informações sobre a criação de *controller* [você pode ver mais informações aqui](#criando-um-controller). Todos os arquivos de controllers do **Laravel** deve estão nesse [diretório de controllers](./basico/app/Http/Controllers). O exemplo mais básico de controller pode ser visto aqui, essa é a classe criada, quando não é passada a flag `--resource`.
+
+    namespace App\Http\Controllers;
+    use Illuminate\Http\Request;
+    class classe extends Controller
+    {
+    
+    }
+
+No caso dos controllers, você usa os métodos para responder requisições, abaixo um exemplo de um método desse, envolvendo a classe ´classe´ e o método `metodo`:
+
+    namespace App\Http\Controllers;
+    use Illuminate\Http\Request;
+
+    class classe extends Controller
+    {
+        public function metodo($param1,$param2){
+            for($i=0; $i<$param1;$i++):
+                return $param2;
+            endfor;
+        }
+    }
+
+Já no arquivo de rotas você coloca a seguinte linha, caso você queira que o método acima deva responder a requisição da url */exemplo*
+
+    Route::get('exemplo/{n1}/{n2}','App\Http\Controllers\classe@metodo');
+
+Continua o uso do `Route::`**metodo_HTTP*(), sendo que esses dois parametros aqui: `{n1}/{n2}` corresponde a esses daqui `public function metodo($param1,$param2)`, inclusive na ordem que foram declarados, o *n1* sendo *$param1*, pois são respectivamente o primeiro parametro da url e o primeiro argumento do método e o mesmo raciocínio se aplica a *n2* e *$param2*. Além disso ao invés de passar a callback, você deve passar o *path@metodo* que vai responder a requisição naquela url. No caso passamos o namespace e a classe `App\Http\Controllers\classe`*@*`metodo`, sendo essa classe `class classe extends Controller` e esse `metodo`: `public function metodo($param1,$param2)`.
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
 #### Exibindo listas de todas as rotas
     php artisan route:list
+
+#### Criando um controller
+    php artisan make:controller [classe]
+
+O `[classe]` deve ser substituído pela classe correspondente.
+
+##### Criando um controller usando o parametro --resource
+    php artisan make:controller [classe] --resource
+
+Quando informado o `--resource` alguns métodos são criados.
+
 ## Instalação
 ### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 

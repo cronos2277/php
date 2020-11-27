@@ -56,3 +56,5 @@ Route::group(['prefix' => 'route'], function () {
     });
 
 });
+
+Route::get('exemplo/{n1}/{n2}','App\Http\Controllers\classe@metodo');
