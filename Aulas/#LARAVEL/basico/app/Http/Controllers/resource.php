@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 
 class resource extends Controller
 {
+    private static $id = 4;
+    public static $clientes = [
+        '1' => 'João',
+        '2' => 'Paulo',
+        '3' => 'Pedro'
+    ];
     /**
      * Mostra uma lista do recurso.
      *
@@ -13,7 +19,16 @@ class resource extends Controller
      */
     public function index()
     {
-        //
+        echo '<a href="./controller/create">adicionar novo</a>';
+        echo "<table id='resource' class='resource'border=2px width=50% height=10% align=center>";
+        foreach(self::$clientes as $key=>$value){
+            echo "<tr class='tr-resource'>";
+                echo "<td class='td-key'>".$key."</td>";
+                echo "<td class='td-value'>".$value."</td>";
+                echo "<td class='td-edit'><a href='./$key/edit' class='td-link'/>Editar</a></td>";                
+            echo "</tr>";
+        }
+        echo "</table>";
     }
 
     /**
@@ -23,7 +38,14 @@ class resource extends Controller
      */
     public function create()
     {
-        //
+        
+        echo "          
+            <form method='post' action='/controller'>
+            <input type='hidden' name='_token' value=".csrf_token().">
+                <input name='nome' />
+                <input type='submit' value='enviar' />
+            </form>
+        ";
     }
 
     /**
@@ -34,7 +56,10 @@ class resource extends Controller
      */
     public function store(Request $request)
     {
-        //
+        self::$clientes[self::$id++] = [
+            self::$id => $request->nome
+        ];
+        dd($request);        
     }
 
     /**
