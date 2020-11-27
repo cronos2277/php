@@ -197,7 +197,171 @@ Já no arquivo de rotas você coloca a seguinte linha, caso você queira que o m
 
     Route::get('exemplo/{n1}/{n2}','App\Http\Controllers\classe@metodo');
 
-Continua o uso do `Route::`**metodo_HTTP*(), sendo que esses dois parametros aqui: `{n1}/{n2}` corresponde a esses daqui `public function metodo($param1,$param2)`, inclusive na ordem que foram declarados, o *n1* sendo *$param1*, pois são respectivamente o primeiro parametro da url e o primeiro argumento do método e o mesmo raciocínio se aplica a *n2* e *$param2*. Além disso ao invés de passar a callback, você deve passar o *path@metodo* que vai responder a requisição naquela url. No caso passamos o namespace e a classe `App\Http\Controllers\classe`*@*`metodo`, sendo essa classe `class classe extends Controller` e esse `metodo`: `public function metodo($param1,$param2)`.
+Continua o uso do `Route::`**metodo_HTTP*(), sendo que esses dois parametros aqui: `{n1}/{n2}` corresponde a esses daqui `public function metodo($param1,$param2)`, inclusive na ordem que foram declarados, o *n1* sendo *$param1*, pois são respectivamente o primeiro parametro da url e o primeiro argumento do método e o mesmo raciocínio se aplica a *n2* e *$param2*. Além disso ao invés de passar a callback, você deve passar o *path@metodo* que vai responder a requisição naquela url. No caso passamos o namespace e a classe `App\Http\Controllers\classe`*@*`metodo`, sendo essa classe `class classe extends Controller` e esse `metodo`: `public function metodo($param1,$param2)`. [arquivo controller](./basico/app/Http/Controllers/classe.php)
+
+#### Todas as rotas até agora
+    $ php artisan route:list
+    +--------+----------------------------------------+-------------------------------+------------+---------------------------------------+------------+
+    | Domain | Method                                 | URI                           | Name       | Action                                | Middleware |
+    +--------+----------------------------------------+-------------------------------+------------+---------------------------------------+------------+
+    |        | GET|HEAD                               | /                             | index      | Closure                               | web        |
+    |        | GET|HEAD                               | api/index                     | nomedarota | Closure                               | api        |
+    |        | GET|HEAD                               | api/redirecionar              |            | Closure                               | api        |
+    |        | GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS | api/redirect                  |            | Illuminate\Routing\RedirectController | api        |
+    |        | GET|HEAD                               | api/test                      |            | Closure                               | api        |
+    |        | POST                                   | api/test                      |            | Closure                               | api        |
+    |        | PUT                                    | api/test                      |            | Closure                               | api        |
+    |        | PATCH                                  | api/test                      |            | Closure                               | api        |
+    |        | DELETE                                 | api/test                      |            | Closure                               | api        |
+    |        | GET|HEAD                               | api/user                      |            | Closure                               | api        |
+    |        |                                        |                               |            |                                       | auth:api   |
+    |        | GET|HEAD                               | exemplo/{n1}/{n2}             |            | App\Http\Controllers\classe@metodo    | web        |
+    |        | GET|HEAD                               | numero/{n}                    |            | Closure                               | web        |
+    |        | GET|HEAD                               | rotaexemplo                   |            | Closure                               | web        |
+    |        | GET|HEAD                               | rotaexemplo/{param1?}         |            | Closure                               | web        |
+    |        | GET|HEAD                               | rotaexemplo/{param1}/{param2} |            | Closure                               | web        |
+    |        | GET|HEAD                               | route                         |            | Closure                               | web        |
+    |        | GET|HEAD                               | route/{nome}/{repetir?}       |            | Closure                               | web        |
+    +--------+----------------------------------------+-------------------------------+------------+---------------------------------------+------------+
+
+Também é possível criar controladores e de maneira automatizada associar os métodos *HTTP* a eles, no caso passando a flag `--resource` no `php artisan make:controller`, conforme ilustrado [aqui](#criando-um-controller-usando-o-parametro---resource)
+#### Controler com -- resource
+[arquivo controller](./basico/app/Http/Controllers/resource.php)
+
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class resource extends Controller
+    {
+        /**
+        * Mostra uma lista do recurso.
+        *
+        * @return \Illuminate\Http\Response
+        */
+        public function index()
+        {
+            //
+        }
+
+        /**
+        * Mostra o formulário de criação de um novo recurso.
+        *
+        * @return \Illuminate\Http\Response
+        */
+        public function create()
+        {
+            //
+        }
+
+        /**
+        * Armazene um recurso recém-criado no armazenamento.
+        *
+        * @param  \Illuminate\Http\Request  $request
+        * @return \Illuminate\Http\Response
+        */
+        public function store(Request $request)
+        {
+            //
+        }
+
+        /**
+        * Exibe o recurso especificado.
+        *
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function show($id)
+        {
+            //
+        }
+
+        /**
+        * Mostra o formulário para editar o recurso especificado.
+        *
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function edit($id)
+        {
+            //
+        }
+
+        /**
+        * Atualize o recurso especificado no armazenamento.
+        *
+        * @param  \Illuminate\Http\Request  $request
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function update(Request $request, $id)
+        {
+            //
+        }
+
+        /**
+        * Remova o recurso especificado do armazenamento.
+        *
+        * @param  int  $id
+        * @return \Illuminate\Http\Response
+        */
+        public function destroy($id)
+        {
+            //
+        }
+    }
+
+##### No arquivo de rotas
+    Route::resource('controller', 'App\Http\Controllers\resource');
+
+O primeiro parametro é em qual url vai responder e o segundo o path e a classe do controller, no caso se você criar usando o --resources, ou uma classe que tenha essa estrutura, você pode usar o método estático resource para tratar os metodos http de uma rota.
+
+##### Como estão as rotas agora?
+    $ php artisan route:list
+    +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------+------------+
+    | Domain | Method                                 | URI                           | Name               | Action                                | Middleware |
+    +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------+------------+
+    |        | GET|HEAD                               | /                             | index              | Closure                               | web        |
+    |        | GET|HEAD                               | api/index                     | nomedarota         | Closure                               | api        |
+    |        | GET|HEAD                               | api/redirecionar              |                    | Closure                               | api        |
+    |        | GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS | api/redirect                  |                    | Illuminate\Routing\RedirectController | api        |
+    |        | POST                                   | api/test                      |                    | Closure                               | api        |
+    |        | PUT                                    | api/test                      |                    | Closure                               | api        |
+    |        | PATCH                                  | api/test                      |                    | Closure                               | api        |
+    |        | DELETE                                 | api/test                      |                    | Closure                               | api        |
+    |        | GET|HEAD                               | api/test                      |                    | Closure                               | api        |
+    |        | GET|HEAD                               | api/user                      |                    | Closure                               | api        |
+    |        |                                        |                               |                    |                                       | auth:api   |
+    |        | GET|HEAD                               | controller                    | controller.index   | App\Http\Controllers\resource@index   | web        |
+    |        | POST                                   | controller                    | controller.store   | App\Http\Controllers\resource@store   | web        |
+    |        | GET|HEAD                               | controller/create             | controller.create  | App\Http\Controllers\resource@create  | web        |
+    |        | PUT|PATCH                              | controller/{controller}       | controller.update  | App\Http\Controllers\resource@update  | web        |
+    |        | GET|HEAD                               | controller/{controller}       | controller.show    | App\Http\Controllers\resource@show    | web        |
+    |        | DELETE                                 | controller/{controller}       | controller.destroy | App\Http\Controllers\resource@destroy | web        |
+    |        | GET|HEAD                               | controller/{controller}/edit  | controller.edit    | App\Http\Controllers\resource@edit    | web        |
+    |        | GET|HEAD                               | exemplo/{n1}/{n2}             |                    | App\Http\Controllers\classe@metodo    | web        |
+    |        | GET|HEAD                               | numero/{n}                    |                    | Closure                               | web        |
+    |        | GET|HEAD                               | rotaexemplo                   |                    | Closure                               | web        |
+    |        | GET|HEAD                               | rotaexemplo/{param1?}         |                    | Closure                               | web        |
+    |        | GET|HEAD                               | rotaexemplo/{param1}/{param2} |                    | Closure                               | web        |
+    |        | GET|HEAD                               | route                         |                    | Closure                               | web        |
+    |        | GET|HEAD                               | route/{nome}/{repetir?}       |                    | Closure                               | web        |
+    +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------+------------+
+
+O que nos interessa está aqui:
+
+    |        | GET|HEAD                               | controller                    | controller.index   | App\Http\Controllers\resource@index   | web        |
+    |        | POST                                   | controller                    | controller.store   | App\Http\Controllers\resource@store   | web        |
+    |        | GET|HEAD                               | controller/create             | controller.create  | App\Http\Controllers\resource@create  | web        |
+    |        | PUT|PATCH                              | controller/{controller}       | controller.update  | App\Http\Controllers\resource@update  | web        |
+    |        | GET|HEAD                               | controller/{controller}       | controller.show    | App\Http\Controllers\resource@show    | web        |
+    |        | DELETE                                 | controller/{controller}       | controller.destroy | App\Http\Controllers\resource@destroy | web        |
+    |        | GET|HEAD                               | controller/{controller}/edit  | controller.edit    | App\Http\Controllers\resource@edit    | web        |
+
+Repare que é assimilado os métodos da classe controller automaticamente, apenas usando o `Route::resource('controller', 'App\Http\Controllers\resource');`, se for usar o resource, certifica-se que os métodos estejam com os nomes corretos, porém você pode evitar dor de cabeça usando `--resource` na criação do controller com o *artisan*.
+
+
+
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve

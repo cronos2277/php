@@ -58,3 +58,5 @@ Route::group(['prefix' => 'route'], function () {
 });
 
 Route::get('exemplo/{n1}/{n2}','App\Http\Controllers\classe@metodo');
+
+Route::resource('controller', 'App\Http\Controllers\resource');
