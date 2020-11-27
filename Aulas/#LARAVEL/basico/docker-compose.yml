@@ -1,18 +1,19 @@
 version: "3.0"
 services:  
   php:
-    image: php:7.3-apache
+    build:
+      dockerfile: php7-runner.dockerfile 
+      context: .
+    image: 'laravelapp'
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./public:/var/www/html
-      - .:/var/www/
-      - ./apache/httpd.conf:/etc/httpd/conf/httpd.conf
-      - ./apache/.htaccess:/var/www/html/.htaccess
+    volumes:            
+      - ./:/var/www/html       
     links:
       - mysql    
   mysql:
+    restart: always
     image: mysql:5.7
     volumes:
       - /var/lib/mysql
