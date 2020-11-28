@@ -360,7 +360,101 @@ O que nos interessa está aqui:
 
 Repare que é assimilado os métodos da classe controller automaticamente, apenas usando o `Route::resource('controller', 'App\Http\Controllers\resource');`, se for usar o resource, certifica-se que os métodos estejam com os nomes corretos, porém você pode evitar dor de cabeça usando `--resource` na criação do controller com o *artisan*.
 
+##### Método index
+    public function index()
+    {
+        echo '<a href="./controller/create">adicionar novo</a>';
+        echo "<table id='resource' class='resource'border=2px width=50% height=10% align=center>";
+        foreach(session('clientes') as $key=>$value){
+            echo "<tr class='tr-resource'>";
+                echo "<td class='td-key'>".$key."</td>";
+                echo "<td class='td-value'>".$value."</td>";
+                echo "<td class='td-edit'><a href='./$key/show' class='td-link'/>Detalhes</a></td>";                
+                echo "<td class='td-edit'><a href='./$key/edit' class='td-link'/>Editar</a></td>";                
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
 
+Esse método acima responde a:
+
+    |        | GET|HEAD                               | controller                    | controller.index   | App\Http\Controllers\resource@index   | web        |
+
+No caso, qunado você cria uma rota usando o `--resource`, cria-se dentre vários métodos o index, para chamalo você usa o path definido aqui `Route::resource('controller', 'App\Http\Controllers\resource');`, seguido de `.index`, nesse exemplo ficaria: `controller.index`.
+
+##### método create e store
+**create**, responde em: `|        | GET|HEAD                               | controller/create             | controller.create  | App\Http\Controllers\resource@create  | web        |`
+
+    public function create()
+    {
+        
+        echo "   
+            <h1>Adicionar Cliente</h1>       
+            <form method='post' action='/controller'>
+            <input type='hidden' name='_token' value=".csrf_token().">
+                <input name='nome' />
+                <input type='submit' value='enviar' />
+            </form>
+        ";
+    }
+
+**store**, responde em: `|        | POST                                   | controller                    | controller.store   | App\Http\Controllers\resource@store   | web        |`
+
+    public function store(Request $request)
+    {    
+        $clientes = session('clientes');
+        $id = count($clientes) +1;        
+        $clientes[$id] = $request->nome;
+        session(['clientes' => $clientes]);
+        return redirect()->route('controller.index');        
+    }
+
+O método *create* responde através do método **GET** no path `/create`, ou seja nessa url você deve criar a view para cadastro de usuário caso precise de um formulário, no caso o nome automático que é criado para essa rota é `.create`, ficando nesse exemplo `controller.index`.
+
+O método *store* que responde através do **POST**, no caso essa rota é a rota raiz `/`, porém o *GET* chama o `controller.index` e o *POST* responde com esse método. O nome dessa rota é o `.store`, sendo nesse exemplo o `controller.store`.
+
+##### método Edit e update
+edit, responde em: `|        | GET|HEAD                               | controller/{controller}/edit  | controller.edit    | App\Http\Controllers\resource@edit    | web        |`
+
+    public function edit($id)
+    {
+        $clientes = session('clientes');
+        echo "<h1>Edição de {$clientes[$id]}";
+        echo "                  
+            <form method='post' action='/controller/{$id}'>            
+            <input type='hidden' name='_token' value=".csrf_token().">
+                <input type='hidden' name='_method' value='PUT' />
+                <input name='nome' value='{$clientes[$id]}'/>
+                <input type='submit' value='enviar' />
+            </form>
+        ";
+        echo '<br>';
+        echo "<a href='/controller'>voltar</a>";
+    }
+
+update, responde em: `|        | PUT|PATCH                              | controller/{controller}       | controller.update  | App\Http\Controllers\resource@update  | web        |`
+
+    public function update(Request $request, $id)
+    {
+        $clientes = session('clientes');               
+        $clientes[$id] = $request->nome;
+        session(['clientes' => $clientes]);
+        return redirect()->route('controller.index'); 
+    }
+
+O *edit* é semelhante ao *create*, porém nele você colocar um formulário de edição, ao contrário de *create*, que foi projetado para um formulário de criação. O edit responde na rota `/{id}/edit` e ele deve enviar uma requisição do tipo *PUT* ou *PATCH* para a raiz `/`, porém como o HTML apenas suporta o POST e o GET no formulário você deve fazer isso colocando um input desses `<input type='hidden' name='_method' value='PUT' />` para *PUT* ou `<input type='hidden' name='_method' value='PATCH' />` para *PATCH*, ou a segunda forma, caso você esteja usando o blade, é usar a anotação dentro do formulário html `@method('PUT')` ou `@method('PATCH')`, que no caso adiciona o input type exatamente igual ao explicado aqui. O update, ele responde no *PUT* ou *PATCH* de uma requisição usando o formulário *EDIT*, ou seja o formulário do *create* você envia para o **store** assim como o formulario do *edit* você envia para o *update*, a grande diferença do update para o store, é que o store responde requisição post e o update requisições *patch* e *put*, logo é no método update que fica a regra de negócio para mudança e no edit o formulário para tal.
+
+##### método show
+O método show responde: `|        | GET|HEAD                               | controller/{controller}       | controller.show    | App\Http\Controllers\resource@show    | web        |`
+
+    public function show($id)
+    {
+        $clientes = session('clientes');        
+        echo "<h1> O cliente selecionado é: {$id} => {$clientes[$id]} </h1>";
+        echo "<a href='/controller'>voltar</a>";
+    }
+
+O método show é semelhante ao index, mas ele foi projetado para exibir detalhes de um único registro, ao passo que o index de todos. Esse método suporta o GET e após a raiz você deve passar o parametro a ser usado como ID. exemplo `/2/`, ou seja esse método é acionado quando passado um parametro na raiz.
 
 ### Artisan
 #### Executando um projeto no laravel

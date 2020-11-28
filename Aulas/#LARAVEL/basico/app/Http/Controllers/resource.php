@@ -33,7 +33,8 @@ class resource extends Controller
             echo "<tr class='tr-resource'>";
                 echo "<td class='td-key'>".$key."</td>";
                 echo "<td class='td-value'>".$value."</td>";
-                echo "<td class='td-edit'><a href='./$key/edit' class='td-link'/>Editar</a></td>";                
+                echo "<td class='td-edit'><a href='./controller/$key' class='td-link'/>Detalhes</a></td>";                
+                echo "<td class='td-edit'><a href='./controller/$key/edit' class='td-link'/>Editar</a></td>";                
             echo "</tr>";
         }
         echo "</table>";
@@ -47,7 +48,8 @@ class resource extends Controller
     public function create()
     {
         
-        echo "          
+        echo "   
+            <h1>Adicionar Cliente</h1>       
             <form method='post' action='/controller'>
             <input type='hidden' name='_token' value=".csrf_token().">
                 <input name='nome' />
@@ -79,7 +81,9 @@ class resource extends Controller
      */
     public function show($id)
     {
-        //
+        $clientes = session('clientes');        
+        echo "<h1> O cliente selecionado é: {$id} => {$clientes[$id]} </h1>";
+        echo "<a href='/controller'>voltar</a>";
     }
 
     /**
@@ -90,7 +94,18 @@ class resource extends Controller
      */
     public function edit($id)
     {
-        //
+        $clientes = session('clientes');
+        echo "<h1>Edição de {$clientes[$id]}";
+        echo "                  
+            <form method='post' action='/controller/{$id}'>            
+            <input type='hidden' name='_token' value=".csrf_token().">
+                <input type='hidden' name='_method' value='PUT' />
+                <input name='nome' value='{$clientes[$id]}'/>
+                <input type='submit' value='enviar' />
+            </form>
+        ";
+        echo '<br>';
+        echo "<a href='/controller'>voltar</a>";
     }
 
     /**
@@ -102,7 +117,10 @@ class resource extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $clientes = session('clientes');               
+        $clientes[$id] = $request->nome;
+        session(['clientes' => $clientes]);
+        return redirect()->route('controller.index'); 
     }
 
     /**
