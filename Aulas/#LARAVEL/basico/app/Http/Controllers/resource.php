@@ -35,6 +35,13 @@ class resource extends Controller
                 echo "<td class='td-value'>".$value."</td>";
                 echo "<td class='td-edit'><a href='./controller/$key' class='td-link'/>Detalhes</a></td>";                
                 echo "<td class='td-edit'><a href='./controller/$key/edit' class='td-link'/>Editar</a></td>";                
+                echo "<td class='td-edit'>
+                    <form method='post' action='./controller/$key' onsubmit='confirm(`Deseja realmente apagar {$value}`)'>
+                        <input type='hidden' name='_token' value=".csrf_token().">
+                        <input type='hidden' name='_method' value='DELETE' />
+                        <input type='submit' value='Apagar' />
+                    </form>
+                </td>";                
             echo "</tr>";
         }
         echo "</table>";
@@ -131,6 +138,9 @@ class resource extends Controller
      */
     public function destroy($id)
     {
-        //
+        $clientes = session('clientes');
+        array_splice($clientes,$id,1);
+        session(['clientes' => $clientes]);
+        return redirect()->route('controller.index');
     }
 }

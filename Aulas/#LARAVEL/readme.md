@@ -369,8 +369,15 @@ Repare que é assimilado os métodos da classe controller automaticamente, apena
             echo "<tr class='tr-resource'>";
                 echo "<td class='td-key'>".$key."</td>";
                 echo "<td class='td-value'>".$value."</td>";
-                echo "<td class='td-edit'><a href='./$key/show' class='td-link'/>Detalhes</a></td>";                
-                echo "<td class='td-edit'><a href='./$key/edit' class='td-link'/>Editar</a></td>";                
+                echo "<td class='td-edit'><a href='./controller/$key' class='td-link'/>Detalhes</a></td>";                
+                echo "<td class='td-edit'><a href='./controller/$key/edit' class='td-link'/>Editar</a></td>";                
+                echo "<td class='td-edit'>
+                    <form method='post' action='./controller/$key' onsubmit='confirm(`Deseja realmente apagar {$value}`)'>
+                        <input type='hidden' name='_token' value=".csrf_token().">
+                        <input type='hidden' name='_method' value='DELETE' />
+                        <input type='submit' value='Apagar' />
+                    </form>
+                </td>";                
             echo "</tr>";
         }
         echo "</table>";
@@ -442,7 +449,7 @@ update, responde em: `|        | PUT|PATCH                              | contro
         return redirect()->route('controller.index'); 
     }
 
-O *edit* é semelhante ao *create*, porém nele você colocar um formulário de edição, ao contrário de *create*, que foi projetado para um formulário de criação. O edit responde na rota `/{id}/edit` e ele deve enviar uma requisição do tipo *PUT* ou *PATCH* para a raiz `/`, porém como o HTML apenas suporta o POST e o GET no formulário você deve fazer isso colocando um input desses `<input type='hidden' name='_method' value='PUT' />` para *PUT* ou `<input type='hidden' name='_method' value='PATCH' />` para *PATCH*, ou a segunda forma, caso você esteja usando o blade, é usar a anotação dentro do formulário html `@method('PUT')` ou `@method('PATCH')`, que no caso adiciona o input type exatamente igual ao explicado aqui. O update, ele responde no *PUT* ou *PATCH* de uma requisição usando o formulário *EDIT*, ou seja o formulário do *create* você envia para o **store** assim como o formulario do *edit* você envia para o *update*, a grande diferença do update para o store, é que o store responde requisição post e o update requisições *patch* e *put*, logo é no método update que fica a regra de negócio para mudança e no edit o formulário para tal.
+O *edit* é semelhante ao *create*, porém nele você colocar um formulário de edição, ao contrário de *create*, que foi projetado para um formulário de criação. O edit responde na rota `/{id}/edit` e ele deve enviar uma requisição do tipo *PUT* ou *PATCH* para a raiz `/`, porém como o HTML apenas suporta o POST e o GET no formulário você deve fazer isso colocando um input desses `<input type='hidden' name='_method' value='PUT' />` para *PUT* ou `<input type='hidden' name='_method' value='PATCH' />` para *PATCH*, ou a segunda forma, caso você esteja usando o blade, é usar a anotação dentro do formulário html `@method('PUT')` ou `@method('PATCH')`, que no caso adiciona o input type exatamente igual ao explicado aqui. O update, ele responde no *PUT* ou *PATCH* de uma requisição usando o formulário *EDIT*, ou seja o formulário do *create* você envia para o **store** assim como o formulario do *edit* você envia para o *update*, a grande diferença do update para o store, é que o store responde requisição post e o update requisições *patch* e *put*, logo é no método update que fica a regra de negócio para mudança e no edit o formulário para tal. Para chamar o edit nesse exemplo `controller.edit `, já o update `controller.update `, ou seja respectivamente `.edit` e `.update`.
 
 ##### método show
 O método show responde: `|        | GET|HEAD                               | controller/{controller}       | controller.show    | App\Http\Controllers\resource@show    | web        |`
@@ -454,7 +461,41 @@ O método show responde: `|        | GET|HEAD                               | co
         echo "<a href='/controller'>voltar</a>";
     }
 
-O método show é semelhante ao index, mas ele foi projetado para exibir detalhes de um único registro, ao passo que o index de todos. Esse método suporta o GET e após a raiz você deve passar o parametro a ser usado como ID. exemplo `/2/`, ou seja esse método é acionado quando passado um parametro na raiz.
+O método show é semelhante ao index, mas ele foi projetado para exibir detalhes de um único registro, ao passo que o index de todos. Esse método suporta o GET e após a raiz você deve passar o parametro a ser usado como ID. exemplo `/2/`, ou seja esse método é acionado quando passado um parametro na raiz. Para chamalo `.show` ou como está nesse exemplo `controller.show`.
+
+### Método Destroy
+O método destroy, responde em: `|        | DELETE                                 | controller/{controller}       | controller.destroy | App\Http\Controllers\resource@destroy | web        |`
+
+     public function destroy($id)
+    {
+        $clientes = session('clientes');
+        array_splice($clientes,$id,1);
+        session(['clientes' => $clientes]);
+        return redirect()->route('controller.index');
+    }
+
+Esse método ele foi projeto para excluir registros, no caso espera-se que a requisição delete venha do index e e ai esse método é chamado, para se chamar ele é `.destroy` ou como é o exemplo `controller.destroy`, esse método responde no método *delete* da raiz e exige um parametro que é o id, assim sendo, ex: `/2/` => no *delete*. No caso do [método index](#método-index), o destroy corresponde a seguinte parte:
+
+    <form method='post' action='./controller/$key' onsubmit='confirm(`Deseja realmente apagar {$value}`)'>
+        <input type='hidden' name='_token' value=".csrf_token().">
+        <input type='hidden' name='_method' value='DELETE' />
+        <input type='submit' value='Apagar' />
+    </form>
+
+No caso é feito uma requisição post, mas devido a `<input type='hidden' name='_method' value='DELETE' />` o Laravel interpreta isso como uma requisição *DELETE*, se for usar isso no blade, deve-se usar a anotação `@method('DELETE')`, que irá adicionar essa linha dentro do formulário.
+
+#### Tokens
+Quando você vai enviar um formulário, devido a proteção contra [Cross-site request forgery](https://pt.wikipedia.org/wiki/Cross-site_request_forgery#:~:text=O%20cross%2Dsite%20request%20forgery,a%20partir%20de%20um%20usu%C3%A1rio), você deve adicionar tokens no seus formulários, para isso existe algumas opções, a primeira como foi feita: `<input type='hidden' name='_token' value=".csrf_token().">`, nesse caso você cria um token manualmente, o que foi útil nesse caso dos formulários criados de maneira simplificada usando *echo*, mas também é possível gerar isso dentro de um arquivo blade usando a anotação `@csrf`, essa anotação irá adicionar essa linha `<input type='hidden' name='_token' value=".csrf_token().">` automaticamente dentro de seu formulário.
+
+#### @method('')
+Um formulário HTML apenas permite requisições *GET* ou *POST*, caso você queira fazer requisições para outros métodos como *PUT*, *PATCH*, *DELETE* por exemplo, você precisa que além do [token](#tokens), tenha também essa linha `<input type='hidden' name='_method' value='[HTTP Método]' />` no seu formulário, estando no value **DELETE ou PUT ou PATCH** ou qualquer outro método que você queira, com esse input o Laravel processa o formulário com um método diferente do especificado no formulário.
+
+#### Arquivos de exemplos
+[classe](./basico/app/Http/Controllers/classe.php)
+
+[resource](./basico/app/Http/Controllers/resource.php)
+
+[arquivo de rotas](./basico/routes/web.php)
 
 ### Artisan
 #### Executando um projeto no laravel
