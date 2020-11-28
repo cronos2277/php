@@ -463,7 +463,7 @@ O método show responde: `|        | GET|HEAD                               | co
 
 O método show é semelhante ao index, mas ele foi projetado para exibir detalhes de um único registro, ao passo que o index de todos. Esse método suporta o GET e após a raiz você deve passar o parametro a ser usado como ID. exemplo `/2/`, ou seja esse método é acionado quando passado um parametro na raiz. Para chamalo `.show` ou como está nesse exemplo `controller.show`.
 
-### Método Destroy
+#### Método Destroy
 O método destroy, responde em: `|        | DELETE                                 | controller/{controller}       | controller.destroy | App\Http\Controllers\resource@destroy | web        |`
 
      public function destroy($id)
@@ -488,7 +488,7 @@ No caso é feito uma requisição post, mas devido a `<input type='hidden' name=
 Quando você vai enviar um formulário, devido a proteção contra [Cross-site request forgery](https://pt.wikipedia.org/wiki/Cross-site_request_forgery#:~:text=O%20cross%2Dsite%20request%20forgery,a%20partir%20de%20um%20usu%C3%A1rio), você deve adicionar tokens no seus formulários, para isso existe algumas opções, a primeira como foi feita: `<input type='hidden' name='_token' value=".csrf_token().">`, nesse caso você cria um token manualmente, o que foi útil nesse caso dos formulários criados de maneira simplificada usando *echo*, mas também é possível gerar isso dentro de um arquivo blade usando a anotação `@csrf`, essa anotação irá adicionar essa linha `<input type='hidden' name='_token' value=".csrf_token().">` automaticamente dentro de seu formulário.
 
 #### @method('')
-Um formulário HTML apenas permite requisições *GET* ou *POST*, caso você queira fazer requisições para outros métodos como *PUT*, *PATCH*, *DELETE* por exemplo, você precisa que além do [token](#tokens), tenha também essa linha `<input type='hidden' name='_method' value='[HTTP Método]' />` no seu formulário, estando no value **DELETE ou PUT ou PATCH** ou qualquer outro método que você queira, com esse input o Laravel processa o formulário com um método diferente do especificado no formulário.
+Um formulário HTML apenas permite requisições *GET* ou *POST*, caso você queira fazer requisições para outros métodos como *PUT*, *PATCH*, *DELETE* por exemplo, você precisa que além do [token](#tokens), tenha também essa linha `<input type='hidden' name='_method' value='[HTTP Método]' />` no seu formulário, estando no value **DELETE ou PUT ou PATCH** ou qualquer outro método que você queira, com esse input o Laravel processa o formulário com um método diferente do especificado no formulário. Ou ao invés de por esse input, nos arquivos blades, você tem a opção pelo `@method('[metodo]')`, devendo substituir o `[metodo]`, pelo método **HTTP** correspondente.
 
 #### Arquivos de exemplos
 [classe](./basico/app/Http/Controllers/classe.php)
