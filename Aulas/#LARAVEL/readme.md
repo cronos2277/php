@@ -497,6 +497,32 @@ Um formulário HTML apenas permite requisições *GET* ou *POST*, caso você que
 
 [arquivo de rotas](./basico/routes/web.php)
 
+### Views
+
+#### Estrutura
+##### Rotas
+    Route::get('view/{n}','App\Http\Controllers\view@view_simples');
+    Route::get('view','App\Http\Controllers\view@template');
+
+Inicialmente é feito o carregamento, se houver parametro carrega a view simples, se não houver carrega o template, no caso é carregado no arquivo de rotas **web**: [web.php](./basico/routes/web.php)
+
+##### Controller
+    namespace App\Http\Controllers;
+    use Illuminate\Http\Request;
+
+    class view extends Controller
+    {
+        public function view_simples($parametro){
+            return view('pasta.arquivo_simples',['parametro' => $parametro]);
+        }
+
+        public function template(){
+            return view('pasta.template');
+        }
+    }
+
+Aqui está o arquivo de controller [view.php](./basico/app/Http/Controllers/view.php), você pode passar ou não parametro para a *view*, dessa forma `return view('pasta.arquivo_simples',['parametro' => $parametro]);`, ou `return view('pasta.arquivo_simples',compact(['parametro']);`, sendo esse segundo uma forma mais compacta, no caso é pego a varável com o nome **$parametro** *que deve existir* e passa como o nome de **$parametro** dentro da *view* também. [O diretório aonde está as views](./basico/resources/views), no o ['pasta.'](./basico/resources/views/pasta) é a pasta aonde está o arquivo de view, para cada subdiretório um novo ponto deve ser adicionado, todos os arquivos de view devem estar em `resources/views` e caso tiver subdiretórios usar o `.` ao invés de `\`, no caso isso apenas vale caso a view esteja dentro de uma pasta.
+
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
