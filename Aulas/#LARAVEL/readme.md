@@ -523,6 +523,201 @@ Inicialmente é feito o carregamento, se houver parametro carrega a view simples
 
 Aqui está o arquivo de controller [view.php](./basico/app/Http/Controllers/view.php), você pode passar ou não parametro para a *view*, dessa forma `return view('pasta.arquivo_simples',['parametro' => $parametro]);`, ou `return view('pasta.arquivo_simples',compact(['parametro']);`, sendo esse segundo uma forma mais compacta, no caso é pego a varável com o nome **$parametro** *que deve existir* e passa como o nome de **$parametro** dentro da *view* também. [O diretório aonde está as views](./basico/resources/views), no o ['pasta.'](./basico/resources/views/pasta) é a pasta aonde está o arquivo de view, para cada subdiretório um novo ponto deve ser adicionado, todos os arquivos de view devem estar em `resources/views` e caso tiver subdiretórios usar o `.` ao invés de `\`, no caso isso apenas vale caso a view esteja dentro de uma pasta.
 
+##### Arquivo Blade Básico
+[Exemplo Básico](./basico/resources/views/pasta/arquivo_simples.blade.php)
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Arquivo Blade Simples</title>
+    </head>
+    <body>
+    <!-- Criando desvio condicional -->
+        @if (true)
+            <h3>Será exibido</h3>
+        @else
+            <h3>Não será exibido</h3>
+        @endif 
+
+    <!-- criando laço for -->
+        @for ($i = 0; $i < 0; $i++)
+            <p>Não será exibido</p>
+        @endfor
+
+    <!-- Criando laço while -->
+        @while (false)
+            <p>Não será exibido</p>
+        @endwhile
+
+    <!-- Exibindo valores php -->
+        <p>Exibindo o parametro passado: {{ $parametro }}</p>
+    </body>
+    </html>
+
+O Blade permite a inserção de certas tags que podem ser interpoladas pelo laravel, o double mustache *{{}}* é interpolado pelo laravel e processado como um código PHP qualquer, assim como ocorre no Angular por exemplo, além disso:
+
+        @if (true)
+            <h3>Será exibido</h3>
+        @else
+            <h3>Não será exibido</h3>
+        @endif 
+
+Desvio condicional, o valor passado dentro dos parentes vai ser intrepretado da mesma forma que é o php, dentro dos parenteses deve passar uma lógica booleana, seguindo a sintaxe do PHP.
+
+    @for ($i = 0; $i < 0; $i++)
+        <p>Não será exibido</p>
+    @endfor
+
+    @while (false)
+        <p>Não será exibido</p>
+    @endwhile
+
+O mesmo ocorre com os laços de repetições, todo esse código estão disponíveis dentro dos templates blade do *PHP*, dentro dos parentes segue-se as regras do PHP para um laço for e while. No geral os comandos especiais do blade segue a lógica do PHP, mas existe coisas exclusivas do Laravel e o blade torna o código muito mais legível.
+
+##### Exemplo com template
+[Exemplo Básico](./basico/resources/views/pasta/template.blade.php)
+
+    @extends('pasta.extensao_template')
+    @section('secao')
+        <!-- Executa codigo php-->
+        @php
+            $arr = [1,2,3,4,5,6,null]
+        @endphp 
+
+        <!-- laço for each igual ao PHP. -->
+        @foreach ($arr as $item)
+            {{ $item }}
+        @endforeach
+
+        <!-- Switch igual ao PHP -->
+        @switch(0)
+            @case(1)
+                <p>Não vai ser exibido.</p>
+                @break
+            @case(2)
+                <p>Não vai ser exibido.</p>
+                @break
+            @default
+                <p>Vai se exibir esse valor.</p>
+        @endswitch
+
+        <!-- forelse imprime o array, ou executa o empty se vazio -->
+        @forelse ([] as $item)
+            <p>forelse: {{$item}}</p>
+        @empty
+            <p>caso de array vazio imprimirá isso</p>
+        @endforelse
+
+        <!-- Comando equivalente ao dd do Laravel, que é um var_dump mais bonito e organizado. -->
+        @dump($arr)
+
+        <!-- Impressao crua -->
+        @{{ arr[3] }}
+
+        <!-- o equivalente ao echo -->
+        {!! $arr[1] !!}
+
+        <!-- verifica se variavel existe -->
+        @isset($arr)
+            <p>Variável $arr está setada </p>
+        @endisset
+
+        <!-- verifica se a variavel está vazia. -->
+        @empty(!$arr)
+            <p>Variável $arr não está vazia </p>
+        @endempty    
+        
+    @endsection
+
+##### O arquivo linkado do @extends('pasta.extensao_template')
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Template</title>
+    </head>
+    <body>
+        @yield('secao')
+    </body>
+    </html>
+
+##### Explicando: @yield('secao') @extends('pasta.extensao_template') @section('secao')
+Para usar um template se faz necessário usar essas três tags em conjunto, o *@yeld*, vai no arquivo HTML e com o *@yeld* você indica aonde será renderizado o o template, no caso qual é o espaço destinado ao output do arquivo do qual se é extendido com o *@section('secao')*.
+
+    <body>
+        @yield('secao')
+    </body>
+
+Aqui estamos definindo que as chamadas usando o **@section('secao')** será encaixado nesse espaço alocado pelo *@yeld*. Esse é o arquivo visual.
+
+    @extends('pasta.extensao_template')
+    @section('secao')
+
+Em resumo: Aqui estamos importando através do *('pasta.extensao_template')*, essa tag seria equivalente ao import do php, no caso do section é um bloco que começa com *@section('secao')* e termina no *@endsection*, e esse bloco será encaixado dentro o *@yield('secao')* contido no arquivo *@extends('pasta.extensao_template')*.
+
+##### Executando código PHP
+será passado uma espécie *"eval"* dentro do que estiver dentro desse bloco `@php` e `@endphp`.
+
+    @php
+        $arr = [1,2,3,4,5,6,null]
+    @endphp 
+
+##### Foreach
+     @foreach ($arr as $item)
+        {{ $item }}
+    @endforeach
+
+##### Switch case
+     @switch(0)
+        @case(1)
+            <p>Não vai ser exibido.</p>
+            @break
+        @case(2)
+            <p>Não vai ser exibido.</p>
+            @break
+        @default
+            <p>Vai se exibir esse valor.</p>
+        @endswitch
+
+##### foreach com suporte a nulo 
+    @forelse ([] as $item)
+        <p>forelse: {{$item}}</p>
+    @empty
+        <p>caso de array vazio imprimirá isso</p>
+    @endforelse
+
+Caso o array esteja vazio, é executado o que está após o `@empty`.
+
+##### var_dump elegante do Laravel
+    @dump($arr)
+
+O `@dump` usa a função `dd()`, que é um `var_dump` mais elegante.
+
+##### o equivalente do isset e empty do Laravel.
+    @isset($arr)
+        <p>Variável $arr está setada </p>
+    @endisset
+
+    @empty(!$arr)
+        <p>Variável $arr não está vazia </p>
+    @endempty    
+
+Esses funcionam respectivamente igual ao `isset` e o `empty` do *PHP*. No caso do **empty** cuidado para confundir com o **forelse**, do **forelse** não aceita parametros, diferente desses.
+
+##### Output
+     <!-- Impressao crua -->
+        @{{ arr[3] }}
+
+    <!-- o equivalente ao echo -->
+        {!! $arr[1] !!}
+
+Você usa o `@{{``}}` caso queira fazer uma impressão equivalente ao `<pre>` do html. Esse código `{!! $arr[1] !!}` ele exibe de maneira igual ao echo do php.
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
