@@ -960,6 +960,44 @@ Todo o laço no laravel tem essa variável para que você possa fazer certas ver
     +"parent": null
 
 O `+` indica que o atributo é publico, esses atributos dizem sobre o array, o *iteration* diz qual é o turno, se for a primeira vez que executa é 1, se for a segunda é dois e por ai vai, interessante para criar listas, pois começa do 1 e não do zero como o *index* que justamente informa o índice do array. *remaining* quantos arrays faltam, *count* quantos elementos tem, *first* se é a primeira execução, assim como *last* que também retorna um booleano informando respectivamente se é o primeiro e o ultimo indice do array, o *odd* se o *iteration* é impar e o *even* se for par, interessante para criar listas zebradas, informando um plano de fundo para colunas pares e outro para impares se for o caso, o *depth* retorna a profundidade ou nível de aninhamento do loop atual; devolve 2 se for um ciclo dentro de outro e 3 se estiver aninhado um nível mais profundo, ou seja varredura de escala quadrática retorna 2, varredura de escala cúbica retorna 3 e por ai vai... *parent* Se este loop estiver aninhado em outro loop @foreach, parent retorna a variável de loop do pai; Se não for testado, retorna nulo. No caso esse seria interessante se em um laço de repetição de escala quadrática, cúbica ou etc... você quer acessar o laço imediatamente acima, por exemplo se você está em um laço cúbico e quer acessar o laço quadrático, logo você usa isso.
+
+#### Como ficou as rotas até agora?
+
+    +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------------+------------+
+    | Domain | Method                                 | URI                           | Name               | Action                                      | Middleware |
+    +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------------+------------+
+    |        | GET|HEAD                               | /                             | index              | Closure                                     | web        |
+    |        | GET|HEAD                               | api/index                     | nomedarota         | Closure                                     | api        |
+    |        | GET|HEAD                               | api/redirecionar              |                    | Closure                                     | api        |
+    |        | GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS | api/redirect                  |                    | Illuminate\Routing\RedirectController       | api        |
+    |        | POST                                   | api/test                      |                    | Closure                                     | api        |
+    |        | PUT                                    | api/test                      |                    | Closure                                     | api        |
+    |        | PATCH                                  | api/test                      |                    | Closure                                     | api        |
+    |        | DELETE                                 | api/test                      |                    | Closure                                     | api        |
+    |        | GET|HEAD                               | api/test                      |                    | Closure                                     | api        |
+    |        | GET|HEAD                               | api/user                      |                    | Closure                                     | api        |
+    |        |                                        |                               |                    |                                             | auth:api   |
+    |        | POST                                   | controller                    | controller.store   | App\Http\Controllers\resource@store         | web        |
+    |        | GET|HEAD                               | controller                    | controller.index   | App\Http\Controllers\resource@index         | web        |
+    |        | GET|HEAD                               | controller/create             | controller.create  | App\Http\Controllers\resource@create        | web        |
+    |        | DELETE                                 | controller/{controller}       | controller.destroy | App\Http\Controllers\resource@destroy       | web        |
+    |        | PUT|PATCH                              | controller/{controller}       | controller.update  | App\Http\Controllers\resource@update        | web        |
+    |        | GET|HEAD                               | controller/{controller}       | controller.show    | App\Http\Controllers\resource@show          | web        |
+    |        | GET|HEAD                               | controller/{controller}/edit  | controller.edit    | App\Http\Controllers\resource@edit          | web        |
+    |        | GET|HEAD                               | exemplo/{n1}/{n2}             |                    | App\Http\Controllers\classe@metodo          | web        |
+    |        | GET|HEAD                               | numero/{n}                    |                    | Closure                                     | web        |
+    |        | GET|HEAD                               | rotaexemplo                   |                    | Closure                                     | web        |
+    |        | GET|HEAD                               | rotaexemplo/{param1?}         |                    | Closure                                     | web        |
+    |        | GET|HEAD                               | rotaexemplo/{param1}/{param2} |                    | Closure                                     | web        |
+    |        | GET|HEAD                               | route                         |                    | Closure                                     | web        |
+    |        | GET|HEAD                               | route/{nome}/{repetir?}       |                    | Closure                                     | web        |
+    |        | GET|HEAD                               | view                          |                    | App\Http\Controllers\view@template          | web        |
+    |        | GET|HEAD                               | view/{n}                      |                    | App\Http\Controllers\view@view_simples      | web        |
+    |        | GET|HEAD                               | view_avancado/{n?}            | avancado           | App\Http\Controllers\view_avancado@response | web        |
+    +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------------+------------+
+
+
+
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
