@@ -63,3 +63,5 @@ Route::resource('controller', 'App\Http\Controllers\resource');
 
 Route::get('view/{n}','App\Http\Controllers\view@view_simples');
 Route::get('view','App\Http\Controllers\view@template');
+Route::get('view_avancado/{n?}','App\Http\Controllers\view_avancado@response')
+->name('avancado')->where('n','\d');

@@ -718,6 +718,248 @@ Esses funcionam respectivamente igual ao `isset` e o `empty` do *PHP*. No caso d
         {!! $arr[1] !!}
 
 Você usa o `@{{``}}` caso queira fazer uma impressão equivalente ao `<pre>` do html. Esse código `{!! $arr[1] !!}` ele exibe de maneira igual ao echo do php.
+
+#### Exemplos mais avançados   
+
+##### route() e request()
+[avancado.blade.php](./basico/resources/views/componentes/avancado.blade.php)
+
+        <nav>
+            <ul>
+                <li><a href="{{route('avancado',1)}}" class="{{(request()->is('view_avancado/1'))?'selected-item':'unselected'}}">Componente 1 </a></li>
+                <li><a href="{{route('avancado',2)}}" class="{{(request()->is('view_avancado/2'))?'selected-item':'unselected'}}">Componente 2 </a></li>
+                <li><a href="{{route('avancado',3)}}" class="{{(request()->is('view_avancado/3'))?'selected-item':'unselected'}}">Componente 3 </a></li>
+                <li><a href="{{route('avancado',4)}}" class="{{(request()->is('view_avancado/4'))?'selected-item':'unselected'}}">Componente 4 </a></li>
+            </ul>
+        <nav>
+
+##### route
+ Route faz o redirecionamento para uma rota estabelecida, nesse exemplo `route('avancado',1)` o primeiro argumento é o nome da rota definido aqui `Route::get('view_avancado/{n?}','App\Http\Controllers\view_avancado@response')->name('avancado')->where('n','\d');`, no caso aqui `->name('avancado')`, alem disso você pode passar parametro como segundo argumento, como no exemplo `route('avancado',1)`, nesse caso é passado como parametro o `/1/` a url, ficando nesse exemplo `/view_avancado/1`.      
+
+ ##### request
+ Dentro desse objeto está todas as informações do usuário, e dentro desse objeto tem uma função que verifica se você está em uma determinada rota que é o método `->is()`, que aceita como argumento uma string da rota a ser analisada.Segue um exemplo desse request:
+    
+    Illuminate\Http\Request {#43 ▼
+    #json: null
+    #convertedFiles: null
+    #userResolver: Closure($guard = null) {#1185 ▼
+        class: "Illuminate\Auth\AuthServiceProvider"
+        this: Illuminate\Auth\AuthServiceProvider {#135 …}
+        use: {▼
+        $app: Illuminate\Foundation\Application {#2 …}
+        }
+        file: "C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\basico\vendor\laravel\framework\src\Illuminate\Auth\AuthServiceProvider.php"
+        line: "105 to 107"
+    }
+    #routeResolver: Closure() {#1186 ▼
+        class: "Illuminate\Routing\Router"
+        this: Illuminate\Routing\Router {#26 …}
+        use: {▼
+        $route: Illuminate\Routing\Route {#1120 …}
+        }
+        file: "C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\basico\vendor\laravel\framework\src\Illuminate\Routing\Router.php"
+        line: "661 to 663"
+    }
+    +attributes: Symfony\Component\HttpFoundation\ParameterBag {#45 ▼
+        #parameters: []
+    }
+    +request: Symfony\Component\HttpFoundation\InputBag {#51 ▶}
+    +query: Symfony\Component\HttpFoundation\InputBag {#51 ▼
+        #parameters: []
+    }
+    +server: Symfony\Component\HttpFoundation\ServerBag {#47 ▼
+        #parameters: array:28 [▼
+        "DOCUMENT_ROOT" => "C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\basico\public"
+        "REMOTE_ADDR" => "::1"
+        "REMOTE_PORT" => "63456"
+        "SERVER_SOFTWARE" => "PHP 7.4.1 Development Server"
+        "SERVER_PROTOCOL" => "HTTP/1.1"
+        "SERVER_NAME" => "localhost"
+        "SERVER_PORT" => "8090"
+        "REQUEST_URI" => "/view_avancado/3"
+        "REQUEST_METHOD" => "GET"
+        "SCRIPT_NAME" => "/index.php"
+        "SCRIPT_FILENAME" => "C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\basico\public\index.php"
+        "PATH_INFO" => "/view_avancado/3"
+        "PHP_SELF" => "/index.php/view_avancado/3"
+        "HTTP_HOST" => "localhost:8090"
+        "HTTP_CONNECTION" => "keep-alive"
+        "HTTP_UPGRADE_INSECURE_REQUESTS" => "1"
+        "HTTP_USER_AGENT" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36"
+        "HTTP_ACCEPT" => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        "HTTP_SEC_FETCH_SITE" => "same-origin"
+        "HTTP_SEC_FETCH_MODE" => "navigate"
+        "HTTP_SEC_FETCH_USER" => "?1"
+        "HTTP_SEC_FETCH_DEST" => "document"
+        "HTTP_REFERER" => "http://localhost:8090/view_avancado/2"
+        "HTTP_ACCEPT_ENCODING" => "gzip, deflate, br"
+        "HTTP_ACCEPT_LANGUAGE" => "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+        "HTTP_COOKIE" => "XSRF-TOKEN=eyJpdiI6ImJvdGNjR1dWc3RmSlhJM3lBU1N3TkE9PSIsInZhbHVlIjoiSTZwRzFqSFZ0RDAxd1NXd25KRW5KVDZNdUlPbllhTTJSZ1lQcHlZbzB2R2wxOWhyT3B6V1VxY2JrQWtkVGw1MEtyNzk3W ▶"
+        "REQUEST_TIME_FLOAT" => 1606872717.2538
+        "REQUEST_TIME" => 1606872717
+        ]
+    }
+    +files: Symfony\Component\HttpFoundation\FileBag {#48 ▼
+        #parameters: []
+    }
+    +cookies: Symfony\Component\HttpFoundation\InputBag {#46 ▼
+        #parameters: array:2 [▼
+        "XSRF-TOKEN" => "FszpGYBRz1vPtalPZpAtQ6uSTmlqYlr2Apwfcl0l"
+        "laravel_session" => "AFZCVw5N8oqIAD6ZWkefVzNM3MN33plhMvTNpeh5"
+        ]
+    }
+    +headers: Symfony\Component\HttpFoundation\HeaderBag {#49 ▼
+        #headers: array:13 [▼
+        "host" => array:1 [▼
+            0 => "localhost:8090"
+        ]
+        "connection" => array:1 [▼
+            0 => "keep-alive"
+        ]
+        "upgrade-insecure-requests" => array:1 [▼
+            0 => "1"
+        ]
+        "user-agent" => array:1 [▼
+            0 => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36"
+        ]
+        "accept" => array:1 [▼
+            0 => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+        ]
+        "sec-fetch-site" => array:1 [▼
+            0 => "same-origin"
+        ]
+        "sec-fetch-mode" => array:1 [▼
+            0 => "navigate"
+        ]
+        "sec-fetch-user" => array:1 [▼
+            0 => "?1"
+        ]
+        "sec-fetch-dest" => array:1 [▼
+            0 => "document"
+        ]
+        "referer" => array:1 [▼
+            0 => "http://localhost:8090/view_avancado/2"
+        ]
+        "accept-encoding" => array:1 [▼
+            0 => "gzip, deflate, br"
+        ]
+        "accept-language" => array:1 [▼
+            0 => "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+        ]
+        "cookie" => array:1 [▼
+            0 => "XSRF-TOKEN=eyJpdiI6ImJvdGNjR1dWc3RmSlhJM3lBU1N3TkE9PSIsInZhbHVlIjoiSTZwRzFqSFZ0RDAxd1NXd25KRW5KVDZNdUlPbllhTTJSZ1lQcHlZbzB2R2wxOWhyT3B6V1VxY2JrQWtkVGw1MEtyNzk3W ▶"
+        ]
+        ]
+        #cacheControl: []
+    }
+    #content: null
+    #languages: null
+    #charsets: null
+    #encodings: null
+    #acceptableContentTypes: null
+    #pathInfo: "/view_avancado/3"
+    #requestUri: "/view_avancado/3"
+    #baseUrl: ""
+    #basePath: null
+    #method: "GET"
+    #format: null
+    #session: Illuminate\Session\Store {#1231 ▼
+        #id: "AFZCVw5N8oqIAD6ZWkefVzNM3MN33plhMvTNpeh5"
+        #name: "laravel_session"
+        #attributes: array:3 [▶]
+        #handler: Illuminate\Session\FileSessionHandler {#1230 ▼
+        #files: Illuminate\Filesystem\Filesystem {#148}
+        #path: "C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\basico\storage\framework/sessions"
+        #minutes: "120"
+        }
+        #started: true
+    }
+    #locale: null
+    #defaultLocale: "en"
+    -preferredFormat: null
+    -isHostValid: true
+    -isForwardedValid: true
+    -isSafeContentPreferred: null
+    basePath: ""
+    format: "html"
+    }
+
+##### Componentes
+
+    @switch($param)
+        @case(1)
+            @component('componentes.componente1')
+                <h1>Componente 1</h1>    
+            @endcomponent
+            @break
+        @case(2)
+            @component('componentes.componente2',['param1' => 'Parametro1', 'param2' => 'parametro2'])
+                <h1>Componente 2</h1> 
+            @endcomponent 
+            @break        
+        @case(3)
+            @component('componentes.componente3')
+                <h1>Componentes 3</h1>
+            @endcomponent
+            @break
+        @case(4)
+            @component('componentes.componente4')
+                <h1>Componentes 4</h1>
+            @endcomponent
+            @break
+        @default
+            <h1>Página Padrão </h1>
+    @endswitch
+
+Aqui acima temos um exemplo de como funciona os componentes usando: `@component`, exemplo:
+
+        @component('componentes.componente2',['param1' => 'Parametro1', 'param2' => 'parametro2'])
+            <h1>Componente 2</h1> 
+        @endcomponent 
+
+o `@componente` aceita dois argumentos, sendo o segundo opcional, o primeiro é o arquivo blade com o componente a ser carregado, no caso o componente funciona de maneira oposta ao do `@section`, no `@section` o arquivo se injeta dentro do arquivo que foi chamado pelo `@extends`, no caso o componente importa e carrega o arquivo dentro daquele espaço aonde está marcado com o `@component` e esse arquivo a ser inserido ali deve ser informado no primeiro argumento, no segundo argumento você passa os valores a serem lidos no componente, repare que o *$param1* e o *$param2* é definido dentro de um array e que estaram disponíveis dentro do componente como valores [componente2.blade.php](./basico/resources/views/componentes/componente2.blade.php):
+
+    <div>
+        {{$slot}}    
+        <hr>
+        <ul>
+            <li>{{$param1}}</li>
+            <li>{{$param2}}</li>
+        </ul>
+        <hr>    
+            <h3>Conteúdo de $slot</h3>   
+            {{dd($slot)}}    
+    </div>
+
+Aqui temos o uso das variáveis `<li>{{$param1}}</li>` e `<li>{{$param2}}</li>`, ambas definidas aqui `@component('componentes.componente2',['param1' => 'Parametro1', 'param2' => 'parametro2'])`, agora essa parte aqui `{{$slot}}` vai renderizar o que está aqui `<h1>Componente 2</h1>`, no caso com a variável *$slot*, você implementa o corpo do que foi definido o componente, tudo que foi definido no corpo pode ser impresso na integra, através da variável *$slot*.
+
+##### $loop dos laços no Laravel
+    <div>
+        {{$slot}}
+        @php
+            $arr = [0,1,2,3,4,5,6,7,8,9];    
+        @endphp
+
+        @foreach ([1] as $item)
+            <h3>Conteudo da $loop dentro de um array</h3>
+        @dump($loop)
+        @endforeach
+    </div>
+
+Todo o laço no laravel tem essa variável para que você possa fazer certas verificações, como exemplo do output do arquivo [componente1.blade.php](./basico/resources/views/componentes/componente1.blade.php) acima, abaixo a estrutura do `$loop`.
+
+    +"iteration": 1
+    +"index": 0
+    +"remaining": 0
+    +"count": 1
+    +"first": true
+    +"last": true
+    +"odd": true
+    +"even": false
+    +"depth": 1
+    +"parent": null
+
+O `+` indica que o atributo é publico, esses atributos dizem sobre o array, o *iteration* diz qual é o turno, se for a primeira vez que executa é 1, se for a segunda é dois e por ai vai, interessante para criar listas, pois começa do 1 e não do zero como o *index* que justamente informa o índice do array. *remaining* quantos arrays faltam, *count* quantos elementos tem, *first* se é a primeira execução, assim como *last* que também retorna um booleano informando respectivamente se é o primeiro e o ultimo indice do array, o *odd* se o *iteration* é impar e o *even* se for par, interessante para criar listas zebradas, informando um plano de fundo para colunas pares e outro para impares se for o caso, o *depth* retorna a profundidade ou nível de aninhamento do loop atual; devolve 2 se for um ciclo dentro de outro e 3 se estiver aninhado um nível mais profundo, ou seja varredura de escala quadrática retorna 2, varredura de escala cúbica retorna 3 e por ai vai... *parent* Se este loop estiver aninhado em outro loop @foreach, parent retorna a variável de loop do pai; Se não for testado, retorna nulo. No caso esse seria interessante se em um laço de repetição de escala quadrática, cúbica ou etc... você quer acessar o laço imediatamente acima, por exemplo se você está em um laço cúbico e quer acessar o laço quadrático, logo você usa isso.
 ### Artisan
 #### Executando um projeto no laravel
     php artisan serve
