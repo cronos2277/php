@@ -996,24 +996,90 @@ O `+` indica que o atributo é publico, esses atributos dizem sobre o array, o *
     |        | GET|HEAD                               | view_avancado/{n?}            | avancado           | App\Http\Controllers\view_avancado@response | web        |
     +--------+----------------------------------------+-------------------------------+--------------------+---------------------------------------------+------------+
 
+### Migrate 
 
+[arquivo](./basico/database/migrations/2020_12_04_152328_exemplo1.php)
 
-### Artisan
-#### Executando um projeto no laravel
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
+
+    class Exemplo1 extends Migration
+    {
+        /**
+        * Execute as migrações.
+        *
+        * @return void
+        */
+        public function up()
+        {
+            Schema::create('exemplo', function (Blueprint $table) {
+                $table->id();
+                $table->string('Valor')->unique();
+                $table->double('numero');
+                $table->date('data')->nullable();
+                $table->boolean('check')->default(true);
+                $table->rememberToken();
+                $table->timestamps();
+            });            
+
+        }
+
+        /**
+        * Reverta as migrações.
+        *
+        * @return void
+        */
+        public function down()
+        {
+            Schema::dropIfExists('exemplo');
+        }
+    }
+
+#### public function up() e public function down()
+As migrations tem por objetivo automatizar e gerenciar as estruturas dos banco de dados, no caso é criado a função **UP** é executada na criação de tabelas e o **DOWN** caso seja necessário dar um rollback, sempre recomenda-se programar as duas funções e caso seja necessário dar um rollback e voltar a ultima estrutura consolidade, volta-se através da função **DOWN**, pense nas migrations como uma espécie de *"GIT"* para banco de dados.
+
+#### Schema::create e Schema::dropIfExists
+Essa função `Schema::create('exemplo', function (Blueprint $table) ` cria tabelas no banco de dados, sendo a sua versão destrutora de tabelas `Schema::dropIfExists('exemplo')`, lembrando que o `'exemplo'` deve ser substituído pelo nome da tabela, isso serve para o único parametro do `Schema::dropIfExists` assim como o primeiro parametro de `Schema::create`. O segundo parametro da função de criação é uma callback que irá construir a tabela no banco de dados.
+
+##### function (Blueprint $table)
+Esse objeto do tipo `Blueprint` tem os seguintes métodos:
+
+`$table->id()` => Gera um campo Primary Key para a tabela.
+
+`$table->string('[Valor]')` => Cria um campo do tipo String na tabela, o `[Valor]` deve ser substituido pelo nome do campo.
+
+`$table->string('[Valor]')->unique()` => Quando adicionado o metodo do unique, isso indica que o valor do campo `[Valor]` deve ser único na tabela.
+
+`$table->double('[numero]')` => Cria um campo númerico para números com pontos flutuantes, o `[numero]` deve ser substituído pelo nome do campo.
+
+`$table->date('[data]')` => cria um campo para datas dentro da tabela, `[data]` deve ser substiuído pelo nome da coluna.
+
+`$table->date('[data]')->nullable()` => O método **nullable** permite com que o campo aceite valores nulos.
+
+## Artisan
+
+### Executando um projeto no laravel
     php artisan serve
-#### Exibindo listas de todas as rotas
+### Exibindo listas de todas as rotas
     php artisan route:list
 
-#### Criando um controller
+### Criando um controller
     php artisan make:controller [classe]
 
 O `[classe]` deve ser substituído pela classe correspondente.
 
-##### Criando um controller usando o parametro --resource
+#### Criando um controller usando o parametro --resource
     php artisan make:controller [classe] --resource
 
 Quando informado o `--resource` alguns métodos são criados.
 
+### Migrations
+`php artisan migrate` **=>** Executa as migrations que não foram executadas.
+
+`php artisan make:migration [nomeDaTabela] --create=exemplo` **=>** Cria uma nova migration já preparado para a criação e exclusão de tabelas dentro do método *UP* e *DOWN* respectivamente. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
+
+`php artisan make:migration [nomeDaTabela]` **=>** cria uma migration com o método *UP* e *DOWN* limpo. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
 ## Instalação
 ### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 
@@ -1030,3 +1096,11 @@ Caso de o seguinte erro:
 
 Vá até o arquivo `php.ini` e habilite a extensão `php_fileinfo.dll`, da seguinte forma:
 Disso: `;extension=fileinfo` para isso `extension=fileinfo`. Geralmente esse arquivo está em *C:\php\php.ini*.
+
+### Erros envolvendo Migration
+
+#### SQLSTATE[HY000] [1049] Unknown database
+Se houver esse erro verifique se o banco de dados existe no SGBD.
+
+#### SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
+Problemas envolvendo as credenciais, pode ser senha erra, usuário errado, assim como IP ou porta errada.

@@ -1,4 +1,6 @@
 version: "3.0"
+networks:
+  backend:
 services:  
   php:
     build:
@@ -11,6 +13,10 @@ services:
     volumes:            
       - ./:/var/www/html       
     links:
+      - mysql
+    networks:
+      - backend
+    depends_on:
       - mysql    
   mysql:
     restart: always
@@ -20,3 +26,5 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=phprs
       - MYSQL_DATABASE=phprs
+    networks:
+      - backend
