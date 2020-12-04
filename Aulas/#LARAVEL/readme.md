@@ -1057,6 +1057,71 @@ Esse objeto do tipo `Blueprint` tem os seguintes métodos:
 
 `$table->date('[data]')->nullable()` => O método **nullable** permite com que o campo aceite valores nulos.
 
+#### Chaves Estrangeiras
+
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
+
+    class Exemplo2 extends Migration
+    {
+
+        public function up()
+        {
+            Schema::create('exemplo2', function (Blueprint $table) {                                  
+                $table->bigIncrements('id');
+                $table->foreignId('fk');
+
+                $table
+                ->foreign('fk')
+                ->references('id')
+                ->on('exemplo')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+                $table->timestamps();
+            });
+        }
+
+        
+        public function down()
+        {
+            Schema::table('exemplo2', function (Blueprint $table) {
+                $table->dropForeign(['fk']);
+            });
+            Schema::drop('exemplo2');
+        }
+    }
+
+##### bigIncrements('[id]')
+Esse método na prática faz o que o método `id('id)` faz, no caso o *id* é um alias para esse. Substitua o `[id]` pelo nome da coluna de id, ou deixe em branco que será usado id na ausência de parametro no método.
+
+#### foreignId('[fk]')
+Cria uma chave estrangeira, ou seja informa ao Laravel que essa tabela vai ter uma chave estrangeira. Substitua o `[fk]` pelo correspondente ao nome da coluna aonde estará a chave estrangeira.
+
+##### criando a chave estrageira
+Além de informar o `foreignId`, você deve setar algumas configurações:
+
+        $table
+            ->foreign('fk')
+            ->references('id')
+            ->on('exemplo')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+
+`->foreign('[fk]')` aqui em `[fk]` deve ser informado o nome do campo correspondente da chave estrangeira na tabela que possui a chave estrangeira, `->references('[id]')`, aqui aonde está `[id]` deve ser informado o campo na outra tabela, ao qual a chave estrangeira faz referencia, nesse caso o nome do campo da outra tabela, `->on('[exemplo]')`, aonde está exemplo você deve informar o nome da outra tabela ao qual essa **fk** se relaciona.
+
+#### ->onUpdate('cascade'), onDelete('cascade')
+Ambos os métodos são opcionais, no caso seria possível criar uma fk apenas com:
+
+        $table
+            ->foreign('fk')
+            ->references('id')
+            ->on('exemplo');
+
+No caso estamos definindo o estilo *cascade* para a exclusão e atualização, nos métodos se faz necessário informar em formato de sting estaram conectados, no caso se apagar ou atualizar qualquer valor nessa fk, isso será refletido do outro lado, cascade é muito perigoso de usar para exclusões, pois ao excluir na fk toda as referencias serão apagadas.
+            
+            
 ## Artisan
 
 ### Executando um projeto no laravel
@@ -1080,6 +1145,16 @@ Quando informado o `--resource` alguns métodos são criados.
 `php artisan make:migration [nomeDaTabela] --create=exemplo` **=>** Cria uma nova migration já preparado para a criação e exclusão de tabelas dentro do método *UP* e *DOWN* respectivamente. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
 
 `php artisan make:migration [nomeDaTabela]` **=>** cria uma migration com o método *UP* e *DOWN* limpo. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
+
+`php artisan migrate:rollback` **=>** retorna a migration ao último estado consistente. No caso esse comando executa o ultimo método *DOWN* da migration mais recente.
+
+`php artisan migrate:status` **=>** Exibe quais migrate foram executados e quais não foram.
+
+`php artisan migrate:refresh` **=>** Executa o método *down* da migration mais recente, desfazendo assim todas as operações e depois executa os métodos *up* das migrations da mais antiga até a mais recente, ou seja esse comando remodela as migrations.
+
+`php artisan migrate:fresh` **=>** Essa migration ela dropa todas as tabelas e depois executa os métodos *UP* de todas as migrations.
+
+`php artisan migrate:reset` **=>** O reset executa o método *DOWN* da migrate mais recente a mais antiga, resetando todas as configurações. 
 ## Instalação
 ### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 
