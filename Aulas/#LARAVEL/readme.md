@@ -1055,8 +1055,15 @@ Esse objeto do tipo `Blueprint` tem os seguintes métodos:
 
 `$table->date('[data]')` => cria um campo para datas dentro da tabela, `[data]` deve ser substiuído pelo nome da coluna.
 
-`$table->date('[data]')->nullable()` => O método **nullable** permite com que o campo aceite valores nulos.
+`$table->date('[data]')->nullable()` => O método **nullable**, quando adicionado permite com que o campo aceite valores nulos.
 
+`$table->boolean('[check]')` => O método boolean cria um campo booleano na tabela, deve-se substituir o `[check]` pelo nome da coluna.
+
+`$table->boolean('check')->default(true)` => Quando adicionado o método **default**, você coloca um valor padrão para o campo, caso o mesmo não tenha um valor.
+
+`$table->rememberToken()` => cria um campo para o gerenciamento de *tokens* na tabela. Pode ser útil caso queira usar essa tabela para gerenciar logins.
+
+`$table->timestamps()` => cria dois campos do tipo **datastamp**, que contem adiciona dois campos, com a data de criação e outra com a data da ultima modificação, pode ser interessante, caso queira ter um controle sobre as alterações feita nas tabelas. 
 ## Artisan
 
 ### Executando um projeto no laravel
