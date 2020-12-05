@@ -1,4 +1,13 @@
 # Laravel
+
+* Rotas [ir](#rotas)
+* Controllers [ir](#controller)
+* Views [ir](#views)
+* Migrations [ir](#migrations)
+
+* Tinker [ir](#tinker)
+* Artisan [ir](#artisan)
+* Problemas e instalação [ir](#instalação)
 ## Explicando o Laravel
 ### Rotas
 #### Arquivos
@@ -1474,6 +1483,165 @@ Quando você quer que o operador do where seja diferente do igual, você deve in
         }
 
 Ou seja um *where* com dois parametros ele procura por valores que são iguais aos passados, porém quando tem três parametros, esse relacionamento seria determinado pelo segundo parametro.
+
+#### orWhere
+`Modelo::orWhere('id','=','2')->orWhere('id','=','4')->get()` que seria equivalente a `select * from modelos where id = 2 or id = 4`, por padrão o **where** trabalha com o operador *AND* para cada where, caso seja necessário ao invés de usar o *AND* usar o *OR*, logo tem o **orWhere**.
+
+    => Illuminate\Database\Eloquent\Collection {#4238
+        all: [
+            App\Models\Modelo {#4239
+                id: 2,
+                Valor: "valor",
+                numero: 990.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 17:40:21",
+                updated_at: "2020-12-05 17:40:21",
+            },
+            App\Models\Modelo {#4240
+                id: 4,
+                Valor: "meu_valor",
+                numero: 850.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:44:56",
+                updated_at: "2020-12-05 18:44:56",
+            },
+        ],
+    }
+
+##### whereBetween
+`whereBetween` procura um intervalo de valores, essa query `Modelo::whereBetween('id',[1,3])->get()` seria equivalente a `SELECT * FROM modelos WHERE id BETWEEN 1 and 3`, o primeiro valor é o campo e o segundo um array contendo um intervalo a ser analisado, como no exemplo abaixo:
+
+    => Illuminate\Database\Eloquent\Collection {#4202
+        all: [
+            App\Models\Modelo {#4213
+                id: 1,
+                Valor: "valor1",
+                numero: 1000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 17:12:13",
+                updated_at: "2020-12-05 17:12:13",
+            },
+            App\Models\Modelo {#4237
+                id: 2,
+                Valor: "valor",
+                numero: 990.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 17:40:21",
+                updated_at: "2020-12-05 17:40:21",
+            },
+            App\Models\Modelo {#4229
+                id: 3,
+                Valor: "meu valor",
+                numero: 500.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:44:45",
+                updated_at: "2020-12-05 18:44:45",
+            },
+        ],
+    }
+
+##### whereNotBetween
+Faz o exato contrário do whereNotBetween, ou seja ele seleciona tudo que estiver fora da seleção do **whereBetween**. Isso ` Modelo::whereNotBetween('id',[1,3])->get()` seria equivalente a `SELECT * FROM `modelos` WHERE id NOT BETWEEN 1 and 3`. Output:
+
+        => Illuminate\Database\Eloquent\Collection {#4223
+            all: [
+                App\Models\Modelo {#4238
+                    id: 4,
+                    Valor: "meu_valor",
+                    numero: 850.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:56",
+                    updated_at: "2020-12-05 18:44:56",
+                },
+                App\Models\Modelo {#4220
+                    id: 5,
+                    Valor: "m_val",
+                    numero: 335.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:45:11",
+                    updated_at: "2020-12-05 18:45:11",
+                },
+            ],
+    }
+
+##### WhereIn e WhereNotIn
+WhereIn seleciona dentro de um intervalo e o whereNotIn fora desse intervalo especificado, esse código ` Modelo::whereIn('id',[1,3,5])->get()` equivale a `SELECT * FROM `modelos` WHERE id IN (1,3,5)`, ou seja retorna o valor dentro do intervalo especificado. Output:
+
+        => Illuminate\Database\Eloquent\Collection {#4250
+            all: [
+                App\Models\Modelo {#4227
+                    id: 1,
+                    Valor: "valor1",
+                    numero: 1000.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 17:12:13",
+                    updated_at: "2020-12-05 17:12:13",
+                },
+                App\Models\Modelo {#4200
+                    id: 3,
+                    Valor: "meu valor",
+                    numero: 500.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:45",
+                    updated_at: "2020-12-05 18:44:45",
+                },
+                App\Models\Modelo {#4248
+                    id: 5,
+                    Valor: "m_val",
+                    numero: 335.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:45:11",
+                    updated_at: "2020-12-05 18:45:11",
+                },
+            ],
+        }
+
+A negação com o **whereNotBetween** ` Modelo::whereNotIn('id',[1,3,5])->get()` equivale a `SELECT * FROM `modelos` WHERE id NOT IN (1,3,5)`, output:
+
+        => Illuminate\Database\Eloquent\Collection {#4221
+            all: [
+                App\Models\Modelo {#4213
+                    id: 2,
+                    Valor: "valor",
+                    numero: 990.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 17:40:21",
+                    updated_at: "2020-12-05 17:40:21",
+                },
+                App\Models\Modelo {#4219
+                    id: 4,
+                    Valor: "meu_valor",
+                    numero: 850.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:56",
+                    updated_at: "2020-12-05 18:44:56",
+                },
+            ],
+        }
 
 
 ## Instalação
