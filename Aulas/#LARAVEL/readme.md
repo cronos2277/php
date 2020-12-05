@@ -1252,6 +1252,230 @@ Ali dentro do array `$fillable` deve conter pelo menos o nome de todos os campos
             id: 2,
         }
 
+#### Procurando dados
+##### usando o método estático Find
+
+        Illuminate\Database\Eloquent\Collection {#4234
+        all: [
+            App\Models\Modelo {#4238
+                id: 1,
+                Valor: "valor1",
+                numero: 1000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 17:12:13",
+                updated_at: "2020-12-05 17:12:13",
+            },
+            App\Models\Modelo {#4242
+                id: 2,
+                Valor: "valor",
+                numero: 990.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 17:40:21",
+                updated_at: "2020-12-05 17:40:21",
+            },
+            App\Models\Modelo {#4243
+                id: 3,
+                Valor: "meu valor",
+                numero: 500.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:44:45",
+                updated_at: "2020-12-05 18:44:45",
+            },
+            App\Models\Modelo {#4244
+                id: 4,
+                Valor: "meu_valor",
+                numero: 850.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:44:56",
+                updated_at: "2020-12-05 18:44:56",
+            },
+            App\Models\Modelo {#4245
+                id: 5,
+                Valor: "m_val",
+                numero: 335.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:45:11",
+                updated_at: "2020-12-05 18:45:11",
+            },
+        ],
+    }
+    
+
+Com o find você pode retornar registros com base no ID, no caso para que isso ocorra você deve definir o nome como `ID` na sua Migration, uma vez feito isso você pode usar esse método, ou seja ele retorna o valor passado como, o exemplo abaixo seria algo como `select * from [modelos] where id = 3`, sendo `[modelos]` o nome da tabela desse exemplo, seguindo o padrão de nomenclatura do Laravel: Comando no *tinker* `Modelo::find(3)`:
+
+    => App\Models\Modelo {#4215
+            id: 3,
+            Valor: "meu valor",
+            numero: 500.0,
+            data: null,
+            check: 1,
+            remember_token: null,
+            created_at: "2020-12-05 18:44:45",
+            updated_at: "2020-12-05 18:44:45",
+        }
+
+Comando no tinker `Modelo::find([3,5])`, algo equivalente a `select * from [modelos] where id = 3 or id = 5`, no caso o array funciona como um conjunto de **or**.
+
+    => Illuminate\Database\Eloquent\Collection {#4204
+        all: [
+            App\Models\Modelo {#4210
+                id: 3,
+                Valor: "meu valor",
+                numero: 500.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:44:45",
+                updated_at: "2020-12-05 18:44:45",
+            },
+            App\Models\Modelo {#4223
+                id: 5,
+                Valor: "m_val",
+                numero: 335.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-05 18:45:11",
+                updated_at: "2020-12-05 18:45:11",
+            },
+        ],
+    }
+
+Comando no tinker `Modelo::find(4,['id','valor','numero'])`, seria equivalente a `select id,valor,numero from [modelos] where id = 4`, caso os elementos do array passado como segundo parametro, passado em formato string, os parametros são usados como base para retornar as colunas, segue o exemplo passando como segundo parametro um array de String.
+
+        => App\Models\Modelo {#4215
+            id: 4,
+            valor: "meu_valor",
+            numero: 850.0,
+        }
+
+Passando dois arrays para o método find: `Modelo::find([2,4],['id','valor','numero'])`, seria equivalente a `select id, valor, numero [modelos] where id = 2 or id =4`
+
+        => Illuminate\Database\Eloquent\Collection {#4223
+            all: [
+                App\Models\Modelo {#4221
+                    id: 2,
+                    valor: "valor",
+                    numero: 990.0,
+                },
+                App\Models\Modelo {#4233
+                    id: 4,
+                    valor: "meu_valor",
+                    numero: 850.0,
+                },
+            ],
+    }
+
+Lembrando: O primeiro parametro sempre será ou o *ID*, ou um array contendo *IDS* a serem retornados e o segundo deve ser uma String ou uma array de string com os campos a serem retornados pelo o método *::find*, mas novamente você deve ter a primary key nomeada como id na sua tabela, do contrário esse método não funcionará.
+
+#### Where
+Exemplo de `Modelo::where('id',3)`, nesse caso esse método retorna um objeto, segue o output: `=> Illuminate\Database\Eloquent\Builder {#4241}`, ou seja com o where é possível fazer uma sequência customizável de consultas.
+
+##### Método get() do where
+Se você quer usar de maneira semelhante ao `::find()`, você deve informar o `->get()` após o `where()`, ficando `::where()->get()`, exemplo: `Modelo::where('id',3)->get()` sendo equivalente a `select * from modelos where id = 3`, output:
+
+        => Illuminate\Database\Eloquent\Collection {#4201
+            all: [
+                App\Models\Modelo {#4237
+                    id: 3,
+                    Valor: "meu valor",
+                    numero: 500.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:45",
+                    updated_at: "2020-12-05 18:44:45",
+                },
+            ],
+        }
+
+o `::where` é a alternativa ao find e permite passar o nome do campo que deseja-se buscar, no caso pode-se fazer consultas em campos que não seja id ` Modelo::where('numero',500)->get()`, sendo: `select * from modelos where numero = 500`
+
+        => Illuminate\Database\Eloquent\Collection {#4229
+            all: [
+                App\Models\Modelo {#4209
+                    id: 3,
+                    Valor: "meu valor",
+                    numero: 500.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:45",
+                    updated_at: "2020-12-05 18:44:45",
+                },
+            ],
+        }
+
+Também é possível encadear where `::where()->where()->where()`, nesse caso o operador funciona como um **AND** `Modelo::where('numero',500)->where('id',3)->get()` equivalente a `select * from modelos where numero = 500 and id = 3`:
+
+        => Illuminate\Database\Eloquent\Collection {#4244
+            all: [
+                App\Models\Modelo {#4229
+                    id: 3,
+                    Valor: "meu valor",
+                    numero: 500.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:45",
+                    updated_at: "2020-12-05 18:44:45",
+                },
+            ],
+        }
+
+Lembre-se que apenas o primeiro **where** é estático, os outros não são, logo: `::where()->where()->where()->where() ... ->get()`, porém para ter retorno deve-se usar o `get()`, pois até que isso aconeteça o retorno será um objeto `Illuminate\Database\Eloquent\Builder`.
+
+##### Terceiro parametro no where
+Quando você quer que o operador do where seja diferente do igual, você deve informar isso como segundo parametro do where, exemplo: `Modelo::where('id','>',1)->where('id','<',5)->get()`, que equivale a: `select * from modelos where id > 1 and id < 5`. Output:
+
+        => Illuminate\Database\Eloquent\Collection {#4231
+            all: [
+                App\Models\Modelo {#4242
+                    id: 2,
+                    Valor: "valor",
+                    numero: 990.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 17:40:21",
+                    updated_at: "2020-12-05 17:40:21",
+                },
+                App\Models\Modelo {#4224
+                    id: 3,
+                    Valor: "meu valor",
+                    numero: 500.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:45",
+                    updated_at: "2020-12-05 18:44:45",
+                },
+                App\Models\Modelo {#4204
+                    id: 4,
+                    Valor: "meu_valor",
+                    numero: 850.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:56",
+                    updated_at: "2020-12-05 18:44:56",
+                },
+            ],
+        }
+
+Ou seja um *where* com dois parametros ele procura por valores que são iguais aos passados, porém quando tem três parametros, esse relacionamento seria determinado pelo segundo parametro.
+
+
 ## Instalação
 ### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 
