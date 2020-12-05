@@ -16,7 +16,7 @@ class Exemplo2 extends Migration
             $table
             ->foreign('fk')
             ->references('id')
-            ->on('exemplo')
+            ->on('exemplo1')
             ->onUpdate('cascade')
             ->onDelete('cascade');
 

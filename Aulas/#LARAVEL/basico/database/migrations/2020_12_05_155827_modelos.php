@@ -4,16 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Exemplo1 extends Migration
+class Modelos extends Migration
 {
-    /**
-     * Execute as migrações.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('exemplo1', function (Blueprint $table) {
+        Schema::create('modelos', function (Blueprint $table) {
             $table->id();
             $table->string('Valor')->unique();
             $table->double('numero');
@@ -21,19 +16,12 @@ class Exemplo1 extends Migration
             $table->boolean('check')->default(true);
             $table->rememberToken();
             $table->timestamps();
-        });
-
-        
-
+        });   
     }
 
-    /**
-     * Reverta as migrações.
-     *
-     * @return void
-     */
+    
     public function down()
     {
-        Schema::dropIfExists('exemplo');
+        Schema::dropIfExists('modelos');
     }
 }

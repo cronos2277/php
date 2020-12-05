@@ -1013,7 +1013,7 @@ O `+` indica que o atributo é publico, esses atributos dizem sobre o array, o *
         */
         public function up()
         {
-            Schema::create('exemplo', function (Blueprint $table) {
+            Schema::create('exemplo1', function (Blueprint $table) {
                 $table->id();
                 $table->string('Valor')->unique();
                 $table->double('numero');
@@ -1032,7 +1032,7 @@ O `+` indica que o atributo é publico, esses atributos dizem sobre o array, o *
         */
         public function down()
         {
-            Schema::dropIfExists('exemplo');
+            Schema::dropIfExists('exemplo1');
         }
     }
 
@@ -1040,7 +1040,7 @@ O `+` indica que o atributo é publico, esses atributos dizem sobre o array, o *
 As migrations tem por objetivo automatizar e gerenciar as estruturas dos banco de dados, no caso é criado a função **UP** é executada na criação de tabelas e o **DOWN** caso seja necessário dar um rollback, sempre recomenda-se programar as duas funções e caso seja necessário dar um rollback e voltar a ultima estrutura consolidade, volta-se através da função **DOWN**, pense nas migrations como uma espécie de *"GIT"* para banco de dados.
 
 #### Schema::create e Schema::dropIfExists
-Essa função `Schema::create('exemplo', function (Blueprint $table) ` cria tabelas no banco de dados, sendo a sua versão destrutora de tabelas `Schema::dropIfExists('exemplo')`, lembrando que o `'exemplo'` deve ser substituído pelo nome da tabela, isso serve para o único parametro do `Schema::dropIfExists` assim como o primeiro parametro de `Schema::create`. O segundo parametro da função de criação é uma callback que irá construir a tabela no banco de dados.
+Essa função `Schema::create('exemplo1', function (Blueprint $table) ` cria tabelas no banco de dados, sendo a sua versão destrutora de tabelas `Schema::dropIfExists('exemplo1')`, lembrando que o `'exemplo1'` deve ser substituído pelo nome da tabela, isso serve para o único parametro do `Schema::dropIfExists` assim como o primeiro parametro de `Schema::create`. O segundo parametro da função de criação é uma callback que irá construir a tabela no banco de dados. Cuidado ao renomear as tabelas, existe um sistema de nomenclatura no laravel, que uma vez que seja respeitado, facilita e muito a integração e reduz a significativamente muitas configurações, caso a nomenclatura seja respeitada, no caso usar o nome das tabelas no plural é uma delas, isso ajuda muito na integração com o Laravel, ignorar essa convenção pode exigir configurações extras por parte do Laravel para identificar a tabela no SGBD.
 
 ##### function (Blueprint $table)
 Esse objeto do tipo `Blueprint` tem os seguintes métodos:
@@ -1082,7 +1082,7 @@ Esse objeto do tipo `Blueprint` tem os seguintes métodos:
                 $table
                 ->foreign('fk')
                 ->references('id')
-                ->on('exemplo')
+                ->on('exemplo1')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
@@ -1116,7 +1116,7 @@ Além de informar o `foreignId`, você deve setar algumas configurações:
             ->onUpdate('cascade')
             ->onDelete('cascade');
 
-`->foreign('[fk]')` aqui em `[fk]` deve ser informado o nome do campo correspondente da chave estrangeira na tabela que possui a chave estrangeira, `->references('[id]')`, aqui aonde está `[id]` deve ser informado o campo na outra tabela, ao qual a chave estrangeira faz referencia, nesse caso o nome do campo da outra tabela, `->on('[exemplo]')`, aonde está exemplo você deve informar o nome da outra tabela ao qual essa **fk** se relaciona.
+`->foreign('[fk]')` aqui em `[fk]` deve ser informado o nome do campo correspondente da chave estrangeira na tabela que possui a chave estrangeira, `->references('[id]')`, aqui aonde está `[id]` deve ser informado o campo na outra tabela, ao qual a chave estrangeira faz referencia, nesse caso o nome do campo da outra tabela, `->on('[exemplo1]')`, aonde está exemplo você deve informar o nome da outra tabela ao qual essa **fk** se relaciona.
 
 #### ->onUpdate('cascade'), onDelete('cascade')
 Ambos os métodos são opcionais, no caso seria possível criar uma fk apenas com:
@@ -1124,7 +1124,7 @@ Ambos os métodos são opcionais, no caso seria possível criar uma fk apenas co
         $table
             ->foreign('fk')
             ->references('id')
-            ->on('exemplo');
+            ->on('exemplo1');
 
 No caso estamos definindo o estilo *cascade* para a exclusão e atualização, nos métodos se faz necessário informar em formato de sting estaram conectados, no caso se apagar ou atualizar qualquer valor nessa fk, isso será refletido do outro lado, cascade é muito perigoso de usar para exclusões, pois ao excluir na fk toda as referencias serão apagadas.
             
@@ -1146,22 +1146,112 @@ O `[classe]` deve ser substituído pela classe correspondente.
 
 Quando informado o `--resource` alguns métodos são criados.
 
+### Models
+Criando um modelo `php artisan make:model [Nome]`, dessa forma você cria um modelo, devendo substituir o `[Nome]` pelo nome correspondente ao da classe, como é classe recomenda-se que a primeira letra do nome comece com letra maiúscula e seja no singular, no caso uma classe que se chama **Modelo** por padrão irá procurar por uma tabela no banco de dados chamado *modelos*, por isso recomenda-se plural nas migrations e singular com a primeira letra em maíuscula nos modelos, isso é o comportamento padrão, podendo ser configurado posteriormente, mas até para evitar dores de cabeça, recomenda-se seguir o padrão. Todos os modelos estaram na pasta [app/Models/](./basico/app/Models)
 ### Migrations
-`php artisan migrate` **=>** Executa as migrations que não foram executadas.
+`php artisan migrate` **=>** Executa as migrations que não foram executadas. As migrations ficam aqui: [database/migrations](./basico/database/migrations)
 
-`php artisan make:migration [nomeDaTabela] --create=exemplo` **=>** Cria uma nova migration já preparado para a criação e exclusão de tabelas dentro do método *UP* e *DOWN* respectivamente. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
+`php artisan make:migration [nomeDaTabela] --create=exemplo` **=>** Cria uma nova migration já preparado para a criação e exclusão de tabelas dentro do método *UP* e *DOWN* respectivamente. 
+`[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados. Lembre-se sempre de usar nomes no plural, pois isso facilita a configuração de modelos no Laravel.
+
+#### Migrate:status
+`php artisan migrate:status` **=>** Exibe quais migrate foram executados e quais não foram, exibirá um output como esse:
+
+    | Ran? | Migration                                      | Batch |
+    +------+------------------------------------------------+-------+
+    | Yes  | 2014_10_12_000000_create_users_table           | 1     |
+    | Yes  | 2014_10_12_100000_create_password_resets_table | 1     |
+    | Yes  | 2019_08_19_000000_create_failed_jobs_table     | 1     |
+    | Yes  | 2020_12_04_152328_exemplo1                     | 1     |
+    | Yes  | 2020_12_04_210240_exemplo2                     | 1     |
+    | Yes  | 2020_12_05_155827_modelos                      | 1     |
+    +------+------------------------------------------------+-------+
+
+A primeira coluna informa se foi executado, a segunda o nome da migration em questão e a segunda, em qual lota que foi aplicado, ou seja se ela foi executado na primeira execução do comando para a criação de migration, ou na segunda execução, ou na *N* execução. Todos que foram executados no ato de criação das tabelas no banco de o valor de *Batch* como 1, valores maiores de *batch* que 1 são atualização de estrutura e foram executado posteriormente a criação.    
 
 `php artisan make:migration [nomeDaTabela]` **=>** cria uma migration com o método *UP* e *DOWN* limpo. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
 
 `php artisan migrate:rollback` **=>** retorna a migration ao último estado consistente. No caso esse comando executa o ultimo método *DOWN* da migration mais recente.
 
-`php artisan migrate:status` **=>** Exibe quais migrate foram executados e quais não foram.
 
 `php artisan migrate:refresh` **=>** Executa o método *down* da migration mais recente, desfazendo assim todas as operações e depois executa os métodos *up* das migrations da mais antiga até a mais recente, ou seja esse comando remodela as migrations.
 
 `php artisan migrate:fresh` **=>** Essa migration ela dropa todas as tabelas e depois executa os métodos *UP* de todas as migrations.
 
 `php artisan migrate:reset` **=>** O reset executa o método *DOWN* da migrate mais recente a mais antiga, resetando todas as configurações. 
+
+## Tinker
+No laravel tem um utilitário que auxilia no crud de uma aplicação, como ele você pode fazer operações de crud no terminal por meio de um **CLI**, comando `php artisan tinker`
+
+### use
+Inicialmente você deve informar o Modelo que você quer usar, os modelos ficam localizados na pasta [app/Models/](./basico/app/Models), você pode fazer esse acesso com o comando use, uma vez inicializado o tinker `use \App\Models\[Modelo]`, aonde está o `[Modelo]`, você deve informar o nome do arquivo de modelo.
+
+### ::all()
+Uma vez acessado, você pode usar o método estático all para acessar todos os registros no banco de dados desse modelo como no exemplo `[Modelo]::all()`, lembrando que o `[Modelo]` deve ser substituído pelo Modelo: `Modelo::all()`, lembrando que por padrão um model chamado de `Model` procuraria por um banco de dados chamado `models`, por padrão, logo esse seria um dos motivos para uma Migration estar no plural e o Modelo em upperlowercase e no singular. O que esse método faz `Modelo::all()` é justamente um fullscan no banco de dados, no caso o famoso `select *`, que pode derrubar um banco de dados em modo produção, se houver um retorno parecido com isso:
+
+    => Illuminate\Database\Eloquent\Collection {#4212
+     all: [],
+    }
+
+Significa que não há dados registrados.
+
+### Inserindo dados
+    $modelo = new Modelo();
+    $modelo->valor = 'valor1';
+    $modelo->numero = 1000;
+
+No caso você instancia o Modelo e coloca valor em todos os seus atributos, no caso [essa migration](./basico/database/migrations/2020_12_05_155827_modelos.php) tem apenas dois dados obrigatórios que são esses dois. Nessa estratégia você instancia o Modelo, coloca atributos neles, seguindo a logica do método mágico `__set`e uma vez que tudo esteja feito:
+
+     $modelo->save()
+
+O método `save()` vem da classe pai do modelo a `Illuminate\Database\Eloquent\Model` e esse método salva os dados que você colocou, se tudo ocorrer bem o output será esse:
+
+    => true
+Usando o método `$modelo->all()` ou `Model::all()`, sendo o output:
+
+    => Illuminate\Database\Eloquent\Collection {#4213
+     all: [
+       App\Models\Modelo {#4214
+         id: 1,
+         Valor: "valor1",
+         numero: 1000.0,
+         data: null,
+         check: 1,
+         remember_token: null,
+         created_at: "2020-12-05 17:12:13",
+         updated_at: "2020-12-05 17:12:13",
+       },
+     ],
+
+#### Usando o método estático create
+     Modelo::create(['valor' => 'Valor', 'numero' => '0'])
+
+Esse método acima você usa o `::create()`, dentro desse método você passa um array associativo, sendo chave o campo e o valor o valor a ser inserido, porém o mesmo deve ser informado na classe de [Modelo](./basico/app/Models/Modelo.php), do contrário o erro abaixo acontece:
+
+    PHP Fatal error:  Class 'Modelo' not found in Psy Shell code on line 1
+
+No caso acima se faz necessário fazer uns ajustes na classe [Modelo](./basico/app/Models/Modelo.php), no caso informar os campos a propriedade protegida `protected $fillable = ['valor','numero']`:
+
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Modelo extends Model
+    {
+        use HasFactory;
+        protected $fillable = ['valor','numero'];
+    }
+
+Ali dentro do array `$fillable` deve conter pelo menos o nome de todos os campos da tabela ao qual você deseja inserir valores, e lembrando que o array a ser passado como parametro em `Modelo::create(['valor' => 'Valor', 'numero' => '0'])` deve seguir a mesma ordem que a definida no `$fillable`, nesse exemplo é aceito respectivamente uma String e um Double, sendo o output do comando `Modelo::create(['valor' => 'valor','numero' => '990'])`:
+
+    => App\Models\Modelo {#4200
+            valor: "valor",
+            numero: "990",
+            updated_at: "2020-12-05 17:40:21",
+            created_at: "2020-12-05 17:40:21",
+            id: 2,
+        }
+
 ## Instalação
 ### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 
