@@ -4,6 +4,7 @@
 * Controllers [ir](#controller)
 * Views [ir](#views)
 * Migrations [ir](#migrations)
+* Models [ir](#model)
 
 * Tinker [ir](#tinker)
 * Artisan [ir](#artisan)
@@ -1136,66 +1137,13 @@ Ambos os métodos são opcionais, no caso seria possível criar uma fk apenas co
             ->on('exemplo1');
 
 No caso estamos definindo o estilo *cascade* para a exclusão e atualização, nos métodos se faz necessário informar em formato de sting estaram conectados, no caso se apagar ou atualizar qualquer valor nessa fk, isso será refletido do outro lado, cascade é muito perigoso de usar para exclusões, pois ao excluir na fk toda as referencias serão apagadas.
-            
-            
-## Artisan
 
-### Executando um projeto no laravel
-    php artisan serve
-### Exibindo listas de todas as rotas
-    php artisan route:list
+### Model
+[Collections 'documentação'](https://laravel.com/docs/8.x/collections#available-methods) o tipo de dado que essas operações retornam, é um objeto que aceita vários tipos de operações e algumas explicadas aqui.
 
-### Criando um controller
-    php artisan make:controller [classe]
+[Builder 'documentação'](https://laravel.com/docs/8.x/queries), aqui o outro tipo muito importante para a construção de Query complexas.
+### Método estático all()
 
-O `[classe]` deve ser substituído pela classe correspondente.
-
-#### Criando um controller usando o parametro --resource
-    php artisan make:controller [classe] --resource
-
-Quando informado o `--resource` alguns métodos são criados.
-
-### Models
-Criando um modelo `php artisan make:model [Nome]`, dessa forma você cria um modelo, devendo substituir o `[Nome]` pelo nome correspondente ao da classe, como é classe recomenda-se que a primeira letra do nome comece com letra maiúscula e seja no singular, no caso uma classe que se chama **Modelo** por padrão irá procurar por uma tabela no banco de dados chamado *modelos*, por isso recomenda-se plural nas migrations e singular com a primeira letra em maíuscula nos modelos, isso é o comportamento padrão, podendo ser configurado posteriormente, mas até para evitar dores de cabeça, recomenda-se seguir o padrão. Todos os modelos estaram na pasta [app/Models/](./basico/app/Models)
-### Migrations
-`php artisan migrate` **=>** Executa as migrations que não foram executadas. As migrations ficam aqui: [database/migrations](./basico/database/migrations)
-
-`php artisan make:migration [nomeDaTabela] --create=exemplo` **=>** Cria uma nova migration já preparado para a criação e exclusão de tabelas dentro do método *UP* e *DOWN* respectivamente. 
-`[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados. Lembre-se sempre de usar nomes no plural, pois isso facilita a configuração de modelos no Laravel.
-
-#### Migrate:status
-`php artisan migrate:status` **=>** Exibe quais migrate foram executados e quais não foram, exibirá um output como esse:
-
-    | Ran? | Migration                                      | Batch |
-    +------+------------------------------------------------+-------+
-    | Yes  | 2014_10_12_000000_create_users_table           | 1     |
-    | Yes  | 2014_10_12_100000_create_password_resets_table | 1     |
-    | Yes  | 2019_08_19_000000_create_failed_jobs_table     | 1     |
-    | Yes  | 2020_12_04_152328_exemplo1                     | 1     |
-    | Yes  | 2020_12_04_210240_exemplo2                     | 1     |
-    | Yes  | 2020_12_05_155827_modelos                      | 1     |
-    +------+------------------------------------------------+-------+
-
-A primeira coluna informa se foi executado, a segunda o nome da migration em questão e a segunda, em qual lota que foi aplicado, ou seja se ela foi executado na primeira execução do comando para a criação de migration, ou na segunda execução, ou na *N* execução. Todos que foram executados no ato de criação das tabelas no banco de o valor de *Batch* como 1, valores maiores de *batch* que 1 são atualização de estrutura e foram executado posteriormente a criação.    
-
-`php artisan make:migration [nomeDaTabela]` **=>** cria uma migration com o método *UP* e *DOWN* limpo. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
-
-`php artisan migrate:rollback` **=>** retorna a migration ao último estado consistente. No caso esse comando executa o ultimo método *DOWN* da migration mais recente.
-
-
-`php artisan migrate:refresh` **=>** Executa o método *down* da migration mais recente, desfazendo assim todas as operações e depois executa os métodos *up* das migrations da mais antiga até a mais recente, ou seja esse comando remodela as migrations.
-
-`php artisan migrate:fresh` **=>** Essa migration ela dropa todas as tabelas e depois executa os métodos *UP* de todas as migrations.
-
-`php artisan migrate:reset` **=>** O reset executa o método *DOWN* da migrate mais recente a mais antiga, resetando todas as configurações. 
-
-## Tinker
-No laravel tem um utilitário que auxilia no crud de uma aplicação, como ele você pode fazer operações de crud no terminal por meio de um **CLI**, comando `php artisan tinker`
-
-### use
-Inicialmente você deve informar o Modelo que você quer usar, os modelos ficam localizados na pasta [app/Models/](./basico/app/Models), você pode fazer esse acesso com o comando use, uma vez inicializado o tinker `use \App\Models\[Modelo]`, aonde está o `[Modelo]`, você deve informar o nome do arquivo de modelo.
-
-### ::all()
 Uma vez acessado, você pode usar o método estático all para acessar todos os registros no banco de dados desse modelo como no exemplo `[Modelo]::all()`, lembrando que o `[Modelo]` deve ser substituído pelo Modelo: `Modelo::all()`, lembrando que por padrão um model chamado de `Model` procuraria por um banco de dados chamado `models`, por padrão, logo esse seria um dos motivos para uma Migration estar no plural e o Modelo em upperlowercase e no singular. O que esse método faz `Modelo::all()` é justamente um fullscan no banco de dados, no caso o famoso `select *`, que pode derrubar um banco de dados em modo produção, se houver um retorno parecido com isso:
 
     => Illuminate\Database\Eloquent\Collection {#4212
@@ -1204,7 +1152,7 @@ Uma vez acessado, você pode usar o método estático all para acessar todos os 
 
 Significa que não há dados registrados.
 
-### Inserindo dados
+#### Inserindo dados
     $modelo = new Modelo();
     $modelo->valor = 'valor1';
     $modelo->numero = 1000;
@@ -1232,7 +1180,7 @@ Usando o método `$modelo->all()` ou `Model::all()`, sendo o output:
        },
      ],
 
-#### Usando o método estático create
+##### Usando o método estático create
      Modelo::create(['valor' => 'Valor', 'numero' => '0'])
 
 Esse método acima você usa o `::create()`, dentro desse método você passa um array associativo, sendo chave o campo e o valor o valor a ser inserido, porém o mesmo deve ser informado na classe de [Modelo](./basico/app/Models/Modelo.php), do contrário o erro abaixo acontece:
@@ -1387,7 +1335,7 @@ Passando dois arrays para o método find: `Modelo::find([2,4],['id','valor','num
 
 Lembrando: O primeiro parametro sempre será ou o *ID*, ou um array contendo *IDS* a serem retornados e o segundo deve ser uma String ou uma array de string com os campos a serem retornados pelo o método *::find*, mas novamente você deve ter a primary key nomeada como id na sua tabela, do contrário esse método não funcionará.
 
-#### Where
+##### Where
 Exemplo de `Modelo::where('id',3)`, nesse caso esse método retorna um objeto, segue o output: `=> Illuminate\Database\Eloquent\Builder {#4241}`, ou seja com o where é possível fazer uma sequência customizável de consultas.
 
 ##### Método get() do where
@@ -1484,7 +1432,7 @@ Quando você quer que o operador do where seja diferente do igual, você deve in
 
 Ou seja um *where* com dois parametros ele procura por valores que são iguais aos passados, porém quando tem três parametros, esse relacionamento seria determinado pelo segundo parametro.
 
-#### orWhere
+##### orWhere
 `Modelo::orWhere('id','=','2')->orWhere('id','=','4')->get()` que seria equivalente a `select * from modelos where id = 2 or id = 4`, por padrão o **where** trabalha com o operador *AND* para cada where, caso seja necessário ao invés de usar o *AND* usar o *OR*, logo tem o **orWhere**.
 
     => Illuminate\Database\Eloquent\Collection {#4238
@@ -1642,6 +1590,337 @@ A negação com o **whereNotBetween** ` Modelo::whereNotIn('id',[1,3,5])->get()`
                 },
             ],
         }
+
+##### Função dentro do Where
+Você também pode passar callbacks para consultas SQL mais avançadas, exemplo ` Modelo::where(function($sql){ $sql->where('id',2);})->get()`:
+
+        => Illuminate\Database\Eloquent\Collection {#4220
+            all: [
+                App\Models\Modelo {#4202
+                    id: 2,
+                    Valor: "valor",
+                    numero: 990.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 17:40:21",
+                    updated_at: "2020-12-05 17:40:21",
+                },
+            ],
+    }
+
+Também é possível passar callback para o orWhere `Modelo::orWhere(function($sql){$sql->where('id',2)->orWhere('id','>',3);})->get()`, no caso essas servem para fazer consultas mais complexas:
+
+        => Illuminate\Database\Eloquent\Collection {#4223
+            all: [
+                App\Models\Modelo {#4229
+                    id: 2,
+                    Valor: "valor",
+                    numero: 990.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 17:40:21",
+                    updated_at: "2020-12-05 17:40:21",
+                },
+                App\Models\Modelo {#4230
+                    id: 4,
+                    Valor: "meu_valor",
+                    numero: 850.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:44:56",
+                    updated_at: "2020-12-05 18:44:56",
+                },
+                App\Models\Modelo {#4231
+                    id: 5,
+                    Valor: "m_val",
+                    numero: 335.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-05 18:45:11",
+                    updated_at: "2020-12-05 18:45:11",
+                },
+            ],
+    }
+
+#### Métodos ùteis
+##### toArray
+Esse método converte o resultado em array, exemplo ` Modelo::all()->toArray()`, saida:
+
+        => [
+            [
+                "id" => 1,
+                "Valor" => "valor1",
+                "numero" => 1000.0,
+                "data" => null,
+                "check" => 1,
+                "remember_token" => null,
+                "created_at" => "2020-12-05T17:12:13.000000Z",
+                "updated_at" => "2020-12-05T17:12:13.000000Z",
+            ],
+            [
+                "id" => 2,
+                "Valor" => "valor",
+                "numero" => 990.0,
+                "data" => null,
+                "check" => 1,
+                "remember_token" => null,
+                "created_at" => "2020-12-05T17:40:21.000000Z",
+                "updated_at" => "2020-12-05T17:40:21.000000Z",
+            ],
+            [
+                "id" => 3,
+                "Valor" => "meu valor",
+                "numero" => 500.0,
+                "data" => null,
+                "check" => 1,
+                "remember_token" => null,
+                "created_at" => "2020-12-05T18:44:45.000000Z",
+                "updated_at" => "2020-12-05T18:44:45.000000Z",
+            ],
+            [
+                "id" => 4,
+                "Valor" => "meu_valor",
+                "numero" => 850.0,
+                "data" => null,
+                "check" => 1,
+                "remember_token" => null,
+                "created_at" => "2020-12-05T18:44:56.000000Z",
+                "updated_at" => "2020-12-05T18:44:56.000000Z",
+            ],
+            [
+                "id" => 5,
+                "Valor" => "m_val",
+                "numero" => 335.0,
+                "data" => null,
+                "check" => 1,
+                "remember_token" => null,
+                "created_at" => "2020-12-05T18:45:11.000000Z",
+                "updated_at" => "2020-12-05T18:45:11.000000Z",
+            ],
+        ]
+
+##### toJson
+
+Converte a saída para JSON `Modelo::all()->tojson()`:
+
+    => "[{"id":1,"Valor":"valor1","numero":1000,"data":null,"check":1,"remember_token":null,"created_at":"2020-12-05T17:12:13.000000Z","updated_at":"2020-12-05T17:12:13.000000Z"},{"id":2,"Valor":"valor","numero":990,"data":null,"check":1,"remember_token":null,"created_at":"2020-12-05T17:40:21.000000Z","updated_at":"2020-12-05T17:40:21.000000Z"},{"id":3,"Valor":"meu
+    valor","numero":500,"data":null,"check":1,"remember_token":null,"created_at":"2020-12-05T18:44:45.000000Z","updated_at":"2020-12-05T18:44:45.000000Z"},{"id":4,"Valor":"meu_valor","numero":850,"data":null,"check":1,"remember_token":null,"created_at":"2020-12-05T18:44:56.000000Z","updated_at":"2020-12-05T18:44:56.000000Z"},{"id":5,"Valor":"m_val","numero":335,"d
+    ata":null,"check":1,"remember_token":null,"created_at":"2020-12-05T18:45:11.000000Z","updated_at":"2020-12-05T18:45:11.000000Z"}]"
+
+##### Chunk
+O método `chunk` cria uma separação entre os elementos, facilitando a paginação e a distribuição em colunas, por exemplo se for passado o número *2* de parametro e tem 6 registros, será criado 3 divisões interna, cada um com duas ocorrências, exemplo: ` Modelo::all()->chunk(2)`:
+
+        => Illuminate\Database\Eloquent\Collection {#4222
+            all: [
+            Illuminate\Database\Eloquent\Collection {#4248
+                all: [
+                    App\Models\Modelo {#4239
+                        id: 1,
+                        Valor: "valor1",
+                        numero: 1000.0,
+                        data: null,
+                        check: 1,
+                        remember_token: null,
+                        created_at: "2020-12-05 17:12:13",
+                        updated_at: "2020-12-05 17:12:13",
+                    },
+                    App\Models\Modelo {#4238
+                        id: 2,
+                        Valor: "valor",
+                        numero: 990.0,
+                        data: null,
+                        check: 1,
+                        remember_token: null,
+                        created_at: "2020-12-05 17:40:21",
+                        updated_at: "2020-12-05 17:40:21",
+                    },
+                ],
+            },
+            Illuminate\Database\Eloquent\Collection {#4240
+                all: [
+                    2 => App\Models\Modelo {#4245
+                            id: 3,
+                            Valor: "meu valor",
+                            numero: 500.0,
+                            data: null,
+                            check: 1,
+                            remember_token: null,
+                            created_at: "2020-12-05 18:44:45",
+                            updated_at: "2020-12-05 18:44:45",
+                    },
+                    3 => App\Models\Modelo {#4241
+                            id: 4,
+                            Valor: "meu_valor",
+                            numero: 850.0,
+                            data: null,
+                            check: 1,
+                            remember_token: null,
+                            created_at: "2020-12-05 18:44:56",
+                            updated_at: "2020-12-05 18:44:56",
+                    },
+                ],
+            },
+            Illuminate\Database\Eloquent\Collection {#4235
+                all: [
+                    4 => App\Models\Modelo {#4255
+                        id: 5,
+                        Valor: "m_val",
+                        numero: 335.0,
+                        data: null,
+                        check: 1,
+                        remember_token: null,
+                        created_at: "2020-12-05 18:45:11",
+                        updated_at: "2020-12-05 18:45:11",
+                    },
+                ],
+            },
+            ],
+    }
+
+##### Pluck
+Essa função retorna apenas o campo selecionado: `Modelo::all()->pluck('numero')`, esse campo deve estar registrado em `protected $fillable = ['valor','numero'];` no arquivo models.
+
+    => Illuminate\Support\Collection {#4238
+        all: [
+            1000.0,
+            990.0,
+            500.0,
+            850.0,
+            335.0,
+        ],
+    }
+
+#### Atualizando registros
+##### Método estático
+No caso usa-se a clausuraa where para pegar o registro e depois disso passa um array ao método update no estilo chave e valor, com o nome da coluna sendo a chave e o novo valor dela, exemplo: `>>> Modelo::where('id',3)->update(['numero' => 750])` que equivale a `update from modelos set numero = 750 where id = 3`
+
+    >>> Modelo::where('id',3)->update(['numero' => 750])
+    => 1
+
+Se der certo retorna a quantidade de registros afetados.
+##### Método de Objeto.
+    >>> $modelo = Modelo::find(3)
+        => App\Models\Modelo {#4276
+            id: 3,
+            Valor: "meu valor",
+            numero: 750.0,
+            data: null,
+            check: 1,
+            remember_token: null,
+            created_at: "2020-12-05 18:44:45",
+            updated_at: "2020-12-07 21:57:56",
+    }
+
+
+    >>> $modelo->valor = 'valor mudado'
+    => "valor mudado"
+    >>> $modelo->save()
+    => true
+    >>> $modelo
+    => App\Models\Modelo {#4276
+            id: 3,
+            Valor: "meu valor",
+            numero: 750.0,
+            data: null,
+            check: 1,
+            remember_token: null,
+            created_at: "2020-12-05 18:44:45",
+            updated_at: "2020-12-07 22:16:27",
+            valor: "valor mudado",
+    }
+
+Inicialmente pega-se o valor e armazena em uma váriável `$modelo = Modelo::find(3)`, no php existe o método `__set`, ou seja um método mágico *SET* e com base nisso você armazena o novo valor em um atributo mágico criado com o `__set` `$modelo->valor = 'valor mudado'`, `$modelo->valor` passou a existir agora, após feito isso basta salvar `$modelo->save()`, para que as informações seja persistidas.
+
+#### Excluíndo registros
+##### Método Estático
+Você conseguir isso ` Modelo::destroy([id])`, caso você siga as convenções do Laravel, você pode passar o id que quer excluir no método destroy, `Modelo::destroy(1)` equivalente a `delete from models where id = 1`. Output:
+
+    >>> Modelo::destroy(1)
+    => 1
+
+##### Método de objetos
+
+    $modelo = Modelo::find(4)
+    => App\Models\Modelo {#4220
+        id: 4,
+        Valor: "meu_valor",
+        numero: 850.0,
+        data: null,
+        check: 1,
+        remember_token: null,
+        created_at: "2020-12-05 18:44:56",
+        updated_at: "2020-12-05 18:44:56",
+    }
+
+    >>> $modelo->delete()
+    => true
+
+Para excluir, você pode resgatar o atributo e armazenar em variáveis `$modelo = Modelo::find(4)` e depois nessa variável `$modelo->delete()`, pronto excluído.
+
+
+
+         
+## Artisan
+
+### Executando um projeto no laravel
+    php artisan serve
+### Exibindo listas de todas as rotas
+    php artisan route:list
+
+### Criando um controller
+    php artisan make:controller [classe]
+
+O `[classe]` deve ser substituído pela classe correspondente.
+
+#### Criando um controller usando o parametro --resource
+    php artisan make:controller [classe] --resource
+
+Quando informado o `--resource` alguns métodos são criados.
+
+### Models
+Criando um modelo `php artisan make:model [Nome]`, dessa forma você cria um modelo, devendo substituir o `[Nome]` pelo nome correspondente ao da classe, como é classe recomenda-se que a primeira letra do nome comece com letra maiúscula e seja no singular, no caso uma classe que se chama **Modelo** por padrão irá procurar por uma tabela no banco de dados chamado *modelos*, por isso recomenda-se plural nas migrations e singular com a primeira letra em maíuscula nos modelos, isso é o comportamento padrão, podendo ser configurado posteriormente, mas até para evitar dores de cabeça, recomenda-se seguir o padrão. Todos os modelos estaram na pasta [app/Models/](./basico/app/Models)
+### Migrations
+`php artisan migrate` **=>** Executa as migrations que não foram executadas. As migrations ficam aqui: [database/migrations](./basico/database/migrations)
+
+`php artisan make:migration [nomeDaTabela] --create=exemplo` **=>** Cria uma nova migration já preparado para a criação e exclusão de tabelas dentro do método *UP* e *DOWN* respectivamente. 
+`[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados. Lembre-se sempre de usar nomes no plural, pois isso facilita a configuração de modelos no Laravel.
+
+#### Migrate:status
+`php artisan migrate:status` **=>** Exibe quais migrate foram executados e quais não foram, exibirá um output como esse:
+
+    | Ran? | Migration                                      | Batch |
+    +------+------------------------------------------------+-------+
+    | Yes  | 2014_10_12_000000_create_users_table           | 1     |
+    | Yes  | 2014_10_12_100000_create_password_resets_table | 1     |
+    | Yes  | 2019_08_19_000000_create_failed_jobs_table     | 1     |
+    | Yes  | 2020_12_04_152328_exemplo1                     | 1     |
+    | Yes  | 2020_12_04_210240_exemplo2                     | 1     |
+    | Yes  | 2020_12_05_155827_modelos                      | 1     |
+    +------+------------------------------------------------+-------+
+
+A primeira coluna informa se foi executado, a segunda o nome da migration em questão e a segunda, em qual lota que foi aplicado, ou seja se ela foi executado na primeira execução do comando para a criação de migration, ou na segunda execução, ou na *N* execução. Todos que foram executados no ato de criação das tabelas no banco de o valor de *Batch* como 1, valores maiores de *batch* que 1 são atualização de estrutura e foram executado posteriormente a criação.    
+
+`php artisan make:migration [nomeDaTabela]` **=>** cria uma migration com o método *UP* e *DOWN* limpo. `[nomeDaTabela]` deve ser substituido pelo nome que a tabela deve ter no banco de dados.
+
+`php artisan migrate:rollback` **=>** retorna a migration ao último estado consistente. No caso esse comando executa o ultimo método *DOWN* da migration mais recente.
+
+
+`php artisan migrate:refresh` **=>** Executa o método *down* da migration mais recente, desfazendo assim todas as operações e depois executa os métodos *up* das migrations da mais antiga até a mais recente, ou seja esse comando remodela as migrations.
+
+`php artisan migrate:fresh` **=>** Essa migration ela dropa todas as tabelas e depois executa os métodos *UP* de todas as migrations.
+
+`php artisan migrate:reset` **=>** O reset executa o método *DOWN* da migrate mais recente a mais antiga, resetando todas as configurações. 
+
+## Tinker
+No laravel tem um utilitário que auxilia no crud de uma aplicação, como ele você pode fazer operações de crud no terminal por meio de um **CLI**, comando `php artisan tinker`
+
+### use
+Inicialmente você deve informar o Modelo que você quer usar, os modelos ficam localizados na pasta [app/Models/](./basico/app/Models), você pode fazer esse acesso com o comando use, uma vez inicializado o tinker `use \App\Models\[Modelo]`, aonde está o `[Modelo]`, você deve informar o nome do arquivo de modelo.
+
 
 
 ## Instalação
