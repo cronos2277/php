@@ -1861,9 +1861,412 @@ Você conseguir isso ` Modelo::destroy([id])`, caso você siga as convenções d
 
 Para excluir, você pode resgatar o atributo e armazenar em variáveis `$modelo = Modelo::find(4)` e depois nessa variável `$modelo->delete()`, pronto excluído.
 
+#### Soft Delete no Laravel.
+Inicialmente você precisa importar uma trait:
+
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\SoftDeletes;
+
+    class Modelo extends Model
+    {
+        use HasFactory;
+        use SoftDeletes;
+        protected $fillable = ['valor','numero'];
+    }
+
+e na migrations você deve usar o método `->softDeletes()` para que seja criado o campo `deleted_at` no banco de dados, nesse caso se esse campo for nulo, significa que o dado não foi excluído e será registrado no método `::all()` ou em qualer método que recupere registros do banco de dados, porém quando uma data está registrado ali, logo isso significa que o dado foi excluído, porém tem como recuperar um dado excluído por softdelete ou até mesmo acessar os dados excluídos.
+
+    class Modelos extends Migration
+    {
+        public function up()
+        {
+            Schema::create('modelos', function (Blueprint $table) {
+                $table->id();
+                $table->string('Valor')->unique();
+                $table->double('numero');
+                $table->date('data')->nullable();
+                $table->boolean('check')->default(true);
+                $table->rememberToken();
+                $table->timestamps();
+                
+                //Metodo de softdownload
+                $table->softDeletes();
+            });   
+        }
+
+##### Todos os dados
+
+        => Illuminate\Database\Eloquent\Collection {#4246
+        all: [
+            App\Models\Modelo {#4250
+                id: 1,
+                Valor: "valor1",
+                numero: 1000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:51:57",
+                updated_at: "2020-12-09 02:51:57",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4253
+                id: 2,
+                Valor: "valor2",
+                numero: 2000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:52:04",
+                updated_at: "2020-12-09 02:52:04",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4252
+                id: 3,
+                Valor: "valor3",
+                numero: 3000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:52:10",
+                updated_at: "2020-12-09 02:52:10",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4251
+                id: 4,
+                Valor: "valor4",
+                numero: 4000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:09",
+                updated_at: "2020-12-09 03:04:09",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4249
+                id: 5,
+                Valor: "valor5",
+                numero: 5000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:15",
+                updated_at: "2020-12-09 03:04:15",
+                deleted_at: null,
+            },
+        ],
+    }
+
+Quando o update tem a mesma data que o create, isso significa que o dado não foi alterado depois de inserido, e todos os deletes estão marcados como Nulo, os comandos para exclusão são semelhantes ao método hardcode.[Metodos de exclusão](#excluíndo-registros)
+
+##### Excluíndo com o método destroy
+    >>> Modelo::destroy([2,4])
+    => 2
+    >>> Modelo::all()
+
+o destroy aceita um array com uma séries de ID, uma vez feito isso, ao executar o comando `Modelo::all()`:
+
+        => Illuminate\Database\Eloquent\Collection {#4221
+        all: [
+            App\Models\Modelo {#4216
+                id: 1,
+                Valor: "valor1",
+                numero: 1000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:51:57",
+                updated_at: "2020-12-09 02:51:57",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4257
+                id: 3,
+                Valor: "valor3",
+                numero: 3000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:52:10",
+                updated_at: "2020-12-09 02:52:10",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4212
+                id: 5,
+                Valor: "valor5",
+                numero: 5000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:15",
+                updated_at: "2020-12-09 03:04:15",
+                deleted_at: null,
+            },
+        ],
+    }
+
+Repare que agora só será retornando registro com o `deleted_at = null`, ou seja ele fica inacessível com os métodos tradicionais, porém existe métodos para acessar dados excluídos por soft delete.
+
+##### Retornando todos os valores inclusive os excluídos
+Para tal você deve usar o método estático `::withTrashed()` ao invés do `::all()`, ficando assim:
+
+    >>> Modelo::withTrashed()->get()
+    => Illuminate\Database\Eloquent\Collection {#4265
+        all: [
+            App\Models\Modelo {#4266
+                id: 1,
+                Valor: "valor1",
+                numero: 1000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:51:57",
+                updated_at: "2020-12-09 02:51:57",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4267
+                id: 2,
+                Valor: "valor2",
+                numero: 2000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:52:04",
+                updated_at: "2020-12-09 03:07:55",
+                deleted_at: "2020-12-09 03:07:55",
+            },
+            App\Models\Modelo {#4268
+                id: 3,
+                Valor: "valor3",
+                numero: 3000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:52:10",
+                updated_at: "2020-12-09 02:52:10",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4269
+                id: 4,
+                Valor: "valor4",
+                numero: 4000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:09",
+                updated_at: "2020-12-09 03:07:55",
+                deleted_at: "2020-12-09 03:07:55",
+            },
+            App\Models\Modelo {#4270
+                id: 5,
+                Valor: "valor5",
+                numero: 5000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:15",
+                updated_at: "2020-12-09 03:04:15",
+                deleted_at: null,
+            },
+        ],
+    }
+
+Repare que nos dados excluídos os campos excluídos possuem valor diferente de nulo em `deleted_at`, para recuperar basta mudar esse valor para nulo ou usar o método `restore`
+
+##### Restaurando
+
+    >>> Modelo::onlyTrashed()->restore()
+    => 2
+    >>> Modelo::all()
+    => Illuminate\Database\Eloquent\Collection {#4275
+        all: [
+                App\Models\Modelo {#4228
+                    id: 1,
+                    Valor: "valor1",
+                    numero: 1000.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-09 02:51:57",
+                    updated_at: "2020-12-09 03:20:38",
+                    deleted_at: null,
+                },
+                App\Models\Modelo {#4212
+                    id: 2,
+                    Valor: "valor2",
+                    numero: 2000.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-09 02:52:04",
+                    updated_at: "2020-12-09 03:37:58",
+                    deleted_at: null,
+                },
+                App\Models\Modelo {#4277
+                    id: 4,
+                    Valor: "valor4",
+                    numero: 4000.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-09 03:04:09",
+                    updated_at: "2020-12-09 03:37:58",
+                    deleted_at: null,
+                },
+            App\Models\Modelo {#4282
+                id: 5,
+                Valor: "valor5",
+                numero: 5000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:15",
+                updated_at: "2020-12-09 03:20:38",
+                deleted_at: null,
+            },
+        ],
+    }
+    >>>
+
+No caso, para restaurar um dado excluído por softdelete, você acessa todos os excluídos `Modelo::onlyTrashed()` e restaura todos usando o método `->restore()` no resultado, porém se você não quiser restaurar todos, você pode usar uma clausura `where` entre `onlyTrashed` e `restore`. Ao exemplo de `Modelo::onlyTrashed()->where(['id' => 4])->restore()` com o output abaixo.
+
+    >>> Modelo::onlyTrashed()->where(['id' => 4])->restore()
+    => 1
+    >>> Modelo::all()
+    => Illuminate\Database\Eloquent\Collection {#4297
+        all: [
+        App\Models\Modelo {#4256
+            id: 1,
+            Valor: "valor1",
+            numero: 1000.0,
+            data: null,
+            check: 1,
+            remember_token: null,
+            created_at: "2020-12-09 02:51:57",
+            updated_at: "2020-12-09 03:20:38",
+            deleted_at: null,
+        },
+        App\Models\Modelo {#4294
+            id: 4,
+            Valor: "valor4",
+            numero: 4000.0,
+            data: null,
+            check: 1,
+            remember_token: null,
+            created_at: "2020-12-09 03:04:09",
+            updated_at: "2020-12-09 03:43:41",
+            deleted_at: null,
+        },
+        ],
+    }
+    >>>
+
+##### onlyTrashed
+
+    >>> Modelo::onlyTrashed()->get()
+        => Illuminate\Database\Eloquent\Collection {#4225
+            all: [
+                App\Models\Modelo {#4228
+                    id: 2,
+                    Valor: "valor2",
+                    numero: 2000.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-09 02:52:04",
+                    updated_at: "2020-12-09 03:24:37",
+                    deleted_at: "2020-12-09 03:24:37",
+                },
+                App\Models\Modelo {#4255
+                    id: 4,
+                    Valor: "valor4",
+                    numero: 4000.0,
+                    data: null,
+                    check: 1,
+                    remember_token: null,
+                    created_at: "2020-12-09 03:04:09",
+                    updated_at: "2020-12-09 03:24:37",
+                    deleted_at: "2020-12-09 03:24:37",
+                },
+            ],
+        }
+    >>>
+
+Use o método `onlyTrashed` no lugar do método `::all()` e por fim o `get` se quiser ter acesso aos registros, ao exemplo de `Modelo::onlyTrashed()->get()`.
+
+##### Excluído do banco de dados
+Para excluir do banco de dados usa-se o `forceDelete()`, com esse método se faz a exclusão de maneira hard.
+
+    >>> Modelo::find(3)->forceDelete()
+    => true
+    >>> Modelo::all()
+    => Illuminate\Database\Eloquent\Collection {#4276
+        all: [
+            App\Models\Modelo {#4277
+                id: 1,
+                Valor: "valor1",
+                numero: 1000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:51:57",
+                updated_at: "2020-12-09 03:20:38",
+                deleted_at: null,
+            },
+            App\Models\Modelo {#4278
+                id: 5,
+                Valor: "valor5",
+                numero: 5000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:15",
+                updated_at: "2020-12-09 03:20:38",
+                deleted_at: null,
+            },
+        ],
+    }
+    >>> Modelo::onlyTrashed()
+    => Illuminate\Database\Eloquent\Builder {#4261}
+    >>> Modelo::onlyTrashed()->get()
+    => Illuminate\Database\Eloquent\Collection {#4283
+        all: [
+            App\Models\Modelo {#4284
+                id: 2,
+                Valor: "valor2",
+                numero: 2000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 02:52:04",
+                updated_at: "2020-12-09 03:24:37",
+                deleted_at: "2020-12-09 03:24:37",
+            },
+            App\Models\Modelo {#4285
+                id: 4,
+                Valor: "valor4",
+                numero: 4000.0,
+                data: null,
+                check: 1,
+                remember_token: null,
+                created_at: "2020-12-09 03:04:09",
+                updated_at: "2020-12-09 03:24:37",
+                deleted_at: "2020-12-09 03:24:37",
+            },
+        ],
+    }
+    >>>
+
+Graças ao `Modelo::find(3)->forceDelete()` o registro se quer existe no banco de dados mais, no caso o `forceDelete` é um método de objeto e não de classe, além disso você obte-lo através do *find* ou *where*.
+
+##### Sabendo se um dado foi excluído
+
+    Modelo::find(5)->trashed()
+
+ Uma vez pego o registro por *find* ou *where*, você pode através de um booleano saber se o registro está ou não excluído, no caso o método de objeto *trashed*
 
 
-         
+
 ## Artisan
 
 ### Executando um projeto no laravel

@@ -15,7 +15,8 @@ class Modelos extends Migration
             $table->date('data')->nullable();
             $table->boolean('check')->default(true);
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamps();            
+            $table->softDeletes();
         });   
     }
 
