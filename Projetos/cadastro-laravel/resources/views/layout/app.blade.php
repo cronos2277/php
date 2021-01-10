@@ -6,10 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="{{asset('css/app.css')}}" rel="stylesheet">
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
+    <meta name="csrf-token" content="{{csrf_token()}}">
     <title>Cadastro de Produtos</title>
 </head>
 <body>
     <div class="container">
+        @component('navbar', ['current' => $current])            
+        @endcomponent
         <main role="main">
             @hasSection ('body')
                 @yield('body')   

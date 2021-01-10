@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::get('/produtos','App\Http\Controllers\ControladorProduto@index');
+Route::get('/categorias','App\Http\Controllers\ControladorCategoria@index');
