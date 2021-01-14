@@ -7,7 +7,7 @@
                 <div class="card-body align-self-center">
                   <h5 class="card-title">Cadastro de produto</h5>
                   <p class="card-text">Clique no botão abaixo para criar um produto.</p>
-                  <a href="#" class="btn btn-primary">Criar Produto</a>
+                  <a href="/produtos/novo" class="btn btn-primary">Criar Produto</a>
                 </div>
               </div>
             </div>
