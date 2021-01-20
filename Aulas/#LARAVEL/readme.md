@@ -2327,6 +2327,17 @@ Inicialmente você deve informar o Modelo que você quer usar, os modelos ficam 
 
 
 ## Instalação
+
+### Colocando scripts e estilos na pasta pública
+A idéia é o seguinte, para que seja colocado script e estilos da pasta resource na pasta publica do projeto, se faz necessário executar o comando `npm run development`, ao executar esse script o laravel vai executar esse usando o webpack `cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js` e com isso colocar os arquivos de estilos e scripts na pasta pública do Laravel, caso tenha algum problema, [clique aqui](#cross-env-problema). Nesse caso estamos usando o *webpack* para isso, sendo possível se for o caso customizar-lo
+#### Comandos
+**npm run development** *=>* `cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js`
+
+**npm run hot** *=>* `cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js`
+
+**npm run production** *=>* `cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --config=node_modules/laravel-mix/setup/webpack.config.js`
+
+Pode ser **npm run development** ou **npm run dev** assim como **npm run production** ou **npm run prod**. O *cross-env* serve para que o windows possa entender comandos unix e esse script funcione em todas as plataformas.
 ### Problema com o PHP ini ou a versão do PHP
 Caso de o seguinte erro: 
 
@@ -2350,3 +2361,18 @@ Se houver esse erro verifique se o banco de dados existe no SGBD.
 
 #### SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)
 Problemas envolvendo as credenciais, pode ser senha erra, usuário errado, assim como IP ou porta errada.
+
+#### cross-env problema
+    cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js
+    'cross-env' não é reconhecido como um comando interno
+    ou externo, um programa operável ou um arquivo em lotes.
+    npm ERR! code ELIFECYCLE
+    npm ERR! errno 1
+    npm ERR! @ development: `cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js`
+    npm ERR! Exit status 1
+    npm ERR!
+    npm ERR! Failed at the @ development script.
+    npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+Isso pode acontecer em ambientes windows principalmente, uma vez que o terminal não identifica muito bem códigos unix. Para isso execute `npm i`, `npm i -D`, `npm i -D cross-env`, o primeiro instala as dependências, o segundo as depêndencias de DEV e o ultimo instala a versão mais atualizada de `cross-env` que é uma funcionalidade que permite ao windows interpretar comando unix.
+
