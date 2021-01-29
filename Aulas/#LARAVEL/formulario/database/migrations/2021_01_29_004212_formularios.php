@@ -19,6 +19,7 @@ class Formularios extends Migration
             $table->string('email')->unique();
             $table->integer('idade');
             $table->double('salario')->nullable();
+            $table->timestamps(); 
         });
     }
 

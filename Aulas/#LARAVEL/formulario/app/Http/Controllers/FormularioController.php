@@ -14,7 +14,8 @@ class FormularioController extends Controller
      */
     public function index()
     {
-        //
+        $formularios = formulario::all();
+        return view('page.index', compact('formularios'));
     }
 
     /**
