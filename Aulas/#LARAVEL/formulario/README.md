@@ -72,3 +72,36 @@ Uma outra forma de fazer isso é colocar isso tudo dentro de uma string única s
 `unique:formularios` => Tanto o atributo `name` do formulário como o campo no banco de dados possuem o mesmo nome e a tabela a ser verifica se o dado informado pelo usuário já existe ou não, seria a tabela formulário, no caso esse campo é pegado com base no index do array `email_form`.
 
 `unique:formularios,email'` => Aqui estamos deixando claro que o campo correspondente na tabela formularios do banco de dados não é `email_form` e sim `email`, ou seja que `email_form` corresponde a `email` na tabela formularios.
+
+### Validação com mensagens customizáveis
+
+    $request->validate(
+        [ //Validacoes
+            'nome_form' => ['required','min:3','max:99'],
+            'email_form' => 'required|email|unique:formularios,email',
+            'idade_form' => 'required|integer',
+            'sal_form' => 'nullable|numeric'
+        ],
+        [ //Mensagens
+            'required' => 'O campo :attribute é obrigatório.',
+            'nome_form.min' => 'O nome precisa ter no mínimo 3 caracteres.',
+            'nome_form.max' => 'Nome com mais de 99 caracteres.',
+            'email' => 'Por favor, informe um e-mail válido!',
+            'email_form.unique' => 'Esse e-mail já foi usado anteriormente.',            
+            'numeric' => 'Esse :attribute recebe apenas valores numéricos.',
+            'integer' => 'Esse :attribute recebe apenas valores inteiros.'
+        ]
+    );
+
+`integer` => Verifica se o valor informado é um número inteiro.
+
+`numeric` => Verifica se o valor informado é real, pondendo ser um número inteiro ou decimal.
+
+`nullable` => Informa ao laravél que esse campo pode ser nulo e se não nulo, ele deve seguir as outras validações, ou nulo ou deve seguir todas as validações.
+
+### Segundo array do método validate
+O segundo método é caso você queira exibir mensagens customizável, por padrão as mensagens são em inglês e essa seria uma forma de você exibir uma mensagem em português por exemplo.
+A regra pode ser definida para campo ou para um validador: `'required' => 'O campo :attribute é obrigatório.',`, no caso se houver algum campo com esse validador, essa será a mensagem a ser exibida exceto que tenha uma regra mais específica, como por exemplo `'email_form.required' => 'O campo é obrigatório.',`, essa segunda regra sobre escreve a primeira, pois é mais específica, a regra geral é essa `'O campo :attribute é obrigatório.'` para qualquer *required* e excepcionalmente para `email_form` essa `'O campo é obrigatório.'`, que é mais específica. Em resumo, você pode definir uma regra para um `campo.atributo` ou `atributo` no lado esquerdo da expressão e ao lado direito a mensagem, tudo isso dentro de um array e passado como segundo argumento do método validate.
+
+#### :attribute
+Esse parametro se for encontrado ao lado direito da expressão `:attribute` interpola-se com o nome do campo, ou seja, esse valor é interpolado pelo nome do campo no input, por exemplo: `'required' => 'O campo :attribute é obrigatório.'`, se o *name* for por exemplo *email_form*, ficará assim `'O campo email_form é obrigatório.'` e essa mesma lógica é aplicada a qualquer campo que se submeter a esse validator.

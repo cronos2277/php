@@ -37,10 +37,21 @@ class FormularioController extends Controller
     public function store(Request $request)
     {
         $request->validate(
-            [
+            [ //Validacoes
                 'nome_form' => ['required','min:3','max:99'],
                 'email_form' => 'required|email|unique:formularios,email',
-                'idade_form' => 'required'                
+                'idade_form' => 'required|integer',
+                'sal_form' => 'nullable|numeric'
+
+            ],
+            [ //Mensagens
+                'required' => 'O campo :attribute é obrigatório.',
+                'nome_form.min' => 'O nome precisa ter no mínimo 3 caracteres.',
+                'nome_form.max' => 'Nome com mais de 99 caracteres.',
+                'email' => 'Por favor, informe um e-mail válido!',
+                'email_form.unique' => 'Esse e-mail já foi usado anteriormente.',                
+                'numeric' => 'Esse :attribute recebe apenas valores numéricos.',
+                'integer' => 'Esse :attribute recebe apenas valores inteiros.'
             ]
         );
 
