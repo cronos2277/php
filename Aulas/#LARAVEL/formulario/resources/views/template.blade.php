@@ -10,7 +10,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-secondary fixed-top justify-content-between">
-        <a class="navbar-brand mx-3" href="#">CRONOS2277</a>    
+        <a class="navbar-brand mx-3" href="{{route('index')}}">HOME</a>    
         <a class="navbar-brand" href="#">CAMINHO</a>    
     </nav>    
     <hr>

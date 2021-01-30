@@ -25,7 +25,7 @@ class FormularioController extends Controller
      */
     public function create()
     {
-        //
+        return view('page.create');
     }
 
     /**
@@ -36,7 +36,21 @@ class FormularioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(
+            [
+                'nome_form' => ['required','min:3','max:99'],
+                'email_form' => 'required|email|unique:formularios,email',
+                'idade_form' => 'required'                
+            ]
+        );
+
+        $formulario = new formulario();
+        $formulario->nome = $request->input('nome_form');
+        $formulario->email = $request->input('email_form');
+        $formulario->idade = $request->input('idade_form');
+        $formulario->salario = $request->input('sal_form');
+        $formulario->save();
+        return redirect()->route('index');
     }
 
     /**

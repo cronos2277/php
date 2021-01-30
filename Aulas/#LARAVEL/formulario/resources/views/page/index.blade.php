@@ -12,6 +12,7 @@
                     <th scope="col">Email</th>
                     <th scope="col">Idade</th>
                     <th scope="col">Salario</th>
+                    <th scope="col" colspan="2">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,12 +23,18 @@
                             <td>{{$formulario->email}}</td>
                             <td>{{$formulario->idade}}</td>
                             <td>R$ {{($formulario->salario)?$formulario->salario:'0.00'}}</td>
+                            <td>
+                                <a type="button" class="btn btn-warning btn-sm" href="/edit/{{$formulario->id}}">Editar</a>
+                            </td>
+                            <td>
+                                <a type="button" class="btn btn-danger btn-sm" href="/destroy/{{$formulario->id}}">Excluir</a>
+                            </td>
                         </tr>    
                     @endforeach
                                         
                 </tbody>
                 </table>            
-                <a class="btn btn-success btn-lg" href="#" role="button">Adicionar Novo</a>
+                <a class="btn btn-success btn-lg" href="/create" role="button">Adicionar Novo</a>
         </div>  
 
     </main>    

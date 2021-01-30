@@ -13,4 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'App\Http\Controllers\FormularioController@index');
+Route::get('/', 'App\Http\Controllers\FormularioController@index')->name('index');
+Route::get('create','App\Http\Controllers\FormularioController@create');
+Route::post('store', 'App\Http\Controllers\FormularioController@store');
