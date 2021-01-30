@@ -10,6 +10,7 @@
 * Artisan [ir](#artisan)
 * Problemas e instalação [ir](#instalação)
 
+ [2. FORMULÁRIOS NO LARAVEL](formulario)
 ## Tópicos Mais avançados
 * Analisando as funcionalidades para formulários [ir](formulario)
   

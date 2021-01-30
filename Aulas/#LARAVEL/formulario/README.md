@@ -108,3 +108,25 @@ A regra pode ser definida para campo ou para um validador: `'required' => 'O cam
 
 #### :attribute
 Esse parametro se for encontrado ao lado direito da expressão `:attribute` interpola-se com o nome do campo, ou seja, esse valor é interpolado pelo nome do campo no input, por exemplo: `'required' => 'O campo :attribute é obrigatório.'`, se o *name* for por exemplo *email_form*, ficará assim `'O campo email_form é obrigatório.'` e essa mesma lógica é aplicada a qualquer campo que se submeter a esse validator.
+
+### Erros
+#### Errors
+    @if ($errors->any())
+          <div class="alert alert-danger p-5 mt-5">
+              <ul>
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+          </div>
+      @endif
+
+Essa variável errors elá contém os erros, é através deles que você exibe ao usuário os erros que o usuário cometeu ao submeter variável e esses erros ficam dentro do objeto `$errors`.
+
+`$errors->any()` => informa se o array contém erros ou não, se tiver esse método retornua *true*.
+
+`$errors->all()` => retorna todos os erros pegos pelos validadores do laravel.
+
+`$errors->has('[algum name de input de formulário]')` => Esse método retorna true caso exista algum erro associado ao input informado como argumento, esse argumento deve ser o `name` do *input*.
+
+`$errors->first('[name de input de formulario]')` => Esse método retorna o primeiro erro pego informado pelo validador.
