@@ -4,6 +4,8 @@
 Toda vez que você ver esse erro, lembre-se de por o token no formulário, sem isso o laravel não permite o *submit*, para isso coloque isso `@csrf` dentro do seu arquivo blade no interior das tags `<form>`
 
 ## Validando formulários
+[Documentação para validadores](https://laravel.com/docs/8.x/validation#available-validation-rules)
+
 [arquivo controller](app/Http/Controllers/FormularioController.php)
 
     public function store(Request $request)
@@ -74,6 +76,7 @@ Uma outra forma de fazer isso é colocar isso tudo dentro de uma string única s
 `unique:formularios,email'` => Aqui estamos deixando claro que o campo correspondente na tabela formularios do banco de dados não é `email_form` e sim `email`, ou seja que `email_form` corresponde a `email` na tabela formularios.
 
 ### Validação com mensagens customizáveis
+[Documentação para exibir mensagens customizáveis](https://laravel.com/docs/8.x/validation#specifying-custom-messages-in-language-files)
 
     $request->validate(
         [ //Validacoes
