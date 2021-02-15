@@ -130,3 +130,24 @@ Essa variável errors elá contém os erros, é através deles que você exibe a
 `$errors->has('[algum name de input de formulário]')` => Esse método retorna true caso exista algum erro associado ao input informado como argumento, esse argumento deve ser o `name` do *input*.
 
 `$errors->first('[name de input de formulario]')` => Esse método retorna o primeiro erro pego informado pelo validador.
+
+## Transformando dados em JSON
+[Controller](app/Http/Controllers/FormularioController.php)
+###### No controller
+    public function api(){
+        $todos = formulario::all();
+        return $todos->toJson();
+    }
+
+ou 
+
+    public function api(){
+        $todos = formulario::all();
+        return json_encode($todos);
+    }
+
+Essa função permite que ao invés de retornar uma view, retornar um *JSON*.
+###### api.php
+    Route::get('/', "App\Http\Controllers\FormularioController@api");
+
+Todas as rotas registradas no [aquivo API](routes/api.php), estão dentro de */api*, no caso para acessar `http://localhost:porta/api`

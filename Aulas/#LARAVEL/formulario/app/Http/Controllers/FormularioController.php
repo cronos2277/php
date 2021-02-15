@@ -108,4 +108,9 @@ class FormularioController extends Controller
     {
         //
     }
+
+    public function api(){
+        $todos = formulario::all();
+        return $todos->toJson();
+    }
 }
