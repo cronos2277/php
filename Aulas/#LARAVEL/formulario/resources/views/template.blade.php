@@ -10,8 +10,8 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-secondary fixed-top justify-content-between">
-        <a class="navbar-brand mx-3" href="{{route('index')}}">HOME</a>    
-        <a class="navbar-brand" href="#">CAMINHO</a>    
+        <a class="navbar-brand color-primary mx-3" href="{{route('index')}}">HOME PAGE</a>    
+        <span class="navbar-brand">{{$title}}</span>    
     </nav>    
     <hr>
     @yield('section')    

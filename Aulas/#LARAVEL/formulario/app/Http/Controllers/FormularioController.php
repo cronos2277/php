@@ -14,8 +14,9 @@ class FormularioController extends Controller
      */
     public function index()
     {
+        $title = 'PAGINA INICIAL';
         $formularios = formulario::all();
-        return view('page.index', compact('formularios'));
+        return view('page.index', compact('formularios','title'));
     }
 
     /**
@@ -25,7 +26,8 @@ class FormularioController extends Controller
      */
     public function create()
     {
-        return view('page.create');
+        $title = 'CRIAR REGISTRO';
+        return view('page.create',['title' => $title]);
     }
 
     /**
@@ -83,8 +85,9 @@ class FormularioController extends Controller
      */
     public function edit($id)
     {
+        $title = 'EDITAR REGISTRO';
         $user = formulario::find($id);
-        return view('page.edit',compact('user'));
+        return view('page.edit',compact('user','title'));
     }
 
     /**
@@ -127,8 +130,9 @@ class FormularioController extends Controller
      */
     public function destroy($id)
     {
+        $title = 'EXCLUIR REGISTRO';
         $user = formulario::find($id);
-        return view('page.delete',compact('user'));
+        return view('page.delete',compact('user','title'));
     }
 
     public function api(){
