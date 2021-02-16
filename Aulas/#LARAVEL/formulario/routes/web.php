@@ -15,4 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'App\Http\Controllers\FormularioController@index')->name('index');
 Route::get('create','App\Http\Controllers\FormularioController@create');
+Route::get('edit/{id}','App\Http\Controllers\FormularioController@edit');
 Route::post('store', 'App\Http\Controllers\FormularioController@store');
+Route::put('update/{id}', 'App\Http\Controllers\FormularioController@update');
+Route::get('destroy/{id}','App\Http\Controllers\FormularioController@destroy');

@@ -81,9 +81,10 @@ class FormularioController extends Controller
      * @param  \App\Models\formulario  $formulario
      * @return \Illuminate\Http\Response
      */
-    public function edit(formulario $formulario)
+    public function edit($id)
     {
-        //
+        $user = formulario::find($id);
+        return view('page.edit',compact('user'));
     }
 
     /**
@@ -93,9 +94,29 @@ class FormularioController extends Controller
      * @param  \App\Models\formulario  $formulario
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, formulario $formulario)
+    public function update(Request $request, $id)
     {
-        //
+        $formulario = formulario::find($id);
+        $request->validate(
+            [ //Validacoes
+                'nome_form' => ['required','min:3','max:99'],                
+                'idade_form' => 'required|integer',
+                'sal_form' => 'nullable|numeric'
+            ],
+            [ //Mensagens
+                'required' => 'O campo :attribute é obrigatório.',
+                'nome_form.min' => 'O nome precisa ter no mínimo 3 caracteres.',
+                'nome_form.max' => 'Nome com mais de 99 caracteres.',                                    
+                'numeric' => 'Esse :attribute recebe apenas valores numéricos.',
+                'integer' => 'Esse :attribute recebe apenas valores inteiros.'
+            ]
+        );
+        
+        $formulario->nome = $request->input('nome_form');        
+        $formulario->idade = $request->input('idade_form');
+        $formulario->salario = $request->input('sal_form');
+        $formulario->save();
+        return redirect()->route('index');
     }
 
     /**
@@ -104,13 +125,20 @@ class FormularioController extends Controller
      * @param  \App\Models\formulario  $formulario
      * @return \Illuminate\Http\Response
      */
-    public function destroy(formulario $formulario)
+    public function destroy($id)
     {
-        //
+        $user = formulario::find($id);
+        return view('page.delete',compact('user'));
     }
 
     public function api(){
         $todos = formulario::all();
         return $todos->toJson();
+    }
+
+    public function remove($id){
+        $user = formulario::find($id);
+        $user->delete();
+        return redirect()->route('index');
     }
 }
