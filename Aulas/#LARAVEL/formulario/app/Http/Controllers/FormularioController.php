@@ -14,9 +14,8 @@ class FormularioController extends Controller
      */
     public function index()
     {
-        $title = 'PAGINA INICIAL';
-        $formularios = formulario::all();
-        return view('page.index', compact('formularios','title'));
+        $title = "Página de início";
+        return view('index',compact(['title']));
     }
 
     /**
@@ -27,7 +26,7 @@ class FormularioController extends Controller
     public function create()
     {
         $title = 'CRIAR REGISTRO';
-        return view('page.create',['title' => $title]);
+        return view('forms.create',['title' => $title]);
     }
 
     /**
@@ -72,9 +71,11 @@ class FormularioController extends Controller
      * @param  \App\Models\formulario  $formulario
      * @return \Illuminate\Http\Response
      */
-    public function show(formulario $formulario)
+    public function show()
     {
-        //
+        $title = 'Registro INICIAL';
+        $formularios = formulario::all();
+        return view('forms.show', compact('formularios','title'));
     }
 
     /**
@@ -87,7 +88,7 @@ class FormularioController extends Controller
     {
         $title = 'EDITAR REGISTRO';
         $user = formulario::find($id);
-        return view('page.edit',compact('user','title'));
+        return view('forms.edit',compact('user','title'));
     }
 
     /**
@@ -132,7 +133,7 @@ class FormularioController extends Controller
     {
         $title = 'EXCLUIR REGISTRO';
         $user = formulario::find($id);
-        return view('page.delete',compact('user','title'));
+        return view('forms.delete',compact('user','title'));
     }
 
     public function api(){

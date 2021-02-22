@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', 'App\Http\Controllers\FormularioController@index')->name('index');
+Route::get('/','App\Http\Controllers\FormularioController@index');
+Route::get('/show', 'App\Http\Controllers\FormularioController@show')->name('index');
 Route::get('create','App\Http\Controllers\FormularioController@create');
 Route::get('edit/{id}','App\Http\Controllers\FormularioController@edit');
 Route::post('store', 'App\Http\Controllers\FormularioController@store');
