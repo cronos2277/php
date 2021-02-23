@@ -27,7 +27,7 @@
             </div>
             <div class="modal-body">
             
-                <form method="POST" action="/api/um-para-um/3">
+                <form>
                     <input type="hidden" name="id" id="id" />
                     <div class="row">
                         <div class="col-auto col-6">
@@ -52,10 +52,7 @@
                             <label for="estado">UF</label>
                             <input type="text" id="estado" class="form-control" name="estado" required/>
                         </div>
-                    </div>                    
-                    @method('delete')
-                    @csrf
-                    <input type="submit" value="testar" />            
+                    </div>                          
                 </form>
                 
             </div>
@@ -71,8 +68,7 @@
     <!-- submit -->
     <script>
         function submit(isNeedToClearId){
-            if(isNeedToClearId) document.getElementById('id').value = null;
-            const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};     
+            if(isNeedToClearId) document.getElementById('id').value = null;                
             const element = attr => document.getElementById(attr).value || null;   
             const id = element('id');    
             const body = new FormData();
@@ -82,13 +78,16 @@
             body.append('cidade',element('cidade'));
             body.append('estado',element('estado'));
             if(!id){
-                //Inserção               
+                //Inserção       
+                const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};         
                 fetch('/api/um-para-um/',{method:'post',headers,body})
                     .then(console.log)
                     .catch(console.error)
                     .finally(getAll());                            
             }else{
-                //Atualização                
+                //Atualização  
+                body.append('id',element('id'));   
+                const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};                              
                 fetch(`/api/um-para-um/${id}`,{method:'put',headers,body})
                     .then(console.log)
                     .catch(console.error)
@@ -115,6 +114,7 @@
         function edit(num){
             const element = attr => document.getElementById(attr) || null;
             let record = allData.filter(e => e.id == num);record = record[0];
+            
             element('id').value = num;
             element('nome').value = record.nome;
             element('email').value = record.email;
@@ -123,6 +123,7 @@
             element('estado').value = record.endereco.estado;                              
             element('create_btn').style.display = 'none';                              
             element('update_btn').style.display = 'inline';                              
+            
         }
 
         document.getElementById('exampleModal')

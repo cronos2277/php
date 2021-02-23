@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente as ModelCliente;
 use App\Models\Endereco;
+use Exception;
 
 class Cliente extends Controller
 {
@@ -59,7 +60,21 @@ class Cliente extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+            $clientes = ModelCliente::with('endereco')->get();         
+            $cliente = $clientes->find($id);                        
+            if($cliente){                
+                $cliente->nome = $request->input('nome');                
+                $cliente->email = $request->input('email');
+                
+                $cliente->endereco->cliente_id = $request->input('id');
+                $cliente->endereco->rua = $request->input('rua');
+                $cliente->endereco->cidade = $request->input('cidade');
+                $cliente->endereco->estado = $request->input('estado');
+                $cliente->push();
+                return response('Updated',202);
+            }else{
+                return response('Not Found',404);
+            }            
     }
 
     
