@@ -12,6 +12,7 @@ class Clientes extends Migration
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nome')->nullable(false);
+            $table->string('email')->nullable(false);
             $table->timestamps();
         });
     }
