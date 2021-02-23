@@ -53,7 +53,7 @@ class Cliente extends Controller
 
     public function edit($id)
     {
-        //
+       //
     }
 
 
@@ -65,6 +65,13 @@ class Cliente extends Controller
     
     public function destroy($id)
     {
-        //
+        $clientes = ModelCliente::with('endereco')->get();         
+        $cliente = $clientes->find($id);
+        if($cliente){
+            $cliente->delete();
+            return response('Deleted',204);
+        }else{
+            return response('Not Found',404);
+        }        
     }
 }

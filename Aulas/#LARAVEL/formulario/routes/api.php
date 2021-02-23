@@ -22,3 +22,4 @@ Route::get('/', "App\Http\Controllers\FormularioController@api");
 Route::delete('/{id}', "App\Http\Controllers\FormularioController@remove");
 Route::get('/um-para-um/{id?}','App\Http\Controllers\Cliente@show');
 Route::post('/um-para-um/','App\Http\Controllers\Cliente@store');
+Route::delete('/um-para-um/{id}','App\Http\Controllers\Cliente@destroy');
