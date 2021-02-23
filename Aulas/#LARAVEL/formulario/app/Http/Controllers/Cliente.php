@@ -23,18 +23,17 @@ class Cliente extends Controller
     
     public function store(Request $request)
     {
-        $cliente = new Cliente();
+        $cliente = new ModelCliente();
         $cliente->nome = $request->input('nome');
         $cliente->email = $request->input('email');
-        //$cliente->save();
+        $cliente->save();
 
         $endereco = new Endereco();
         $endereco->rua = $request->input('rua');
         $endereco->cidade = $request->input('cidade');
-        $endereco->estado = $request->input('estado');
-        //$endereco->cliente_id = $cliente->id;
+        $endereco->estado = $request->input('estado');        
 
-        //$cliente->endereco()->save($endereco);
+        $cliente->endereco()->save($endereco);
         return response('Created',201);
     }
 

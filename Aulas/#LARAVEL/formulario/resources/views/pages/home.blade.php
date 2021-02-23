@@ -26,7 +26,7 @@
             </div>
             <div class="modal-body">
             
-                <form>
+                <form method="POST" action="/api/um-para-um/">
                     <input type="hidden" name="id" id="id" />
                     <div class="row">
                         <div class="col-auto col-6">
@@ -52,6 +52,7 @@
                             <input type="text" id="estado" class="form-control" name="estado" required/>
                         </div>
                     </div>
+                    <input type="submit" value="ENVIAR"/>
                 </form>
                 
             </div>
@@ -69,15 +70,18 @@
             const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};     
             const element = attr => document.getElementById(attr).value || null;   
             const id = element('id');    
-            console.log(id);
+            const body = new FormData();
+            body.append('nome',element('nome'));
+            body.append('email',element('email'));
+            body.append('rua',element('rua'));
+            body.append('cidade',element('cidade'));
+            body.append('estado',element('estado'));
             if(!id){
-                //Inserção
-                const arr = [element('nome'),element('email'),element('rua'),element('cidade'),element('estado')];
-                fetch('/api/um-para-um/',{method:'post',headers}).then(console.log).catch(console.error).finally(getAll());                            
+                //Inserção               
+                fetch('/api/um-para-um/',{method:'post',headers,body}).then(console.log).catch(console.error).finally(getAll());                            
             }else{
-                //Atualização
-                const arr = [id,element('nome'),element('email'),element('rua'),element('cidade'),element('estado')];
-                fetch('/api/um-para-um/',{method:'put',headers}).then(console.log).catch(console.error).finally(getAll());       
+                //Atualização                
+                fetch('/api/um-para-um/',{method:'put',headers,body}).then(console.log).catch(console.error).finally(getAll());       
             }
             
         }
