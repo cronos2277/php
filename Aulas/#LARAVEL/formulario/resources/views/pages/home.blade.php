@@ -52,7 +52,7 @@
                             <label for="estado">UF</label>
                             <input type="text" id="estado" class="form-control" name="estado" required/>
                         </div>
-                    </div>                          
+                    </div>                                        
                 </form>
                 
             </div>
@@ -86,9 +86,10 @@
                     .finally(getAll());                            
             }else{
                 //Atualização  
-                body.append('id',element('id'));   
+                body.append('id',element('id'));
+                body.append('_method','PUT')   
                 const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};                              
-                fetch(`/api/um-para-um/${id}`,{method:'put',headers,body})
+                fetch(`/api/um-para-um/${id}`,{method:'post',headers,body})
                     .then(console.log)
                     .catch(console.error)
                     .finally(getAll());       

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Cliente as ModelCliente;
 use App\Models\Endereco;
 use Exception;
+use Symfony\Component\Console\Input\Input;
 
 class Cliente extends Controller
 {
@@ -64,13 +65,15 @@ class Cliente extends Controller
             $cliente = $clientes->find($id);                        
             if($cliente){                
                 $cliente->nome = $request->input('nome');                
-                $cliente->email = $request->input('email');
-                
-                $cliente->endereco->cliente_id = $request->input('id');
-                $cliente->endereco->rua = $request->input('rua');
-                $cliente->endereco->cidade = $request->input('cidade');
-                $cliente->endereco->estado = $request->input('estado');
-                $cliente->push();
+                $cliente->email = $request->input('email');                                
+                //$cliente->update();
+                                
+                $endereco = $cliente->endereco;                
+                $endereco->rua = $request->input('rua');
+                $endereco->cidade = $request->input('cidade');
+                $endereco->estado = $request->input('estado');
+                $cliente->endereco()->save($endereco,'endereco','cliente_id');
+
                 return response('Updated',202);
             }else{
                 return response('Not Found',404);
