@@ -66,13 +66,14 @@ class Cliente extends Controller
             if($cliente){                
                 $cliente->nome = $request->input('nome');                
                 $cliente->email = $request->input('email');                                
-                //$cliente->update();
+                $cliente->update();
                                 
-                $endereco = $cliente->endereco;                
+                $endereco = $cliente->endereco; 
+                $endereco->cliente_id = $id;               
                 $endereco->rua = $request->input('rua');
                 $endereco->cidade = $request->input('cidade');
-                $endereco->estado = $request->input('estado');
-                $cliente->endereco()->save($endereco,'endereco','cliente_id');
+                $endereco->estado = $request->input('estado');                
+                $cliente->endereco->update();                
 
                 return response('Updated',202);
             }else{
