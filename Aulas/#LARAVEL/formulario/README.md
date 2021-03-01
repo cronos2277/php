@@ -152,6 +152,14 @@ Essa função permite que ao invés de retornar uma view, retornar um *JSON*.
 
 Todas as rotas registradas no [aquivo API](routes/api.php), estão dentro de */api*, no caso para acessar `http://localhost:porta/api`.
 
+## Retornando códigos HTTP
+
+    public function show($id = 0)
+    {
+        return response('OK',200);
+    }
+
+Ao invés de retornar uma *view*, você pode retornar um status HTTP para o cliente, útil caso a requisição seja feita planejando o uso do ajax, conforme visto aqui `return response('OK',200);`, sendo o primeiro argumento a mensagem a ser informado ao cliente e o segundo o código *HTTP*.
 ## Relacionamento com Eloquent
 
 ### Eloquent one to one
@@ -232,6 +240,7 @@ Repare que a chave estrangeira também é a chave primária e isso pode ser vist
         return response('Created',201);
     }
 
+Para salvar (criar dados novos) você pode fazer uso do relacionamento, no caso o método *store* acima cria um novo registro, nesse caso o **endereco()**  [vem daqui](#entidade-forte), repareque esse método faz um retorno e é com base nesse retorno que é feito o relacionamento e o *Laravel* entende o *endereço* como parte do relacionamento, ao passo que dentro do save é colocado o objeto modelo contendo os dados a serem inseridos, no caso é um objeto do tipo entidade fraca, conforme visto aqui `$cliente->endereco()->save($endereco);` e então retornado uma mensagem de que foi inserido `return response('Created',201);`, para exemplificar> `$[entidade forte]->[nome do metodo que retorna hasOne]()->save($[instancia da entidade fraca com os dados]);`
 ###### atualizando
     public function update(Request $request, $id)
     {
@@ -255,6 +264,7 @@ Repare que a chave estrangeira também é a chave primária e isso pode ser vist
             }            
     }
 
+Aqui estamos atualizando, inicialmente estamos pegando de maneira *eager* aqui `$clientes = ModelCliente::with('endereco')->get();`, esse `'endereco'` [vem daqui](#entidade-forte), ou seja como string você deve informar o método que retorna o *hasOne*. Por padrão o carregamento é *lazy*, logo os dados do relacionamento não vêm, porém se carregar de maneira *eager*, como feito aqui, o carregamento é feito junto com o relacionamento, logo como o carregamento foi *eager* não precisa informar instancia no *update* conforme visto aqui `$cliente->endereco->update();` e retornado caso a atualização ocorra `return response('Updated',202);`.
 ###### excluindo
     public function destroy($id)
     {
@@ -267,3 +277,5 @@ Repare que a chave estrangeira também é a chave primária e isso pode ser vist
             return response('Not Found',404);
         }        
     }
+
+Para excluir, usa o mesmo pricípio usado na atualização, porém isso funciona, porque o carregamento é **eager** `$clientes = ModelCliente::with('endereco')->get();`, de toda forma como existe cascade on *update* e *delete* ao excluir cliente se exclui o endereço junto, conforme [visto aqui](#migration-da-entidade-fraca). Depois de exluir retorna o estatus *204* `return response('Deleted',204);`.
