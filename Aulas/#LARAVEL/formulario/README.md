@@ -150,4 +150,120 @@ Essa função permite que ao invés de retornar uma view, retornar um *JSON*.
 ###### api.php
     Route::get('/', "App\Http\Controllers\FormularioController@api");
 
-Todas as rotas registradas no [aquivo API](routes/api.php), estão dentro de */api*, no caso para acessar `http://localhost:porta/api`
+Todas as rotas registradas no [aquivo API](routes/api.php), estão dentro de */api*, no caso para acessar `http://localhost:porta/api`.
+
+## Relacionamento com Eloquent
+
+### Eloquent one to one
+#### Entidade forte
+Aqui temos um exemplo de relacionamento um para um. Inicialmente você precisa estabelecer uma entidade forte, que no caso é a [Cliente](app/Models/Cliente.php), nela é indicada um afunção para acessar a entidade fraca, como no exemplo abaixo:
+    
+    use HasFactory;
+    function endereco(){
+        return $this->hasOne(\App\Models\Endereco::class,'cliente_id');
+    }
+
+###### Migration
+    Schema::create('clientes', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('nome')->nullable(false);
+        $table->string('email')->nullable(false);
+        $table->timestamps();
+    });
+##### hasOne
+Nessa função você faz o retorno usando o método **hasOne**, esse método exige como argumento, sendo o primeiro obrigatório a classe da entidade, nesse caso `\App\Models\Endereco::class` e o segundo o nome da coluna correspondente ao campo *id* da tabela fraca da relação, no caso o *cliente_id*. Ou seja a entidade `Endereco::class` tem como campo chave `cliente_id`. Esse segundo argumento é opcional, ou seja ele não é obrigatório caso você use o padrão de nomenclatura do *Laravel*, no caso se o nome do campo chave fosse **id** esse segundo argumento poderia ser omitido, mas como não é, e sim `cliente_id`, logo o mesmo deve ser informado no segundo argumento de **hasOne**. Essa função *hasOne* vem daqui, por isso precisa importar usando o **HasFactory**, conforme visto aqui: `use HasFactory;`
+
+##### Increments
+Esse é um campo de incremento e está marcado devido a isto `$table->increments('id');`, o método *increments* transforma em um campo de incremento, e devido a essa característica ela não é definida como chave primária aqui e sim na entidade fraca, nesse exemplo, uma vez que esse campo será usado como chave primária e estrangeira em outra tabela, ao qual tem um relacionamento fracom com essa.
+#### Entidade fraca
+Aqui temos um exemplo de uma entidade que tem um relacionamento fraco com a classe acima, no caso é a classe [Endereco](app/Models/Endereco.php), segue o exemplo abaixo:
+
+    class Endereco extends Model
+    {
+        protected $primaryKey = 'cliente_id';
+        use HasFactory;
+        function cliente(){
+            return $this->belongsTo(Cliente::class,'cliente_id','id');
+        }
+    }
+
+##### Informando a Chave primária
+Na entidade acima, como a chave primária se chama *ID*, logo não se faz necessário informar isso, mas como isso não ocorre aqui, precisa inicialmente na própria entidade informar qual é o campo de chave primária e isso é feito aqui `protected $primaryKey = 'cliente_id';`.
+
+##### belongsTo
+Aqui ao invés de usar o *hasOne* usamos o *belongsTo*, ou seja essa entidade não tem uma outra entidade, ela pertece a outra entidade, esse método a ser rescrito vem de **HasFactory** igual ao *hasOne*. Então temos o uso da *belongsTo* aqui `return $this->belongsTo(Cliente::class,'cliente_id','id');`, nesse método podemos passar até 3 argumentos, podendo o segundo e o terceiro argumento ser omitido, caso ambos as entidades tenham como campo chave o nome *id*. O primeiro argumento é a entidade ao qual pertence, que no caso é essa `Cliente::class`, o segundo o campo *ID* da própria entidade, nesse caso o campo chave da tabela é esse, o *cliente_id* conforme feito na migration também:
+###### Migration da entidade fraca
+
+    Schema::create('enderecos', function (Blueprint $table) {
+        $table->integer('cliente_id')->unsigned();
+
+        $table->foreign('cliente_id')
+        ->references('id')->on('clientes')
+        ->onUpdate('cascade')->onDelete('cascade');
+
+        $table->primary('cliente_id');
+        $table->string('estado');
+        $table->string('cidade');
+        $table->string('rua');
+        $table->timestamps();
+    });
+
+Repare que a chave estrangeira também é a chave primária e isso pode ser visto aqui `$table->primary('cliente_id');` e aqui `$table->foreign('cliente_id')->references('id')->on('clientes')->onUpdate('cascade')->onDelete('cascade');`, sendo esse campo sendo definido aqui `$table->integer('cliente_id')->unsigned();`. Por fim no campo **belongsTo** existe um terceiro argumento, conforme visto aqui `return $this->belongsTo(Cliente::class,'cliente_id','id');`, nesse caso o *id* seria o campo chave ao qual possuí um relacionamento forte com essa entidade.
+
+#### Para resumir
+>Ambos os métodos **hasOne** e **belongsTo** vem da superclasse **HasFactory** que vem de `use Illuminate\Database\Eloquent\Factories\HasFactory;`. O **hasOne** deve ser colocada na classe ao qual possuí o relacionamento *(O método que possuí o relacionamento forte)*. Como argumento o **hasOne** pede a classe que possuí a parte fraca da relação no primeiro argumento, podendo ter o segundo argumento omitido, caso o Modelo segue o padrão de nomenclatura do Laravel. O **belongsTo** é usado na entidade ao qual é posse de um relacionamento, ou seja na entidade fraca, esse método aceita três argumentos, a classe ao qual ela está contida, o campo chave da entidade fraca e o nome do campo chave dessa entidade.
+###### Importando Modelos
+    use App\Models\Cliente as ModelCliente;
+    use App\Models\Endereco;
+###### salvando
+     public function store(Request $request)
+    {
+        $cliente = new ModelCliente();
+        $cliente->nome = $request->input('nome');
+        $cliente->email = $request->input('email');
+        $cliente->save();
+
+        $endereco = new Endereco();
+        $endereco->rua = $request->input('rua');
+        $endereco->cidade = $request->input('cidade');
+        $endereco->estado = $request->input('estado');        
+
+        $cliente->endereco()->save($endereco);
+        return response('Created',201);
+    }
+
+###### atualizando
+    public function update(Request $request, $id)
+    {
+            $clientes = ModelCliente::with('endereco')->get();         
+            $cliente = $clientes->find($id);                        
+            if($cliente){                
+                $cliente->nome = $request->input('nome');                
+                $cliente->email = $request->input('email');                                
+                $cliente->update();
+                                
+                $endereco = $cliente->endereco; 
+                $endereco->cliente_id = $id;               
+                $endereco->rua = $request->input('rua');
+                $endereco->cidade = $request->input('cidade');
+                $endereco->estado = $request->input('estado');                
+                $cliente->endereco->update();                
+
+                return response('Updated',202);
+            }else{
+                return response('Not Found',404);
+            }            
+    }
+
+###### excluindo
+    public function destroy($id)
+    {
+        $clientes = ModelCliente::with('endereco')->get();         
+        $cliente = $clientes->find($id);
+        if($cliente){
+            $cliente->delete();
+            return response('Deleted',204);
+        }else{
+            return response('Not Found',404);
+        }        
+    }
