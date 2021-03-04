@@ -20,3 +20,4 @@ Route::post('store', 'App\Http\Controllers\FormularioController@store');
 Route::put('update/{id}', 'App\Http\Controllers\FormularioController@update');
 Route::get('destroy/{id}','App\Http\Controllers\FormularioController@destroy');
 Route::get('um-para-um','App\Http\Controllers\Cliente@index')->name('1to1');
+Route::get('um-para-muitos','App\Http\Controllers\ProdutoCategoriaController@index')->name('1toN');

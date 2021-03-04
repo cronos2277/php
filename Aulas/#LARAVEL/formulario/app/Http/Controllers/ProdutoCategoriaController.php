@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class ProdutoController extends Controller
+class ProdutoCategoriaController extends Controller
 {
     
     public function index()
     {
-        //
+        $title = 'One To One';
+        return view('1ton.home',compact('title'));
     }
 
     
@@ -30,7 +31,7 @@ class ProdutoController extends Controller
         //
     }
 
-    
+
     public function edit($id)
     {
         //
