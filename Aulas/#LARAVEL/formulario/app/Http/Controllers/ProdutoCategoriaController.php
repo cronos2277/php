@@ -11,41 +11,15 @@ class ProdutoCategoriaController extends Controller
     {
         $title = 'One To One';
         return view('1ton.home',compact('title'));
+    }     
+
+    function todosProdutos(){
+        $produtos = \App\Models\Produto::with('categorias')->get();
+        return $produtos->toJson();
     }
 
-    
-    public function create()
-    {
-        //
-    }
-
-    
-    public function store(Request $request)
-    {
-        //
-    }
-
-    
-    public function show($id)
-    {
-        //
-    }
-
-
-    public function edit($id)
-    {
-        //
-    }
-
-    
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    
-    public function destroy($id)
-    {
-        //
+    function todasCategorias(){
+        $categorias = \App\Models\Categoria::all();
+        return $categorias->toJson();
     }
 }

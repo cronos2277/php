@@ -63,4 +63,34 @@
                 </div>
             </div>
         </main>
+        <script>
+            var produtos;
+            var categorias;             
+            function getAll(){
+                //produtos
+                fetch('/api/um-para-muitos/p')                
+                .then(data => data.text())
+                .then(data => JSON.parse(data))
+                .then(data => produtos = data)                
+                .then(setProdutos);
+
+                //categorias
+                fetch('/api/um-para-muitos/c')                
+                .then(data => data.text())
+                .then(data => JSON.parse(data))
+                .then(data => categorias = data)
+                .then(setCategorias);                
+            };
+            
+            function setCategorias(){
+
+            }
+
+            function setProdutos(){
+                
+            }
+
+            window.onload = getAll();
+            
+        </script>
 @endsection
