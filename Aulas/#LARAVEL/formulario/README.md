@@ -279,3 +279,68 @@ Aqui estamos atualizando, inicialmente estamos pegando de maneira *eager* aqui `
     }
 
 Para excluir, usa o mesmo pricípio usado na atualização, porém isso funciona, porque o carregamento é **eager** `$clientes = ModelCliente::with('endereco')->get();`, de toda forma como existe cascade on *update* e *delete* ao excluir cliente se exclui o endereço junto, conforme [visto aqui](#migration-da-entidade-fraca). Depois de exluir retorna o estatus *204* `return response('Deleted',204);`.
+
+## Seeders
+Os *seeders* servem para popular tabelas no Laravel, no caso seria uma alternativa ao *TINKER*, porém você pode fazer isso usando algoritimos para isso, que é um grande diferencial dele. No caso seria aqui que seria programado a parte relacionada ao uso do *faker* para fazer os devidos testes. O seu funcionamento é relativamente simples:
+
+### Criando um novo Seeder
+    php artisan make:seeder [nome]
+
+No terminal você deve digitar o comando acima e substituir `[nome]` pelo nome correspondente, recomenda-se a palavra *Seeder* após o nome, por exemplo *CategoriaSeeder*, *PessoaSeeder*, etc... Ao fazer isso:
+
+    namespace Database\Seeders;
+    use Illuminate\Database\Seeder;
+    
+
+    class [nome] extends Seeder
+    {
+        public function run()
+        {              
+            
+        }
+    }
+
+É criado um classe nesse estilo acima, você pode importar o *DB* `use Illuminate\Support\Facades\DB;` caso você queira usar ele para popular alguma tabela. Você deve colocar toda a lógica dentro do método *run*. Se for usar a classe *DB* tem duas estratégias para isso:
+
+### Primeira Estratégia: DB::table
+[CategoriaSeeder](./database/seeders/CategoriaSeeder.php)
+
+    public function run()
+    {              
+        DB::table('categorias')->insert(['nome' => 'ROUPAS']);        
+        DB::table('categorias')->insert(['nome' => 'ELETRONICO']);
+        DB::table('categorias')->insert(['nome' => 'PERFUME']);
+        DB::table('categorias')->insert(['nome' => 'MOVEIS']);
+    }
+
+O `DB::table` vem do `use Illuminate\Support\Facades\DB;`. 
+
+### Segunda estratégia: DB::metodos()
+[ProdutoSeeder](./database/seeders/ProdutoSeeder.php)
+
+    public function run()
+    {
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [5, 'Camisa Polo']);
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [2, 'Televisor']);
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [1, 'Perfume feminino']);
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [4, 'Sofa de canto']);
+    }
+
+A segunda forma seria usar os métodos estáticos do próprio *DB*, no caso essa estratégia permite a digitação de uma query.
+
+### Registrando no DatabaseSeeder.php    
+[DatabaseSeeder](./database/seeders/DatabaseSeeder.php)
+
+    namespace Database\Seeders;
+    use Illuminate\Database\Seeder;
+
+    class DatabaseSeeder extends Seeder
+    {        
+        public function run()
+        {
+            $this->call(CategoriaSeeder::class);
+            $this->call(ProdutoSeeder::class);        
+        }
+    }
+
+Para que a **seeder** seja identificada, se faz necessário registrar as **seeders** criadas dentro do arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php), quando você for executar um comando para executar as seeders, é justamente esse arquivo que será lido, e é aqui `$this->call` que você informa as *seeders* a serem executadas. Nesse caso as duas *seeders* serão executadas. O método *call* aceita com argumento uma classe, e graças a estrutura do *Seeder* você pode colocar nesse arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php) as condições para as *Seeder* executar.
