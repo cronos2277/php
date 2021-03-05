@@ -24,15 +24,7 @@
                             <td width='80%' align="center"><b>NOME</b></td>   
                             <th colspan="2">Ações</th>                         
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td width='80%' align="center">Nome</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm">Editar</button>
-                                    <button class="btn btn-danger btn-sm">Excluir</button>
-                                </td>
-                            </tr>
+                        <tbody id="categoria">                            
                         </tbody>                        
                     </table>
                 </div>
@@ -41,23 +33,13 @@
                 <div class="card card-body bg-primary bg-gradient">
                     <table class="table table-striped table-primary">
                         <thead>
-                            <th>ID</th>
-                            <th width="40%">NOME</th>
-                            <th>ESTOQUE</th>
-                            <th width="40%">CATEGORIA</th>
-                            <th colspan="2">Ações</th>
+                            <td align="center"><b>ID</b></td>
+                            <td width="35%" align="center"><b>NOME</b></td>
+                            <td align="center"><b>ESTOQUE</b></td>
+                            <td width="35%" align="center"><b>CATEGORIA</b></td>
+                            <td colspan="2" align="center"><b>Ações</b></td>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td width="40%">Produto</td>
-                                <td>2</td>
-                                <td width="40%">Nome</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm">Editar</button>
-                                    <button class="btn btn-danger btn-sm">Excluir</button>
-                                </td>
-                            </tr>
+                        <tbody id="produto">                            
                         </tbody>
                     </table>
                 </div>
@@ -72,22 +54,130 @@
                 .then(data => data.text())
                 .then(data => JSON.parse(data))
                 .then(data => produtos = data)                
-                .then(setProdutos);
+                .then(setProdutos)
+                .catch(_ => console.error('Não foi possível carregar Produtos'));
 
                 //categorias
                 fetch('/api/um-para-muitos/c')                
                 .then(data => data.text())
                 .then(data => JSON.parse(data))
                 .then(data => categorias = data)
-                .then(setCategorias);                
+                .then(setCategorias)
+                .then(afterCat)
+                .catch(_ => alert('Erro ao carregar o site, verifique a conexão com o banco de dados!'));                
             };
             
-            function setCategorias(){
+            function afterCat(){
+                const options = document.getElementsByClassName('all_categories');
+                Array.from(options).forEach(
+                    el => {
+                        let font = Array.from(categorias).filter(c => el.getAttribute('category') == c.id); 
+                        font = font[0];
+                        if(font && font.nome){
+                            el.innerText = font.nome;
+                        }else{
+                            el.innerText = 'N/A';
+                        }                        
+                    }
+                )
+            }
 
+            function setCategorias(){
+                function createCategoria(key,name){
+
+                    const tr = document.createElement('tr');
+                    tr.setAttribute('key',key);
+
+                    const td_id = document.createElement('td');
+                    td_id.innerText = key;                    
+
+                    const td_nome = document.createElement('td');
+                    td_nome.innerText = name;       
+                    td_nome.setAttribute('width','80%');  
+                    td_nome.setAttribute('align','center');                  
+
+                    const edit = document.createElement('button');
+                    edit.setAttribute('onclick',`editCat(${key})`);
+                    edit.className = "btn btn-warning btn-sm";
+                    edit.innerText = 'Editar';
+                    
+                    const remove = document.createElement('button');
+                    remove.setAttribute('onclick',`remCat(${key})`);
+                    remove.className = "mx-4 btn btn-danger btn-sm";
+                    remove.innerText = 'Remover';
+                    
+                    const container = document.createElement('td');
+                    container.appendChild(edit);
+                    container.appendChild(remove);
+
+                    tr.appendChild(td_id);
+                    tr.appendChild(td_nome);
+                    tr.appendChild(container);
+                    return tr;
+                }
+
+                const categoria = document.getElementById('categoria');
+                Array.from(categorias)
+                .forEach(
+                        e => categoria.appendChild(
+                            createCategoria(e.id,e.nome)
+                        )
+                    );
             }
 
             function setProdutos(){
-                
+                function createProduto(key,name,estoque,cat){
+                    const tr = document.createElement('tr');
+                    tr.setAttribute('key',key);
+
+                    const td_id = document.createElement('td');
+                    td_id.innerText = key;
+                    tr.appendChild(td_id);
+
+                    const td_nome = document.createElement('td');
+                    td_nome.innerText = name;       
+                    td_nome.setAttribute('width','35%');  
+                    td_nome.setAttribute('align','center');                      
+                    tr.appendChild(td_nome);
+
+                    const td_catid = document.createElement('td');
+                    td_catid.innerText = estoque;
+                    tr.appendChild(td_catid);
+
+                    const td_cat = document.createElement('td');
+                    td_cat.setAttribute('id',`prod-${key}`);
+                    td_cat.setAttribute('class','all_categories');               
+                    td_cat.setAttribute('category',cat);
+                    td_cat.setAttribute('width','35%');  
+                    td_cat.setAttribute('align','center');  
+                    tr.appendChild(td_cat);
+
+                    const edit = document.createElement('button');
+                    edit.setAttribute('onclick',`editProd(${key})`);
+                    edit.className = "btn btn-warning btn-sm";
+                    edit.innerText = 'Editar';
+                    
+                    const remove = document.createElement('button');
+                    remove.setAttribute('onclick',`remProd(${key})`);
+                    remove.className = "mx-4 btn btn-danger btn-sm";
+                    remove.innerText = 'Remover';
+                    
+                    const container = document.createElement('td');
+                    container.setAttribute('width','20%');
+                    container.appendChild(edit);
+                    container.appendChild(remove);
+                    tr.appendChild(container);
+
+                    return tr;
+                }
+                const produto = document.getElementById('produto');                
+                Array.from(produtos)
+                .forEach(
+                        e => produto.appendChild(
+                            createProduto(e.id,e.nome,e.estoque,e.categoria_id)
+                        )
+                    );
+
             }
 
             window.onload = getAll();

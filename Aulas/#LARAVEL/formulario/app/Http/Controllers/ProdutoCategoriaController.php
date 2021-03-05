@@ -14,7 +14,7 @@ class ProdutoCategoriaController extends Controller
     }     
 
     function todosProdutos(){
-        $produtos = \App\Models\Produto::with('categorias')->get();
+        $produtos = \App\Models\Produto::with('categoria')->get();
         return $produtos->toJson();
     }
 
