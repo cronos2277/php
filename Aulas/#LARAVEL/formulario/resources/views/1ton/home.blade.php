@@ -13,7 +13,7 @@
 
             <div class="col-6">
                 <a class="btn btn-outline-primary">ADICIONAR PRODUTO</a>
-                <a class="btn btn-outline-info">ADICIONAR CATEGORIA</a>
+                <a class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#addCat">ADICIONAR CATEGORIA</a>
             </div>
         </div>
             <div class="collapse mt-3" id="collapseExample">
@@ -43,11 +43,58 @@
                         </tbody>
                     </table>
                 </div>
+            </div>            
+            <div class="modal fade" id="addCat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">                            
+                            <input type="nome" class="form-control" id="categoriaNome" placeholder="CATEGORIA" value="">
+                            <label for="categoriaNome">Categoria</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-info" onclick="addCat()">Adicionar</button>
+                    </div>
+                </div>
+                </div>
             </div>
         </main>
         <script>
-            var produtos;
-            var categorias;             
+            var produtos = null;
+            var categorias = null; 
+            const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};
+
+            function addCat(){                
+                const categoriaNome = document.getElementById('categoriaNome').value;
+                const body = new FormData();
+                body.append('nome',categoriaNome);                
+                fetch('/api/um-para-muitos/c',{method:'post',headers,body})
+                .then(e => (e.status == 401)? alert('Erro ao inserir'):alert(`${categoriaNome} adicionado com sucesso!`))
+                .then(getAll)
+                .catch(console.error)                
+            }
+
+            function remCat(id){
+                const body = new FormData();
+                body.append('_method','DELETE');
+                if(confirm('Deseja Excluir?')){
+                    fetch(`/api/um-para-muitos/c/${id}`,{method:'post',headers,body})
+                    .then(e => (e.status == 401) && alert('Essa categoria tem produto(s) associados e não pode ser excluída!'))
+                    .then(getAll)
+                    .catch(console.error)
+                }
+            }
+
+            function editCat(id){
+                                
+            }
+
             function getAll(){
                 //produtos
                 fetch('/api/um-para-muitos/p')                
@@ -62,25 +109,9 @@
                 .then(data => data.text())
                 .then(data => JSON.parse(data))
                 .then(data => categorias = data)
-                .then(setCategorias)
-                .then(afterCat)
+                .then(setCategorias)                
                 .catch(_ => alert('Erro ao carregar o site, verifique a conexão com o banco de dados!'));                
-            };
-            
-            function afterCat(){
-                const options = document.getElementsByClassName('all_categories');
-                Array.from(options).forEach(
-                    el => {
-                        let font = Array.from(categorias).filter(c => el.getAttribute('category') == c.id); 
-                        font = font[0];
-                        if(font && font.nome){
-                            el.innerText = font.nome;
-                        }else{
-                            el.innerText = 'N/A';
-                        }                        
-                    }
-                )
-            }
+            };           
 
             function setCategorias(){
                 function createCategoria(key,name){
@@ -117,6 +148,7 @@
                 }
 
                 const categoria = document.getElementById('categoria');
+                categoria.innerHTML = '';
                 Array.from(categorias)
                 .forEach(
                         e => categoria.appendChild(
@@ -126,7 +158,7 @@
             }
 
             function setProdutos(){
-                function createProduto(key,name,estoque,cat){
+                function createProduto(key,name,estoque,categoria){
                     const tr = document.createElement('tr');
                     tr.setAttribute('key',key);
 
@@ -140,14 +172,13 @@
                     td_nome.setAttribute('align','center');                      
                     tr.appendChild(td_nome);
 
-                    const td_catid = document.createElement('td');
-                    td_catid.innerText = estoque;
-                    tr.appendChild(td_catid);
+                    const td_estoque = document.createElement('td');
+                    td_estoque.innerText = estoque;
+                    tr.appendChild(td_estoque);
 
                     const td_cat = document.createElement('td');
-                    td_cat.setAttribute('id',`prod-${key}`);
-                    td_cat.setAttribute('class','all_categories');               
-                    td_cat.setAttribute('category',cat);
+                    td_cat.innerText = categoria && categoria.nome;
+                    td_cat.setAttribute('class','all_categories');                                   
                     td_cat.setAttribute('width','35%');  
                     td_cat.setAttribute('align','center');  
                     tr.appendChild(td_cat);
@@ -170,11 +201,12 @@
 
                     return tr;
                 }
-                const produto = document.getElementById('produto');                
+                const produto = document.getElementById('produto');  
+                produto.innerHTML = '';              
                 Array.from(produtos)
                 .forEach(
                         e => produto.appendChild(
-                            createProduto(e.id,e.nome,e.estoque,e.categoria_id)
+                            createProduto(e.id,e.nome,e.estoque,e.categoria)
                         )
                     );
 

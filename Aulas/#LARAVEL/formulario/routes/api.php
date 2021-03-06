@@ -28,3 +28,5 @@ Route::put('/um-para-um/{id}','App\Http\Controllers\Cliente@update');
 
 Route::get('/um-para-muitos/p','App\Http\Controllers\ProdutoCategoriaController@todosProdutos');
 Route::get('/um-para-muitos/c','App\Http\Controllers\ProdutoCategoriaController@todasCategorias');
+Route::post('/um-para-muitos/c','App\Http\Controllers\ProdutoCategoriaController@adicionarCategoria');
+Route::delete('/um-para-muitos/c/{id}','App\Http\Controllers\ProdutoCategoriaController@removerCategoria');
