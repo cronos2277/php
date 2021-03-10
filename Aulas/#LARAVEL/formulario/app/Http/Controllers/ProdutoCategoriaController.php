@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Produto;
 use Illuminate\Http\Request;
 
 class ProdutoCategoriaController extends Controller
@@ -54,6 +55,19 @@ class ProdutoCategoriaController extends Controller
             $categoria = Categoria::find($id);
             $categoria->nome = $request->input('nome');
             $categoria->update();
+            response('Updated',202);
+        }catch(\Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
+    function atualizarProdutoCategoria(Request $request, $id){
+        try{
+            $produto = Produto::find($id);
+            $numero = $request->input('categoria_id');
+            $produto->categoria_id = ($numero > 0) ? $numero : null;
+            $produto->update();
+            response('Updated',202);
         }catch(\Exception $e){
             return response($e->getMessage(),500);
         }

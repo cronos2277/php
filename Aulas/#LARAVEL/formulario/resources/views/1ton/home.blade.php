@@ -106,6 +106,22 @@
                 }
             }
 
+            function prodCat(prodId,catId){
+                const body = new FormData();
+                body.append('_method','PUT');
+                const cat = (catId) ? catId : null;
+                body.append('categoria_id',cat);
+                if(confirm(`Deseja alterar a categoria?`)){
+                    fetch(`/api/um-para-muitos/p/c/${prodId}`,{method:'post',headers,body})
+                    .then(e => (e.status == 500) && alert('Erro ao atualizar'))
+                    .then(getAll)
+                    .catch(console.error);
+                }else{
+                    const old = (produtos && prodId) ? produtos.filter(e => e.id == prodId) : 0; 
+                    document.getElementById(`select_cat_prod-${prodId}`).value = old[0].categoria_id;
+                }
+            }
+
             function getAll(){
                 //produtos
                 fetch('/api/um-para-muitos/p')                
@@ -120,9 +136,27 @@
                 .then(data => data.text())
                 .then(data => JSON.parse(data))
                 .then(data => categorias = data)
-                .then(setCategorias)                
+                .then(setCategorias)
+                .then(setCategoriasProducts)                
                 .catch(_ => alert('Erro ao carregar o site, verifique a conexão com o banco de dados!'));                
-            };           
+            };
+            
+            function setCategoriasProducts(){
+                if(produtos){
+                    produtos.forEach(function(prod){
+                        const element = document.getElementById(`select_cat_prod-${prod.id}`);
+                        const index = element.value;
+                        categorias.forEach(function(cat){
+                            if(cat.id != index){
+                                const opt = document.createElement('option');
+                                opt.value = cat.id;
+                                opt.innerText = cat.nome;
+                                element.appendChild(opt);
+                            }
+                        });
+                    });
+                }
+            }
 
             function setCategorias(){
                 function createCategoria(key,name){
@@ -186,17 +220,27 @@
                     td_estoque.innerText = estoque;
                     tr.appendChild(td_estoque);
 
-                    const td_cat = document.createElement('td');
-                    td_cat.innerText = categoria && categoria.nome;
-                    td_cat.setAttribute('class','all_categories');                                   
-                    td_cat.setAttribute('width','35%');  
-                    td_cat.setAttribute('align','center');  
-                    tr.appendChild(td_cat);
-
-                    const edit = document.createElement('button');
-                    edit.setAttribute('onclick',`editProd(${key})`);
-                    edit.className = "btn btn-warning btn-sm";
-                    edit.innerText = 'Editar';
+                    const select_cat = document.createElement('select');                    
+                    const opt = document.createElement('option');
+                    opt.value = (categoria && categoria.id) ? categoria.id:0;
+                    opt.innerText = (categoria && categoria.nome) ? categoria.nome:'NENHUM';
+                    if(categoria){
+                        const anyopt = document.createElement('option');
+                        anyopt.value = 0;
+                        anyopt.innerText = 'NENHUM';
+                        select_cat.appendChild(anyopt);
+                    }
+                    select_cat.appendChild(opt);
+                    select_cat.value = (categoria && categoria.id) ? categoria.id : 0;
+                    select_cat.setAttribute('class','all_categories form-select');                                   
+                    select_cat.setAttribute('width','35%');  
+                    select_cat.setAttribute('align','center'); 
+                    select_cat.setAttribute('id',`select_cat_prod-${key}`); 
+                    select_cat.setAttribute('onchange',`prodCat(${key},this.value)`);
+                    const td_select = document.createElement('td');
+                    td_select.appendChild(select_cat);
+                    tr.appendChild(td_select);
+                    
                     
                     const remove = document.createElement('button');
                     remove.setAttribute('onclick',`remProd(${key})`);
@@ -204,8 +248,7 @@
                     remove.innerText = 'Remover';
                     
                     const container = document.createElement('td');
-                    container.setAttribute('width','20%');
-                    container.appendChild(edit);
+                    container.setAttribute('width','20%');                    
                     container.appendChild(remove);
                     tr.appendChild(container);
 
