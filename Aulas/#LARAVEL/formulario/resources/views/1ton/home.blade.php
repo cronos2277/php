@@ -91,8 +91,19 @@
                 }
             }
 
-            function editCat(id){
-                                
+            function editCat(id,value){
+                const body = new FormData();
+                body.append('_method','PUT');
+                body.append('nome',value);
+                if(confirm(`Deseja alterar para ${value}?`)){
+                    fetch(`/api/um-para-muitos/c/${id}`,{method:'post',headers,body})
+                    .then(e => (e.status == 500) && alert('Erro ao atualizar'))
+                    .then(getAll)
+                    .catch(console.error);
+                }else{
+                    const old = (categorias) && categorias.filter(e => e.id == id);                    
+                    document.getElementById(`catName-${id}`).value = old[0].nome;
+                }
             }
 
             function getAll(){
@@ -122,23 +133,22 @@
                     const td_id = document.createElement('td');
                     td_id.innerText = key;                    
 
-                    const td_nome = document.createElement('td');
-                    td_nome.innerText = name;       
+                    const td_nome = document.createElement('td');                           
+                    input_name = document.createElement('input');
+                    input_name.setAttribute('id',`catName-${key}`);
+                    input_name.setAttribute('class','form-control');
+                    input_name.value = name;
+                    input_name.setAttribute('onchange',`editCat(${key},this.value)`);
+                    td_nome.append(input_name);
                     td_nome.setAttribute('width','80%');  
                     td_nome.setAttribute('align','center');                  
 
-                    const edit = document.createElement('button');
-                    edit.setAttribute('onclick',`editCat(${key})`);
-                    edit.className = "btn btn-warning btn-sm";
-                    edit.innerText = 'Editar';
-                    
                     const remove = document.createElement('button');
                     remove.setAttribute('onclick',`remCat(${key})`);
                     remove.className = "mx-4 btn btn-danger btn-sm";
                     remove.innerText = 'Remover';
                     
-                    const container = document.createElement('td');
-                    container.appendChild(edit);
+                    const container = document.createElement('td');                    
                     container.appendChild(remove);
 
                     tr.appendChild(td_id);

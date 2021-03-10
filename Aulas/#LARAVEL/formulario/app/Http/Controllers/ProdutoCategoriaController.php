@@ -48,4 +48,14 @@ class ProdutoCategoriaController extends Controller
             return response($e->getMessage(),401);
         }
     }
+
+    function atualizarCategoria(Request $request, $id){
+        try{
+            $categoria = Categoria::find($id);
+            $categoria->nome = $request->input('nome');
+            $categoria->update();
+        }catch(\Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
 }
