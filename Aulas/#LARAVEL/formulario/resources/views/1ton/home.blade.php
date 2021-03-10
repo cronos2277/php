@@ -122,6 +122,22 @@
                 }
             }
 
+            function setEstoque(id,quantity){
+                const body = new FormData();
+                body.append('_method','PUT');
+                const qtd = (quantity > 0)?quantity:0;
+                body.append('estoque',qtd);
+                if(confirm(`Deseja alterar o estoque para "${qtd}"`)){
+                    fetch(`/api/um-para-muitos/p/e/${id}`,{method:'post',headers,body})
+                    .then(e => (e.status == 500) && alert('Erro ao atualizar'))
+                    .then(getAll)
+                    .catch(console.error);
+                }else{
+                    const old = (produtos) && produtos.filter(e => e.id == id);                    
+                    document.getElementById(`estoque-${id}`).value = old[0].estoque;
+                }
+            }
+
             function getAll(){
                 //produtos
                 fetch('/api/um-para-muitos/p')                
@@ -217,7 +233,13 @@
                     tr.appendChild(td_nome);
 
                     const td_estoque = document.createElement('td');
-                    td_estoque.innerText = estoque;
+                    const input_estoque = document.createElement('input');
+                    input_estoque.value = estoque;
+                    input_estoque.setAttribute('type','number');
+                    input_estoque.setAttribute('class','form-select');
+                    input_estoque.setAttribute('onchange',`setEstoque(${key},this.value)`);
+                    input_estoque.setAttribute('id',`estoque-${key}`);
+                    td_estoque.appendChild(input_estoque);
                     tr.appendChild(td_estoque);
 
                     const select_cat = document.createElement('select');                    

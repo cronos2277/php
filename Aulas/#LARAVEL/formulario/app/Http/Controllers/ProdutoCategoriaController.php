@@ -72,4 +72,16 @@ class ProdutoCategoriaController extends Controller
             return response($e->getMessage(),500);
         }
     }
+
+    function atualizarProdutoEstoque(Request $request, $id){
+        try{
+            $produto = Produto::find($id);
+            $estoque = ($request->input('estoque') > 0) ?$request->input('estoque'):0;
+            $produto->estoque = $estoque;
+            $produto->update();
+            response('Updated',202);
+        }catch(\Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
 }
