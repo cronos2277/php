@@ -138,6 +138,21 @@
                 }
             }
 
+            function setProdNome(id,value){
+                const body = new FormData();
+                body.append('_method','PUT');
+                body.append('nome',value);
+                if(confirm(`Deseja alterar o nome do produto para "${value}"`)){
+                    fetch(`/api/um-para-muitos/p/n/${id}`,{method:'post',headers,body})
+                    .then(e => (e.status == 500) && alert('Erro ao atualizar'))
+                    .then(getAll)
+                    .catch(console.error);
+                }else{
+                    const old = (produtos) && produtos.filter(e => e.id == id);                    
+                    document.getElementById(`nomeProd-${id}`).value = old[0].nome;
+                }
+            }
+
             function getAll(){
                 //produtos
                 fetch('/api/um-para-muitos/p')                
@@ -227,7 +242,12 @@
                     tr.appendChild(td_id);
 
                     const td_nome = document.createElement('td');
-                    td_nome.innerText = name;       
+                    const input_nome = document.createElement('input');
+                    input_nome.value = name;
+                    input_nome.setAttribute('id',`nomeProd-${key}`);
+                    input_nome.setAttribute('class','form-select');
+                    input_nome.setAttribute('onchange',`setProdNome(${key},this.value)`);
+                    td_nome.appendChild(input_nome)
                     td_nome.setAttribute('width','35%');  
                     td_nome.setAttribute('align','center');                      
                     tr.appendChild(td_nome);

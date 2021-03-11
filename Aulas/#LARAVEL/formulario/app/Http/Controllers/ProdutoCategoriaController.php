@@ -84,4 +84,15 @@ class ProdutoCategoriaController extends Controller
             return response($e->getMessage(),500);
         }
     }
+
+    function atualizarProdutoNome(Request $request, $id){
+        try{
+            $produto = Produto::find($id);
+            $produto->nome = $request->input('nome');
+            $produto->update();
+            response('Updated',202);
+        }catch(\Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
 }
