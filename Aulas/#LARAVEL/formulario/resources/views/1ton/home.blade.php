@@ -12,7 +12,7 @@
             </div>
 
             <div class="col-6">
-                <a class="btn btn-outline-primary">ADICIONAR PRODUTO</a>
+                <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addProd">ADICIONAR PRODUTO</a>
                 <a class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#addCat">ADICIONAR CATEGORIA</a>
             </div>
         </div>
@@ -43,12 +43,14 @@
                         </tbody>
                     </table>
                 </div>
-            </div>            
+            </div>       
+
+            <!-- Adicionar categorias -->     
             <div class="modal fade" id="addCat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Categoria</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -64,6 +66,45 @@
                 </div>
                 </div>
             </div>
+
+            <!-- Adicionar produtos -->     
+            <div class="modal fade" id="addProd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">                            
+                            <input type="nome" class="form-control" id="produtoNome" placeholder="NOME" value="">
+                            <label for="categoriaNome">Nome</label>
+                        </div>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="form-floating mb-3 col-6">                            
+                            <input type="number" class="form-control" id="produtoEstoque" placeholder="QUANTIDADE" value="">
+                            <label for="categoriaNome">Estoque</label>
+                        </div>
+
+                        <div class="form-floating mb-3 col-6">                            
+                            <select type="nome" class="form-select" id="produtoCategoria" value=null>
+                                <option value=null selected>NENHUM</option>
+                            </select>
+                            <label for="categoriaNome">Nome</label>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-info" onclick="addProd()">Adicionar</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
         </main>
         <script>
             var produtos = null;
@@ -76,8 +117,23 @@
                 body.append('nome',categoriaNome);                
                 fetch('/api/um-para-muitos/c',{method:'post',headers,body})
                 .then(e => (e.status == 401)? alert('Erro ao inserir'):alert(`${categoriaNome} adicionado com sucesso!`))
-                .then(getAll)
+                .then(getAll)                
                 .catch(console.error)                
+            }
+
+            function addProd(){
+                const nome = document.getElementById('produtoNome').value;
+                const estoque = document.getElementById('produtoEstoque').value;
+                let categoria = document.getElementById('produtoCategoria').value;
+                categoria = (categoria && categoria > 0) ? categoria : null;
+                const body = new FormData();
+                body.append('nome',nome);
+                body.append('estoque',estoque);
+                body.append('categoria_id',categoria);
+                fetch('/api/um-para-muitos/p',{method:'post',headers,body})
+                .then(e => (e.status == 401)? alert('Erro ao inserir'):alert(`${nome} adicionado com sucesso!`))
+                .then(getAll)                
+                .catch(console.error)  
             }
 
             function remCat(id){
@@ -180,9 +236,34 @@
                 .then(data => categorias = data)
                 .then(setCategorias)
                 .then(setCategoriasProducts)                
-                .catch(_ => alert('Erro ao carregar o site, verifique a conexão com o banco de dados!'));                
+                .catch(_ => alert('Erro ao carregar o site, verifique a conexão com o banco de dados!'))
+                .finally(produtoCategoria);                
             };
-            
+
+            function produtoCategoria(){
+                const cats = document.getElementById('produtoCategoria');
+                cats.innerHTML = document.createElement('select');
+                cats.setAttribute('type','nome');
+                cats.setAttribute('class','form-select');
+                cats.setAttribute('id','produtoCategoria');
+                cats.value=null;
+                const anyopt = document.createElement('option');
+                anyopt.value = null;
+                anyopt.innerText = "NENHUM";
+                anyopt.setAttribute('selected',true);
+                cats.appendChild(anyopt);                
+                if(categorias){
+                    categorias.forEach(
+                        function(element){
+                            let opt = document.createElement('option');
+                            opt.value = element.id;
+                            opt.innerText = element.nome;
+                            cats.append(opt);
+                        }
+                    );
+                }
+            }
+
             function setCategoriasProducts(){
                 if(produtos){
                     produtos.forEach(function(prod){

@@ -26,7 +26,17 @@ class ProdutoCategoriaController extends Controller
     }
 
     function adicionarProduto(Request $request){
-
+        $produto = new Produto();
+        try{
+            $produto->nome = $request->input('nome');
+            $produto->estoque = $request->input('estoque');
+            $categoria_id = ($request->input('categoria_id') > 0)?$request->input('categoria_id'):null;
+            $produto->categoria_id = $categoria_id;
+            $produto->save();
+            return response('Created',201);
+        }catch(\Exception $e){
+            return response($e->getMessage(),401);
+        }
     }
 
     function adicionarCategoria(Request $request){
