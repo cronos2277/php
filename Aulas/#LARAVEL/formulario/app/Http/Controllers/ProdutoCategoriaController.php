@@ -50,6 +50,16 @@ class ProdutoCategoriaController extends Controller
         }
     }
 
+    function removerProduto($id){
+        try{
+            $produto = Produto::find($id);
+            $produto->delete();
+            return response('Deleted',204);
+        }catch(\Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
     function atualizarCategoria(Request $request, $id){
         try{
             $categoria = Categoria::find($id);

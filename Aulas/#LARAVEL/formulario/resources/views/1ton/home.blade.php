@@ -91,6 +91,17 @@
                 }
             }
 
+            function remProd(id){
+                const body = new FormData();
+                body.append('_method','DELETE');
+                if(confirm('Deseja Excluir?')){
+                    fetch(`/api/um-para-muitos/p/${id}`,{method:'post',headers,body})
+                    .then(e => (e.status == 401) && alert('Erro ao excluir o produto!'))
+                    .then(getAll)
+                    .catch(console.error)
+                }
+            }
+
             function editCat(id,value){
                 const body = new FormData();
                 body.append('_method','PUT');
