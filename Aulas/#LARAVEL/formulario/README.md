@@ -344,3 +344,64 @@ A segunda forma seria usar os métodos estáticos do próprio *DB*, no caso essa
     }
 
 Para que a **seeder** seja identificada, se faz necessário registrar as **seeders** criadas dentro do arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php), quando você for executar um comando para executar as seeders, é justamente esse arquivo que será lido, e é aqui `$this->call` que você informa as *seeders* a serem executadas. Nesse caso as duas *seeders* serão executadas. O método *call* aceita com argumento uma classe, e graças a estrutura do *Seeder* você pode colocar nesse arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php) as condições para as *Seeder* executar.
+
+## Requisição AJAX
+[home.blade.php](./resources/views/pages/home.blade.php)
+###### Código
+    function submit(isNeedToClearId){
+            if(isNeedToClearId) document.getElementById('id').value = null;                
+            const element = attr => document.getElementById(attr).value || null;   
+            const id = element('id');    
+            const body = new FormData();
+            body.append('nome',element('nome'));
+            body.append('email',element('email'));
+            body.append('rua',element('rua'));
+            body.append('cidade',element('cidade'));
+            body.append('estado',element('estado'));
+            if(!id){
+                //Inserção       
+                const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};         
+                fetch('/api/um-para-um/',{method:'post',headers,body})
+                    .then(console.log)
+                    .catch(console.error)
+                    .finally(getAll());                            
+            }else{
+                //Atualização  
+                body.append('id',element('id'));
+                body.append('_method','PUT')   
+                const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};                              
+                fetch(`/api/um-para-um/${id}`,{method:'post',headers,body})
+                    .then(console.log)
+                    .catch(console.error)
+                    .finally(getAll());       
+            }
+            
+        }
+
+### Explicando 
+Quando for fazer uma requisição ajax, ou fazer uso de formulários para outros verbos além do *GET* e *POST*, deve-se usar o `'X-CSFR-TOKEN`, que nada mais é que colocar o token no formulário para que ele seja válido no Laravel, além disso você deve passar o método desejado pelo atributo `_method`, devendo esse envio ser feito usando o método *POST*. 
+
+### X-CSFR-TOKEN
+Ou seja toda requisição que não seja *GET* deve conter em seu cabeçalho `'X-CSFR-TOKEN'`, esse token é necessário por motivos de segurança para evitar um ataque *CSFR*. Existe duas formas de se obter esse *token*, a primeira é através do blade `@csrf`, mas no caso do *ajax*, pode-se usar a função PHP, conforme visto aqui `csrf_token()`, conforme visto abaixo:
+
+    const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};
+
+No caso o resultado de `csrf_token()`, na expressão acima o *double mustache* na prática tem a mesma função que o *echo*, conforme visto aqui `'{{csrf_token()}}'`.
+
+### @method('')
+Nenhum formulário aceita um método diferente de *GET* ou *POST*, no caso se você quer fazer uso de qualquer outro método além desses, a requisição deve ser feito usando *POST* e dentro do formulário deve ter um campo chamado `name='_method' value='DELETE|PUT|PATCH|etc...'`, e com base nesse campo o *Laravel* deve fazer uma requisição com base no valor nesse campo, ou seja se por exemplo `name='_method' value='PUT'` essa requisição será feita usando o *PUT*, pois o *Laravel* vai levar em consideração o método passado no valor, porém se for fazer a requisição em *AJAX* temos:
+
+    const body = new FormData();
+    body.append('_method','PUT');
+    body.append('id',element('id'));                
+    const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};                              
+    fetch(`/api/um-para-um/${id}`,{method:'post',headers,body})
+        .then(console.log)
+        .catch(console.error)
+        .finally(getAll());       
+
+No caso:
+
+    body.append('_method','PUT');
+
+Você deve incluir o *_method* cuja o valor seja o método ao qual deve ser a requisição, e claro, quando for fazer uma requisição com método diferente de *GET* a requisição será sempre *POST* `{method:'post',headers,body}`.
