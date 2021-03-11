@@ -405,3 +405,55 @@ No caso:
     body.append('_method','PUT');
 
 Você deve incluir o *_method* cuja o valor seja o método ao qual deve ser a requisição, e claro, quando for fazer uma requisição com método diferente de *GET* a requisição será sempre *POST* `{method:'post',headers,body}`.
+
+### Isso pode não funcionar
+
+     function remove(id){
+            let record = allData.filter(e => e.id == id);record = record[0];
+            if(confirm(`Deseja Excluir ${record.nome}?`)){
+                const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};
+                fetch(`/api/um-para-um/${id}`,{method:'delete',headers})
+                    .then(console.log)
+                    .catch(console.error)
+                    .finally(getAll());
+            }
+        }
+
+Nessa requisição é feito pelo método *DELETE* direto sem passar o *@method*, vai funcionar, porém a requisição não terá corpo, no caso essa requisição deve funcionar, pois o laravel na exclusão usa o *ID* passado a *URL* para fazer a requisição. Porém se precisar de qualquer dado que não esteja na *URL*, não funcionaria, e é para poder aproveitar os dados do corpo da requisição que precisa usar a técnica com o *@method*.
+
+## Um para muitos
+[ 1 Categoria](./app/Models/Categoria.php) para ['N' Produto](./app/Models/Produto.php).
+### Entidade dominante 
+
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Categoria extends Model
+    {    
+        use HasFactory;
+        public function produtos(){
+            return $this->hasMany(Produto::class);
+        }
+    }
+
+O método *hasMany* vem da mesma origem do *hasOne*, ou seja de *HasFactory*, além disso segue a mesma lógica, no caso nesse método é passado apenas a classe, devido a essa *Entidade* seguir o padrão de nomenclatura do *Laravel*, logo não precisa que se informe qual é o campo *id*, o laravel já deduz nesse caso que o campo chave se chama *ID*.
+
+### Entidade dominada
+
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Produto extends Model
+    {
+        use HasFactory;
+        public function categoria(){
+            return $this->belongsTo(Categoria::class);
+        }
+    }
+
+Na classe dominada, tanto no *1 para 1* como em relacionamentos *1 para N*, usa na classe dominada o método *belongsTo()*. Novamente, como essa classe segue o padrão de nomenclatura do *Laravel*, o segundo e o terceiro argumento podem ser omitido.
+
+### Sobre o Controller
+Você também pode  conforme visto nesse exemplo:[ProdutoCategoriaController](./app/Http/Controllers/ProdutoCategoriaController.php), ou seja você pode, se quiser não usar o relacionamento do *Eloquent*, conforme ilustrado nesse controller, associando o *ID* da classe dominante na classe dominada.
