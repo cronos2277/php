@@ -345,6 +345,11 @@ A segunda forma seria usar os métodos estáticos do próprio *DB*, no caso essa
 
 Para que a **seeder** seja identificada, se faz necessário registrar as **seeders** criadas dentro do arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php), quando você for executar um comando para executar as seeders, é justamente esse arquivo que será lido, e é aqui `$this->call` que você informa as *seeders* a serem executadas. Nesse caso as duas *seeders* serão executadas. O método *call* aceita com argumento uma classe, e graças a estrutura do *Seeder* você pode colocar nesse arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php) as condições para as *Seeder* executar.
 
+### Executando as Seeder
+    `php artisan db:seed`
+
+Esse comando acima, faz com que se execute todas a seeds criadas, segue aqui um exemplo: [EXEMPLO](./database/seeders/DatabaseSeeder.php)
+
 ## Requisição AJAX
 [home.blade.php](./resources/views/pages/home.blade.php)
 ###### Código
