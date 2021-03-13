@@ -3,6 +3,68 @@
 ## Pagina expired error 419.
 Toda vez que você ver esse erro, lembre-se de por o token no formulário, sem isso o laravel não permite o *submit*, para isso coloque isso `@csrf` dentro do seu arquivo blade no interior das tags `<form>`
 
+## SQLSTATE[HY000]: General error: 1005 Can't create table
+Se aparecer um erro parecido com esse:
+
+      Illuminate\Database\QueryException 
+
+    SQLSTATE[HY000]: General error: 1005 Can't create table `laravel`.`uso_motorista_veiculos` (errno: 150 "Foreign key constraint is incorrectly formed") (SQL: alter table `uso_motorista_veiculos` add constraint `uso_motorista_veiculos_veiculo_id_foreign` foreign key (`veiculo_id`) references `veiculos` (`id`))
+
+    at C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:678
+        674▕         // If an exception occurs when attempting to run a query, we'll format the error
+        675▕         // message to include the bindings with SQL, which will make this exception a
+        676▕         // lot more helpful to the developer instead of just the database's errors.
+        677▕         catch (Exception $e) {
+    ➜ 678▕             throw new QueryException(
+        679▕                 $query, $this->prepareBindings($bindings), $e
+        680▕             );
+        681▕         }
+        682▕
+
+    1   C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:471
+        PDOException::("SQLSTATE[HY000]: General error: 1005 Can't create table `laravel`.`uso_motorista_veiculos` (errno: 150 "Foreign key constraint is incorrectly formed")")
+
+    2   C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:471
+        PDOStatement::execute()
+
+Tipo que diz que a chave estrangeira está formada incorretamente `errno: 150 "Foreign key constraint is incorrectly formed"`, vefique se o tipo da chave primaria com a chave estrangeira são os mesmos, a chave estrangeira deve ser o exato mesmo tipo da chave primária da outra tabela para funcionar, isso deve ser analisado nas migrations. Por exemplo:
+
+[uso_motorista_veiculos](./database/migrations/2021_03_12_234553_create_uso_motorista_veiculos_table.php)
+
+    Schema::create('uso_motorista_veiculos', function (Blueprint $table) {            
+            $table->integer('veiculo_id')->unsigned();
+            $table->foreign('veiculo_id')->references('id')->on('veiculos');
+            $table->integer('motorista_id')->unsigned();
+            $table->foreign('motorista_id')->references('id')->on('motoristas');
+            $table->date('ultimo_uso')->nullable(true);
+            $table->primary(['motorista_id','veiculo_id']);
+            $table->timestamps();
+        });
+
+Ou seja, nessa migratio acima o **veiculo_id** deve o exato mesmo tipo que o *id* da tabela veiculo, conforme visto abaixo:
+
+[2021_03_12_234426_create_veiculos_table](./database/migrations/2021_03_12_234426_create_veiculos_table.php)
+
+    Schema::create('veiculos', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('placa');            
+            $table->string('cor');
+            $table->boolean('luxo');
+            $table->timestamps();
+        });
+
+No caso `$table->integer('veiculo_id')->unsigned();` faz referência a `$table->integer('id')->unsigned()->autoIncrement();`, repare que as duas colunas são **unsigned** e **integer**, no caso do *autoincrement* se houver deve ser só no campo **PK** e não **FK**.
+
+[2021_03_12_234508_create_motoristas_table](./database/migrations/2021_03_12_234508_create_motoristas_table.php)
+
+    Schema::create('motoristas', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('nome');
+            $table->string('cpf');            
+            $table->timestamps();
+        });
+
+Aqui também se repete: `$table->integer('motorista_id')->unsigned();` faz referência a `$table->integer('id')->unsigned()->autoIncrement();`
 ## Validando formulários
 [Documentação para validadores](https://laravel.com/docs/8.x/validation#available-validation-rules)
 

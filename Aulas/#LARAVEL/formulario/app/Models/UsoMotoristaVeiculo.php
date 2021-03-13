@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class UsoMotoristaVeiculo extends Model
 {
+    protected $table = "";
+    protected $primaryKey = "";
+    
     use HasFactory;
 }
