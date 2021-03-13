@@ -5,12 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 class EnderecoSeeder extends Seeder
-{
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+{   
     public function run()
     {
         DB::insert('insert into enderecos (cliente_id, estado, cidade, rua) values (?,?,?,?)', [1, 'PR','Curitiba', 'rua 12']);
