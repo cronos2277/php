@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Motorista extends Model
 {
-    protected $table = "";
-    protected $primaryKey = "";
+    protected $table = "motoristas";
+    protected $primaryKey = "id";
     
     use HasFactory;
 }

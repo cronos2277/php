@@ -1,70 +1,14 @@
-# Formulário no Laravel
+# Formulário no Laravel e Eloquent
 
-## Pagina expired error 419.
-Toda vez que você ver esse erro, lembre-se de por o token no formulário, sem isso o laravel não permite o *submit*, para isso coloque isso `@csrf` dentro do seu arquivo blade no interior das tags `<form>`
-
-## SQLSTATE[HY000]: General error: 1005 Can't create table
-Se aparecer um erro parecido com esse:
-
-      Illuminate\Database\QueryException 
-
-    SQLSTATE[HY000]: General error: 1005 Can't create table `laravel`.`uso_motorista_veiculos` (errno: 150 "Foreign key constraint is incorrectly formed") (SQL: alter table `uso_motorista_veiculos` add constraint `uso_motorista_veiculos_veiculo_id_foreign` foreign key (`veiculo_id`) references `veiculos` (`id`))
-
-    at C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:678
-        674▕         // If an exception occurs when attempting to run a query, we'll format the error
-        675▕         // message to include the bindings with SQL, which will make this exception a
-        676▕         // lot more helpful to the developer instead of just the database's errors.
-        677▕         catch (Exception $e) {
-    ➜ 678▕             throw new QueryException(
-        679▕                 $query, $this->prepareBindings($bindings), $e
-        680▕             );
-        681▕         }
-        682▕
-
-    1   C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:471
-        PDOException::("SQLSTATE[HY000]: General error: 1005 Can't create table `laravel`.`uso_motorista_veiculos` (errno: 150 "Foreign key constraint is incorrectly formed")")
-
-    2   C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:471
-        PDOStatement::execute()
-
-Tipo que diz que a chave estrangeira está formada incorretamente `errno: 150 "Foreign key constraint is incorrectly formed"`, vefique se o tipo da chave primaria com a chave estrangeira são os mesmos, a chave estrangeira deve ser o exato mesmo tipo da chave primária da outra tabela para funcionar, isso deve ser analisado nas migrations. Por exemplo:
-
-[uso_motorista_veiculos](./database/migrations/2021_03_12_234553_create_uso_motorista_veiculos_table.php)
-
-    Schema::create('uso_motorista_veiculos', function (Blueprint $table) {            
-            $table->integer('veiculo_id')->unsigned();
-            $table->foreign('veiculo_id')->references('id')->on('veiculos');
-            $table->integer('motorista_id')->unsigned();
-            $table->foreign('motorista_id')->references('id')->on('motoristas');
-            $table->date('ultimo_uso')->nullable(true);
-            $table->primary(['motorista_id','veiculo_id']);
-            $table->timestamps();
-        });
-
-Ou seja, nessa migratio acima o **veiculo_id** deve o exato mesmo tipo que o *id* da tabela veiculo, conforme visto abaixo:
-
-[2021_03_12_234426_create_veiculos_table](./database/migrations/2021_03_12_234426_create_veiculos_table.php)
-
-    Schema::create('veiculos', function (Blueprint $table) {
-            $table->integer('id')->unsigned()->autoIncrement();
-            $table->string('placa');            
-            $table->string('cor');
-            $table->boolean('luxo');
-            $table->timestamps();
-        });
-
-No caso `$table->integer('veiculo_id')->unsigned();` faz referência a `$table->integer('id')->unsigned()->autoIncrement();`, repare que as duas colunas são **unsigned** e **integer**, no caso do *autoincrement* se houver deve ser só no campo **PK** e não **FK**.
-
-[2021_03_12_234508_create_motoristas_table](./database/migrations/2021_03_12_234508_create_motoristas_table.php)
-
-    Schema::create('motoristas', function (Blueprint $table) {
-            $table->integer('id')->unsigned()->autoIncrement();
-            $table->string('nome');
-            $table->string('cpf');            
-            $table->timestamps();
-        });
-
-Aqui também se repete: `$table->integer('motorista_id')->unsigned();` faz referência a `$table->integer('id')->unsigned()->autoIncrement();`
+##### Formulários
+1. [Validando Formulários](#validando-formulários)
+2. [Transformando dados em JSON](#transformando-dados-em-json)
+3. [Retornando códigos HTTP](#retornando-códigos-http)
+4. [Requisição AJAX no Laravel](#requisição-ajax)
+5. [Seeders](#seeders)
+6. [Erros Possíveis](#erros-possíveis)
+7. [Eloquent - 1 para 1 ](#eloquent-um-para-um)
+8. [Eloquent - 1 para N ](#eloquent-um-para-muitos)
 ## Validando formulários
 [Documentação para validadores](https://laravel.com/docs/8.x/validation#available-validation-rules)
 
@@ -222,195 +166,6 @@ Todas as rotas registradas no [aquivo API](routes/api.php), estão dentro de */a
     }
 
 Ao invés de retornar uma *view*, você pode retornar um status HTTP para o cliente, útil caso a requisição seja feita planejando o uso do ajax, conforme visto aqui `return response('OK',200);`, sendo o primeiro argumento a mensagem a ser informado ao cliente e o segundo o código *HTTP*.
-## Relacionamento com Eloquent
-
-### Eloquent one to one
-#### Entidade forte
-Aqui temos um exemplo de relacionamento um para um. Inicialmente você precisa estabelecer uma entidade forte, que no caso é a [Cliente](app/Models/Cliente.php), nela é indicada um afunção para acessar a entidade fraca, como no exemplo abaixo:
-    
-    use HasFactory;
-    function endereco(){
-        return $this->hasOne(\App\Models\Endereco::class,'cliente_id');
-    }
-
-###### Migration
-    Schema::create('clientes', function (Blueprint $table) {
-        $table->increments('id');
-        $table->string('nome')->nullable(false);
-        $table->string('email')->nullable(false);
-        $table->timestamps();
-    });
-##### hasOne
-Nessa função você faz o retorno usando o método **hasOne**, esse método exige como argumento, sendo o primeiro obrigatório a classe da entidade, nesse caso `\App\Models\Endereco::class` e o segundo o nome da coluna correspondente ao campo *id* da tabela fraca da relação, no caso o *cliente_id*. Ou seja a entidade `Endereco::class` tem como campo chave `cliente_id`. Esse segundo argumento é opcional, ou seja ele não é obrigatório caso você use o padrão de nomenclatura do *Laravel*, no caso se o nome do campo chave fosse **id** esse segundo argumento poderia ser omitido, mas como não é, e sim `cliente_id`, logo o mesmo deve ser informado no segundo argumento de **hasOne**. Essa função *hasOne* vem daqui, por isso precisa importar usando o **HasFactory**, conforme visto aqui: `use HasFactory;`
-
-##### Increments
-Esse é um campo de incremento e está marcado devido a isto `$table->increments('id');`, o método *increments* transforma em um campo de incremento, e devido a essa característica ela não é definida como chave primária aqui e sim na entidade fraca, nesse exemplo, uma vez que esse campo será usado como chave primária e estrangeira em outra tabela, ao qual tem um relacionamento fracom com essa.
-#### Entidade fraca
-Aqui temos um exemplo de uma entidade que tem um relacionamento fraco com a classe acima, no caso é a classe [Endereco](app/Models/Endereco.php), segue o exemplo abaixo:
-
-    class Endereco extends Model
-    {
-        protected $primaryKey = 'cliente_id';
-        use HasFactory;
-        function cliente(){
-            return $this->belongsTo(Cliente::class,'cliente_id','id');
-        }
-    }
-
-##### Informando a Chave primária
-Na entidade acima, como a chave primária se chama *ID*, logo não se faz necessário informar isso, mas como isso não ocorre aqui, precisa inicialmente na própria entidade informar qual é o campo de chave primária e isso é feito aqui `protected $primaryKey = 'cliente_id';`.
-
-##### belongsTo
-Aqui ao invés de usar o *hasOne* usamos o *belongsTo*, ou seja essa entidade não tem uma outra entidade, ela pertece a outra entidade, esse método a ser rescrito vem de **HasFactory** igual ao *hasOne*. Então temos o uso da *belongsTo* aqui `return $this->belongsTo(Cliente::class,'cliente_id','id');`, nesse método podemos passar até 3 argumentos, podendo o segundo e o terceiro argumento ser omitido, caso ambos as entidades tenham como campo chave o nome *id*. O primeiro argumento é a entidade ao qual pertence, que no caso é essa `Cliente::class`, o segundo o campo *ID* da própria entidade, nesse caso o campo chave da tabela é esse, o *cliente_id* conforme feito na migration também:
-###### Migration da entidade fraca
-
-    Schema::create('enderecos', function (Blueprint $table) {
-        $table->integer('cliente_id')->unsigned();
-
-        $table->foreign('cliente_id')
-        ->references('id')->on('clientes')
-        ->onUpdate('cascade')->onDelete('cascade');
-
-        $table->primary('cliente_id');
-        $table->string('estado');
-        $table->string('cidade');
-        $table->string('rua');
-        $table->timestamps();
-    });
-
-Repare que a chave estrangeira também é a chave primária e isso pode ser visto aqui `$table->primary('cliente_id');` e aqui `$table->foreign('cliente_id')->references('id')->on('clientes')->onUpdate('cascade')->onDelete('cascade');`, sendo esse campo sendo definido aqui `$table->integer('cliente_id')->unsigned();`. Por fim no campo **belongsTo** existe um terceiro argumento, conforme visto aqui `return $this->belongsTo(Cliente::class,'cliente_id','id');`, nesse caso o *id* seria o campo chave ao qual possuí um relacionamento forte com essa entidade.
-
-#### Para resumir
->Ambos os métodos **hasOne** e **belongsTo** vem da superclasse **HasFactory** que vem de `use Illuminate\Database\Eloquent\Factories\HasFactory;`. O **hasOne** deve ser colocada na classe ao qual possuí o relacionamento *(O método que possuí o relacionamento forte)*. Como argumento o **hasOne** pede a classe que possuí a parte fraca da relação no primeiro argumento, podendo ter o segundo argumento omitido, caso o Modelo segue o padrão de nomenclatura do Laravel. O **belongsTo** é usado na entidade ao qual é posse de um relacionamento, ou seja na entidade fraca, esse método aceita três argumentos, a classe ao qual ela está contida, o campo chave da entidade fraca e o nome do campo chave dessa entidade.
-###### Importando Modelos
-    use App\Models\Cliente as ModelCliente;
-    use App\Models\Endereco;
-###### salvando
-     public function store(Request $request)
-    {
-        $cliente = new ModelCliente();
-        $cliente->nome = $request->input('nome');
-        $cliente->email = $request->input('email');
-        $cliente->save();
-
-        $endereco = new Endereco();
-        $endereco->rua = $request->input('rua');
-        $endereco->cidade = $request->input('cidade');
-        $endereco->estado = $request->input('estado');        
-
-        $cliente->endereco()->save($endereco);
-        return response('Created',201);
-    }
-
-Para salvar (criar dados novos) você pode fazer uso do relacionamento, no caso o método *store* acima cria um novo registro, nesse caso o **endereco()**  [vem daqui](#entidade-forte), repareque esse método faz um retorno e é com base nesse retorno que é feito o relacionamento e o *Laravel* entende o *endereço* como parte do relacionamento, ao passo que dentro do save é colocado o objeto modelo contendo os dados a serem inseridos, no caso é um objeto do tipo entidade fraca, conforme visto aqui `$cliente->endereco()->save($endereco);` e então retornado uma mensagem de que foi inserido `return response('Created',201);`, para exemplificar> `$[entidade forte]->[nome do metodo que retorna hasOne]()->save($[instancia da entidade fraca com os dados]);`
-###### atualizando
-    public function update(Request $request, $id)
-    {
-            $clientes = ModelCliente::with('endereco')->get();         
-            $cliente = $clientes->find($id);                        
-            if($cliente){                
-                $cliente->nome = $request->input('nome');                
-                $cliente->email = $request->input('email');                                
-                $cliente->update();
-                                
-                $endereco = $cliente->endereco; 
-                $endereco->cliente_id = $id;               
-                $endereco->rua = $request->input('rua');
-                $endereco->cidade = $request->input('cidade');
-                $endereco->estado = $request->input('estado');                
-                $cliente->endereco->update();                
-
-                return response('Updated',202);
-            }else{
-                return response('Not Found',404);
-            }            
-    }
-
-Aqui estamos atualizando, inicialmente estamos pegando de maneira *eager* aqui `$clientes = ModelCliente::with('endereco')->get();`, esse `'endereco'` [vem daqui](#entidade-forte), ou seja como string você deve informar o método que retorna o *hasOne*. Por padrão o carregamento é *lazy*, logo os dados do relacionamento não vêm, porém se carregar de maneira *eager*, como feito aqui, o carregamento é feito junto com o relacionamento, logo como o carregamento foi *eager* não precisa informar instancia no *update* conforme visto aqui `$cliente->endereco->update();` e retornado caso a atualização ocorra `return response('Updated',202);`.
-###### excluindo
-    public function destroy($id)
-    {
-        $clientes = ModelCliente::with('endereco')->get();         
-        $cliente = $clientes->find($id);
-        if($cliente){
-            $cliente->delete();
-            return response('Deleted',204);
-        }else{
-            return response('Not Found',404);
-        }        
-    }
-
-Para excluir, usa o mesmo pricípio usado na atualização, porém isso funciona, porque o carregamento é **eager** `$clientes = ModelCliente::with('endereco')->get();`, de toda forma como existe cascade on *update* e *delete* ao excluir cliente se exclui o endereço junto, conforme [visto aqui](#migration-da-entidade-fraca). Depois de exluir retorna o estatus *204* `return response('Deleted',204);`.
-
-## Seeders
-Os *seeders* servem para popular tabelas no Laravel, no caso seria uma alternativa ao *TINKER*, porém você pode fazer isso usando algoritimos para isso, que é um grande diferencial dele. No caso seria aqui que seria programado a parte relacionada ao uso do *faker* para fazer os devidos testes. O seu funcionamento é relativamente simples:
-
-### Criando um novo Seeder
-    php artisan make:seeder [nome]
-
-No terminal você deve digitar o comando acima e substituir `[nome]` pelo nome correspondente, recomenda-se a palavra *Seeder* após o nome, por exemplo *CategoriaSeeder*, *PessoaSeeder*, etc... Ao fazer isso:
-
-    namespace Database\Seeders;
-    use Illuminate\Database\Seeder;
-    
-
-    class [nome] extends Seeder
-    {
-        public function run()
-        {              
-            
-        }
-    }
-
-É criado um classe nesse estilo acima, você pode importar o *DB* `use Illuminate\Support\Facades\DB;` caso você queira usar ele para popular alguma tabela. Você deve colocar toda a lógica dentro do método *run*. Se for usar a classe *DB* tem duas estratégias para isso:
-
-### Primeira Estratégia: DB::table
-[CategoriaSeeder](./database/seeders/CategoriaSeeder.php)
-
-    public function run()
-    {              
-        DB::table('categorias')->insert(['nome' => 'ROUPAS']);        
-        DB::table('categorias')->insert(['nome' => 'ELETRONICO']);
-        DB::table('categorias')->insert(['nome' => 'PERFUME']);
-        DB::table('categorias')->insert(['nome' => 'MOVEIS']);
-    }
-
-O `DB::table` vem do `use Illuminate\Support\Facades\DB;`. 
-
-### Segunda estratégia: DB::metodos()
-[ProdutoSeeder](./database/seeders/ProdutoSeeder.php)
-
-    public function run()
-    {
-        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [5, 'Camisa Polo']);
-        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [2, 'Televisor']);
-        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [1, 'Perfume feminino']);
-        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [4, 'Sofa de canto']);
-    }
-
-A segunda forma seria usar os métodos estáticos do próprio *DB*, no caso essa estratégia permite a digitação de uma query.
-
-### Registrando no DatabaseSeeder.php    
-[DatabaseSeeder](./database/seeders/DatabaseSeeder.php)
-
-    namespace Database\Seeders;
-    use Illuminate\Database\Seeder;
-
-    class DatabaseSeeder extends Seeder
-    {        
-        public function run()
-        {
-            $this->call(CategoriaSeeder::class);
-            $this->call(ProdutoSeeder::class);        
-        }
-    }
-
-Para que a **seeder** seja identificada, se faz necessário registrar as **seeders** criadas dentro do arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php), quando você for executar um comando para executar as seeders, é justamente esse arquivo que será lido, e é aqui `$this->call` que você informa as *seeders* a serem executadas. Nesse caso as duas *seeders* serão executadas. O método *call* aceita com argumento uma classe, e graças a estrutura do *Seeder* você pode colocar nesse arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php) as condições para as *Seeder* executar.
-
-### Executando as Seeder
-    `php artisan db:seed`
-
-Esse comando acima, faz com que se execute todas a seeds criadas, segue aqui um exemplo: [EXEMPLO](./database/seeders/DatabaseSeeder.php)
 
 ## Requisição AJAX
 [home.blade.php](./resources/views/pages/home.blade.php)
@@ -488,7 +243,260 @@ Você deve incluir o *_method* cuja o valor seja o método ao qual deve ser a re
 
 Nessa requisição é feito pelo método *DELETE* direto sem passar o *@method*, vai funcionar, porém a requisição não terá corpo, no caso essa requisição deve funcionar, pois o laravel na exclusão usa o *ID* passado a *URL* para fazer a requisição. Porém se precisar de qualquer dado que não esteja na *URL*, não funcionaria, e é para poder aproveitar os dados do corpo da requisição que precisa usar a técnica com o *@method*.
 
-## Um para muitos
+## Seeders
+Os *seeders* servem para popular tabelas no Laravel, no caso seria uma alternativa ao *TINKER*, porém você pode fazer isso usando algoritimos para isso, que é um grande diferencial dele. No caso seria aqui que seria programado a parte relacionada ao uso do *faker* para fazer os devidos testes. O seu funcionamento é relativamente simples:
+
+### Criando um novo Seeder
+    php artisan make:seeder [nome]
+
+No terminal você deve digitar o comando acima e substituir `[nome]` pelo nome correspondente, recomenda-se a palavra *Seeder* após o nome, por exemplo *CategoriaSeeder*, *PessoaSeeder*, etc... Ao fazer isso:
+
+    namespace Database\Seeders;
+    use Illuminate\Database\Seeder;
+    
+
+    class [nome] extends Seeder
+    {
+        public function run()
+        {              
+            
+        }
+    }
+
+É criado um classe nesse estilo acima, você pode importar o *DB* `use Illuminate\Support\Facades\DB;` caso você queira usar ele para popular alguma tabela. Você deve colocar toda a lógica dentro do método *run*. Se for usar a classe *DB* tem duas estratégias para isso:
+
+### Primeira Estratégia: DB::table
+[CategoriaSeeder](./database/seeders/CategoriaSeeder.php)
+
+    public function run()
+    {              
+        DB::table('categorias')->insert(['nome' => 'ROUPAS']);        
+        DB::table('categorias')->insert(['nome' => 'ELETRONICO']);
+        DB::table('categorias')->insert(['nome' => 'PERFUME']);
+        DB::table('categorias')->insert(['nome' => 'MOVEIS']);
+    }
+
+O `DB::table` vem do `use Illuminate\Support\Facades\DB;`. 
+
+### Segunda estratégia: DB::metodos()
+[ProdutoSeeder](./database/seeders/ProdutoSeeder.php)
+
+    public function run()
+    {
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [5, 'Camisa Polo']);
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [2, 'Televisor']);
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [1, 'Perfume feminino']);
+        DB::insert('insert into produtos (estoque,nome) values (?, ?)', [4, 'Sofa de canto']);
+    }
+
+A segunda forma seria usar os métodos estáticos do próprio *DB*, no caso essa estratégia permite a digitação de uma query.
+
+### Registrando no DatabaseSeeder.php    
+[DatabaseSeeder](./database/seeders/DatabaseSeeder.php)
+
+    namespace Database\Seeders;
+    use Illuminate\Database\Seeder;
+
+    class DatabaseSeeder extends Seeder
+    {        
+        public function run()
+        {
+            $this->call(CategoriaSeeder::class);
+            $this->call(ProdutoSeeder::class);        
+        }
+    }
+
+Para que a **seeder** seja identificada, se faz necessário registrar as **seeders** criadas dentro do arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php), quando você for executar um comando para executar as seeders, é justamente esse arquivo que será lido, e é aqui `$this->call` que você informa as *seeders* a serem executadas. Nesse caso as duas *seeders* serão executadas. O método *call* aceita com argumento uma classe, e graças a estrutura do *Seeder* você pode colocar nesse arquivo [DatabaseSeeder](./database/seeders/DatabaseSeeder.php) as condições para as *Seeder* executar.
+
+### Executando as Seeder
+    `php artisan db:seed`
+
+Esse comando acima, faz com que se execute todas a seeds criadas, segue aqui um exemplo: [EXEMPLO](./database/seeders/DatabaseSeeder.php)
+## Erros possíveis
+### Pagina expired error 419.
+Toda vez que você ver esse erro, lembre-se de por o token no formulário, sem isso o laravel não permite o *submit*, para isso coloque isso `@csrf` dentro do seu arquivo blade no interior das tags `<form>`
+
+### SQLSTATE[HY000]: General error: 1005 Can't create table
+Se aparecer um erro parecido com esse:
+
+      Illuminate\Database\QueryException 
+
+    SQLSTATE[HY000]: General error: 1005 Can't create table `laravel`.`uso_motorista_veiculos` (errno: 150 "Foreign key constraint is incorrectly formed") (SQL: alter table `uso_motorista_veiculos` add constraint `uso_motorista_veiculos_veiculo_id_foreign` foreign key (`veiculo_id`) references `veiculos` (`id`))
+
+    at C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:678
+        674▕         // If an exception occurs when attempting to run a query, we'll format the error
+        675▕         // message to include the bindings with SQL, which will make this exception a
+        676▕         // lot more helpful to the developer instead of just the database's errors.
+        677▕         catch (Exception $e) {
+    ➜ 678▕             throw new QueryException(
+        679▕                 $query, $this->prepareBindings($bindings), $e
+        680▕             );
+        681▕         }
+        682▕
+
+    1   C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:471
+        PDOException::("SQLSTATE[HY000]: General error: 1005 Can't create table `laravel`.`uso_motorista_veiculos` (errno: 150 "Foreign key constraint is incorrectly formed")")
+
+    2   C:\Users\crono\OneDrive\Área de Trabalho\php\Aulas\#LARAVEL\formulario\vendor\laravel\framework\src\Illuminate\Database\Connection.php:471
+        PDOStatement::execute()
+
+Tipo que diz que a chave estrangeira está formada incorretamente `errno: 150 "Foreign key constraint is incorrectly formed"`, vefique se o tipo da chave primaria com a chave estrangeira são os mesmos, a chave estrangeira deve ser o exato mesmo tipo da chave primária da outra tabela para funcionar, isso deve ser analisado nas migrations. Por exemplo:
+
+[uso_motorista_veiculos](./database/migrations/2021_03_12_234553_create_uso_motorista_veiculos_table.php)
+
+    Schema::create('uso_motorista_veiculos', function (Blueprint $table) {            
+            $table->integer('veiculo_id')->unsigned();
+            $table->foreign('veiculo_id')->references('id')->on('veiculos');
+            $table->integer('motorista_id')->unsigned();
+            $table->foreign('motorista_id')->references('id')->on('motoristas');
+            $table->date('ultimo_uso')->nullable(true);
+            $table->primary(['motorista_id','veiculo_id']);
+            $table->timestamps();
+        });
+
+Ou seja, nessa migratio acima o **veiculo_id** deve o exato mesmo tipo que o *id* da tabela veiculo, conforme visto abaixo:
+
+[2021_03_12_234426_create_veiculos_table](./database/migrations/2021_03_12_234426_create_veiculos_table.php)
+
+    Schema::create('veiculos', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('placa');            
+            $table->string('cor');
+            $table->boolean('luxo');
+            $table->timestamps();
+        });
+
+No caso `$table->integer('veiculo_id')->unsigned();` faz referência a `$table->integer('id')->unsigned()->autoIncrement();`, repare que as duas colunas são **unsigned** e **integer**, no caso do *autoincrement* se houver deve ser só no campo **PK** e não **FK**.
+
+[2021_03_12_234508_create_motoristas_table](./database/migrations/2021_03_12_234508_create_motoristas_table.php)
+
+    Schema::create('motoristas', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('nome');
+            $table->string('cpf');            
+            $table->timestamps();
+        });
+
+Aqui também se repete: `$table->integer('motorista_id')->unsigned();` faz referência a `$table->integer('id')->unsigned()->autoIncrement();`
+
+## Eloquent um para um
+### Entidade forte
+Aqui temos um exemplo de relacionamento um para um. Inicialmente você precisa estabelecer uma entidade forte, que no caso é a [Cliente](app/Models/Cliente.php), nela é indicada um afunção para acessar a entidade fraca, como no exemplo abaixo:
+    
+    use HasFactory;
+    function endereco(){
+        return $this->hasOne(\App\Models\Endereco::class,'cliente_id');
+    }
+
+###### Migration
+    Schema::create('clientes', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('nome')->nullable(false);
+        $table->string('email')->nullable(false);
+        $table->timestamps();
+    });
+#### hasOne
+Nessa função você faz o retorno usando o método **hasOne**, esse método exige como argumento, sendo o primeiro obrigatório a classe da entidade, nesse caso `\App\Models\Endereco::class` e o segundo o nome da coluna correspondente ao campo *id* da tabela fraca da relação, no caso o *cliente_id*. Ou seja a entidade `Endereco::class` tem como campo chave `cliente_id`. Esse segundo argumento é opcional, ou seja ele não é obrigatório caso você use o padrão de nomenclatura do *Laravel*, no caso se o nome do campo chave fosse **id** esse segundo argumento poderia ser omitido, mas como não é, e sim `cliente_id`, logo o mesmo deve ser informado no segundo argumento de **hasOne**. Essa função *hasOne* vem daqui, por isso precisa importar usando o **HasFactory**, conforme visto aqui: `use HasFactory;`
+
+#### Increments
+Esse é um campo de incremento e está marcado devido a isto `$table->increments('id');`, o método *increments* transforma em um campo de incremento, e devido a essa característica ela não é definida como chave primária aqui e sim na entidade fraca, nesse exemplo, uma vez que esse campo será usado como chave primária e estrangeira em outra tabela, ao qual tem um relacionamento fracom com essa.
+### Entidade fraca
+Aqui temos um exemplo de uma entidade que tem um relacionamento fraco com a classe acima, no caso é a classe [Endereco](app/Models/Endereco.php), segue o exemplo abaixo:
+
+    class Endereco extends Model
+    {
+        protected $primaryKey = 'cliente_id';
+        use HasFactory;
+        function cliente(){
+            return $this->belongsTo(Cliente::class,'cliente_id','id');
+        }
+    }
+
+#### Informando a Chave primária
+Na entidade acima, como a chave primária se chama *ID*, logo não se faz necessário informar isso, mas como isso não ocorre aqui, precisa inicialmente na própria entidade informar qual é o campo de chave primária e isso é feito aqui `protected $primaryKey = 'cliente_id';`.
+
+#### belongsTo
+Aqui ao invés de usar o *hasOne* usamos o *belongsTo*, ou seja essa entidade não tem uma outra entidade, ela pertece a outra entidade, esse método a ser rescrito vem de **HasFactory** igual ao *hasOne*. Então temos o uso da *belongsTo* aqui `return $this->belongsTo(Cliente::class,'cliente_id','id');`, nesse método podemos passar até 3 argumentos, podendo o segundo e o terceiro argumento ser omitido, caso ambos as entidades tenham como campo chave o nome *id*. O primeiro argumento é a entidade ao qual pertence, que no caso é essa `Cliente::class`, o segundo o campo *ID* da própria entidade, nesse caso o campo chave da tabela é esse, o *cliente_id* conforme feito na migration também:
+###### Migration da entidade fraca
+
+    Schema::create('enderecos', function (Blueprint $table) {
+        $table->integer('cliente_id')->unsigned();
+
+        $table->foreign('cliente_id')
+        ->references('id')->on('clientes')
+        ->onUpdate('cascade')->onDelete('cascade');
+
+        $table->primary('cliente_id');
+        $table->string('estado');
+        $table->string('cidade');
+        $table->string('rua');
+        $table->timestamps();
+    });
+
+Repare que a chave estrangeira também é a chave primária e isso pode ser visto aqui `$table->primary('cliente_id');` e aqui `$table->foreign('cliente_id')->references('id')->on('clientes')->onUpdate('cascade')->onDelete('cascade');`, sendo esse campo sendo definido aqui `$table->integer('cliente_id')->unsigned();`. Por fim no campo **belongsTo** existe um terceiro argumento, conforme visto aqui `return $this->belongsTo(Cliente::class,'cliente_id','id');`, nesse caso o *id* seria o campo chave ao qual possuí um relacionamento forte com essa entidade.
+
+### Para resumir
+>Ambos os métodos **hasOne** e **belongsTo** vem da superclasse **HasFactory** que vem de `use Illuminate\Database\Eloquent\Factories\HasFactory;`. O **hasOne** deve ser colocada na classe ao qual possuí o relacionamento *(O método que possuí o relacionamento forte)*. Como argumento o **hasOne** pede a classe que possuí a parte fraca da relação no primeiro argumento, podendo ter o segundo argumento omitido, caso o Modelo segue o padrão de nomenclatura do Laravel. O **belongsTo** é usado na entidade ao qual é posse de um relacionamento, ou seja na entidade fraca, esse método aceita três argumentos, a classe ao qual ela está contida, o campo chave da entidade fraca e o nome do campo chave dessa entidade.
+###### Importando Modelos
+    use App\Models\Cliente as ModelCliente;
+    use App\Models\Endereco;
+###### salvando
+     public function store(Request $request)
+    {
+        $cliente = new ModelCliente();
+        $cliente->nome = $request->input('nome');
+        $cliente->email = $request->input('email');
+        $cliente->save();
+
+        $endereco = new Endereco();
+        $endereco->rua = $request->input('rua');
+        $endereco->cidade = $request->input('cidade');
+        $endereco->estado = $request->input('estado');        
+
+        $cliente->endereco()->save($endereco);
+        return response('Created',201);
+    }
+
+Para salvar (criar dados novos) você pode fazer uso do relacionamento, no caso o método *store* acima cria um novo registro, nesse caso o **endereco()**  [vem daqui](#entidade-forte), repareque esse método faz um retorno e é com base nesse retorno que é feito o relacionamento e o *Laravel* entende o *endereço* como parte do relacionamento, ao passo que dentro do save é colocado o objeto modelo contendo os dados a serem inseridos, no caso é um objeto do tipo entidade fraca, conforme visto aqui `$cliente->endereco()->save($endereco);` e então retornado uma mensagem de que foi inserido `return response('Created',201);`, para exemplificar> `$[entidade forte]->[nome do metodo que retorna hasOne]()->save($[instancia da entidade fraca com os dados]);`
+###### atualizando
+    public function update(Request $request, $id)
+    {
+            $clientes = ModelCliente::with('endereco')->get();         
+            $cliente = $clientes->find($id);                        
+            if($cliente){                
+                $cliente->nome = $request->input('nome');                
+                $cliente->email = $request->input('email');                                
+                $cliente->update();
+                                
+                $endereco = $cliente->endereco; 
+                $endereco->cliente_id = $id;               
+                $endereco->rua = $request->input('rua');
+                $endereco->cidade = $request->input('cidade');
+                $endereco->estado = $request->input('estado');                
+                $cliente->endereco->update();                
+
+                return response('Updated',202);
+            }else{
+                return response('Not Found',404);
+            }            
+    }
+
+Aqui estamos atualizando, inicialmente estamos pegando de maneira *eager* aqui `$clientes = ModelCliente::with('endereco')->get();`, esse `'endereco'` [vem daqui](#entidade-forte), ou seja como string você deve informar o método que retorna o *hasOne*. Por padrão o carregamento é *lazy*, logo os dados do relacionamento não vêm, porém se carregar de maneira *eager*, como feito aqui, o carregamento é feito junto com o relacionamento, logo como o carregamento foi *eager* não precisa informar instancia no *update* conforme visto aqui `$cliente->endereco->update();` e retornado caso a atualização ocorra `return response('Updated',202);`.
+###### excluindo
+    public function destroy($id)
+    {
+        $clientes = ModelCliente::with('endereco')->get();         
+        $cliente = $clientes->find($id);
+        if($cliente){
+            $cliente->delete();
+            return response('Deleted',204);
+        }else{
+            return response('Not Found',404);
+        }        
+    }
+
+Para excluir, usa o mesmo pricípio usado na atualização, porém isso funciona, porque o carregamento é **eager** `$clientes = ModelCliente::with('endereco')->get();`, de toda forma como existe cascade on *update* e *delete* ao excluir cliente se exclui o endereço junto, conforme [visto aqui](#migration-da-entidade-fraca). Depois de exluir retorna o estatus *204* `return response('Deleted',204);`.
+## Eloquent um para muitos
 [ 1 Categoria](./app/Models/Categoria.php) para ['N' Produto](./app/Models/Produto.php).
 ### Entidade dominante 
 
