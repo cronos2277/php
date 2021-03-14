@@ -9,6 +9,11 @@ use App\Models\Veiculo;
 
 class ManyController extends Controller
 {
+    public function index(){
+        $title = "Many to Many";
+        return view('ntom.home',compact(['title']));
+    }
+
     public function getAllVeiculo(){
         $veiculos = Veiculo::with('motoristas')->get();
         return response($veiculos->toJson(),200);

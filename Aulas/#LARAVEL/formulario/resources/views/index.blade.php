@@ -44,6 +44,20 @@
                 </div>
             </div>
         </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                Relacionamento N para N no Laravel
+                </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    Ir para relacionamento N para N
+                    <br> 
+                    <a class="btn btn-primary mt-3" href="{{route('NtoN')}}"><strong>IR</strong></a>
+                </div>
+            </div>
+        </div>
     </div>
     
 @endsection
