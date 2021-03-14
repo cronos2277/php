@@ -11,4 +11,8 @@ class Veiculo extends Model
     protected $primaryKey = "id";
     
     use HasFactory;
+
+    public function motoristas(){
+        return $this->belongsToMany(Motorista::class,UsoMotoristaVeiculo::class)->withPivot('ultimo_uso');
+    }
 }
