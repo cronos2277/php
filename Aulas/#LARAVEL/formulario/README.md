@@ -9,6 +9,7 @@
 6. [Erros Possíveis](#erros-possíveis)
 7. [Eloquent - 1 para 1 ](#eloquent-um-para-um)
 8. [Eloquent - 1 para N ](#eloquent-um-para-muitos)
+9. [Eloquent - N para N](#eloquent---manytomany)
 ## Validando formulários
 [Documentação para validadores](https://laravel.com/docs/8.x/validation#available-validation-rules)
 
@@ -532,3 +533,124 @@ Na classe dominada, tanto no *1 para 1* como em relacionamentos *1 para N*, usa 
 
 ### Sobre o Controller
 Você também pode  conforme visto nesse exemplo:[ProdutoCategoriaController](./app/Http/Controllers/ProdutoCategoriaController.php), ou seja você pode, se quiser não usar o relacionamento do *Eloquent*, conforme ilustrado nesse controller, associando o *ID* da classe dominante na classe dominada.
+
+## Elequent - Muitos para Muitos
+
+### Modelos - Many To Many
+[Motorista](./app/Models/Motorista.php)
+
+[Veiculo](./app/Models/Veiculo.php)
+
+[UsoMotoristaVeiculo](./app/Models/UsoMotoristaVeiculo.php)
+### Classe Motorista
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Motorista extends Model
+    {
+        protected $table = "motoristas";
+        protected $primaryKey = "id";
+
+        use HasFactory;
+
+        public function veiculos(){
+            return $this->belongsToMany(Veiculo::class,UsoMotoristaVeiculo::class)->withPivot('ultimo_uso');
+        }
+    }
+
+Quando você faz o relacionamento *M* para *N*, você irá precisar de uma terceira entidade para intermediar essa relação entre **M** e **N**, para isso usamos o método `belongsToMany` do `Illuminate\Database\Eloquent\Factories\HasFactory;`. Essa classe aceita dois argumentos, o primeiro é o modelo que faz parte do outro lado da relação, no caso [Classe Veículo](#classe-veículo), e o segundo argumento é justamente essa classe que intermedia essa relação muito para muito dessas duas classes, no caso [UsoMotoristaVeiculo](#classe-usomotoristaveiculo).
+
+### withPivot
+Esse método é importante caso você queira incluir campos da tabela intermediária nessa relação, por exemplo com o `belongsToMany` você obtem todos os relacionamentos da outra classe, mas com o *pivot* você também terá acesso aos campos dessa tabela intermediaria, no caso essa classe intermediaria tem uma coluna chamada *ultimo_uso* e essa será inclusa ao relacionamento, dentro de um objeto chamado *pivot*.
+
+### Classe Veículo
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Veiculo extends Model
+    {
+        protected $table = "veiculos";
+        protected $primaryKey = "id";
+        
+        use HasFactory;
+
+        public function motoristas(){
+            return $this->belongsToMany(Motorista::class,UsoMotoristaVeiculo::class)->withPivot('ultimo_uso');
+        }
+    }
+
+Acima estamos configurando o outro lado da relação, é válido ressaltar que se você segue o padrão de nomenclatura, não se faz necessário incluir `$table` e o `$primaryKey`.
+### Classe UsoMotoristaVeiculo
+    namespace App\Models;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class UsoMotoristaVeiculo extends Model
+    {
+        protected $table = "uso_motorista_veiculos";
+        protected $primaryKey = ["veiculo_id","motorista_id"];
+        use HasFactory;
+    }
+
+Essa entidade usa como chave primária duas chaves estrangeiras, conforme visto aqui `protected $primaryKey = ["veiculo_id","motorista_id"];`, sendo que *veiculo_id* referente a tabela [veiculos](#classe-veículo) e *motorista_id* que se refere a tabela [motoristas](#classe-motorista).
+
+### Eloquent - ManyToMany
+###### Veiculos - ManyToMany
+    ...
+        Schema::create('veiculos', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('placa');            
+            $table->string('cor');
+            $table->boolean('luxo');
+            $table->timestamps();
+        });
+    ...
+
+###### Motoristas - ManyToMany
+    ...
+        Schema::create('motoristas', function (Blueprint $table) {
+            $table->integer('id')->unsigned()->autoIncrement();
+            $table->string('nome');
+            $table->string('cpf');            
+            $table->timestamps();
+        });
+    ...
+
+###### UsoMotoristaVeiculos
+    ...
+        Schema::create('uso_motorista_veiculos', function (Blueprint $table) {            
+            $table->integer('veiculo_id')->unsigned();
+            $table->foreign('veiculo_id')->references('id')->on('veiculos');
+            $table->integer('motorista_id')->unsigned();
+            $table->foreign('motorista_id')->references('id')->on('motoristas');
+            $table->date('ultimo_uso')->nullable(true);
+            $table->primary(['motorista_id','veiculo_id']);
+            $table->timestamps();
+        });
+    ...
+
+Nessa migration estamos criando uma tabela com chave composta `$table->primary(['motorista_id','veiculo_id']);``.
+
+### Controller Básico
+
+    class ManyController extends Controller
+    {
+        public function index(){
+            $title = "Many to Many";
+            return view('ntom.home',compact(['title']));
+        }
+
+        public function getAllVeiculo(){
+            $veiculos = Veiculo::with('motoristas')->get();
+            return response($veiculos->toJson(),200);
+        }
+
+        public function getAllMotorista(){
+            $motoristas = Motorista::with('veiculos')->get();
+            return response($motoristas->toJson(),200);
+        }        
+    }
+
+Até agora estamos usando a mesma estratégia **EAGER** que foi usanda no *1* para *N*. Porém dentro de veículo por exemplo `$veiculos = Veiculo::with('motoristas')->get();`, terá um array de [Motoristas](#classe-motorista), e dentro desse array dentro de cada [Motoristas](#classe-motorista), você também terá um objeto chamado [pivot](#withpivot) dentro de cada elemento desse array, e o mesmo vale para a classe [Motoristas](#classe-motorista) que contém um array de [Veículos](#classe-veículo) que também contém um [pivot](#withpivot) dentro de cada elemento.
