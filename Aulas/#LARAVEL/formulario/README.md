@@ -9,7 +9,7 @@
 6. [Erros Possíveis](#erros-possíveis)
 7. [Eloquent - 1 para 1 ](#eloquent-um-para-um)
 8. [Eloquent - 1 para N ](#eloquent-um-para-muitos)
-9. [Eloquent - N para N](#eloquent---manytomany)
+9. [Eloquent - N para N](#eloquent---muitos-para-muitos)
 ## Validando formulários
 [Documentação para validadores](https://laravel.com/docs/8.x/validation#available-validation-rules)
 
@@ -534,8 +534,7 @@ Na classe dominada, tanto no *1 para 1* como em relacionamentos *1 para N*, usa 
 ### Sobre o Controller
 Você também pode  conforme visto nesse exemplo:[ProdutoCategoriaController](./app/Http/Controllers/ProdutoCategoriaController.php), ou seja você pode, se quiser não usar o relacionamento do *Eloquent*, conforme ilustrado nesse controller, associando o *ID* da classe dominante na classe dominada.
 
-## Elequent - Muitos para Muitos
-
+## Eloquent - Muitos para Muitos
 ### Modelos - Many To Many
 [Motorista](./app/Models/Motorista.php)
 
@@ -596,7 +595,6 @@ Acima estamos configurando o outro lado da relação, é válido ressaltar que s
 
 Essa entidade usa como chave primária duas chaves estrangeiras, conforme visto aqui `protected $primaryKey = ["veiculo_id","motorista_id"];`, sendo que *veiculo_id* referente a tabela [veiculos](#classe-veículo) e *motorista_id* que se refere a tabela [motoristas](#classe-motorista).
 
-### Eloquent - ManyToMany
 ###### Veiculos - ManyToMany
     ...
         Schema::create('veiculos', function (Blueprint $table) {
