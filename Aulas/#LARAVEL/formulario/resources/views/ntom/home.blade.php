@@ -33,6 +33,11 @@
 <script>
     var motoristas = null;
     var veiculos = null;
+    const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};
+    function cleanTables(){
+        document.getElementById('motoristas').innerHTML = "";
+        document.getElementById('veiculos').innerHTML = "";
+    }
     function getall(){
         fetch('http://127.0.0.1:8000/api/muitos-para-muitos/m')
             .then(data => data.text())
@@ -40,8 +45,7 @@
             .then(data => Array.from(data))
             .then(data => data.map(d => setMotorista(d.id,d.nome,d.cpf,d.veiculos)))
 
-            .then(data => motoristas = data)
-            .then(console.log)
+            .then(data => motoristas = data)            
             .catch(_ => console.error('Não foi possível carregar Motoristas'));
 
         fetch('http://127.0.0.1:8000/api/muitos-para-muitos/v')
@@ -50,8 +54,7 @@
             .then(data => Array.from(data))
             .then(data => data.map(v => setVeiculos(v.id,v.placa,v.cor,v.luxo,v.motoristas)))
 
-            .then(data => veiculos = data)
-            .then(console.log)
+            .then(data => veiculos = data)            
             .catch(_ => console.error('Não foi possível carregar Veículos'));
     }
 
@@ -171,8 +174,32 @@
         return{id,placa,cor,isLuxo,motoristas};
     }
     
-    function change(args){
-        console.log(args);
+    function change(arg){        
+        let url = null;
+        let body = new FormData();
+        body.append('_method','PUT');
+        if(arg.type === 'cpf' || arg.type === 'nome'){
+            url = `http://127.0.0.1:8000/api/muitos-para-muitos/m/${arg.data.id}`;
+            const cpf = (arg.type === 'cpf') ? arg.payload : arg.data.cpf;
+            const nome = (arg.type === 'nome') ? arg.payload : arg.data.nome;
+            body.append('cpf',cpf);
+            body.append('nome',nome);            
+        }else if(arg.type === 'placa' || arg.type === 'cor' || arg.type === 'luxo'){
+            url = `http://127.0.0.1:8000/api/muitos-para-muitos/v/${arg.data.id}`;
+            const placa = (arg.type === 'placa') ? arg.payload : arg.data.placa;
+            const cor = (arg.type === 'cor') ? arg.payload : arg.data.cor;
+            const luxo = (arg.type === 'luxo') ? arg.payload : arg.data.luxo;
+            body.append('placa',placa);
+            body.append('cor',cor);
+            body.append('luxo',luxo);
+        }else{
+            throw new Error('operação inválida!')
+        }            
+        fetch(url,{body,headers,method:'POST'})      
+        .then(e => (e.status == 401)? alert('Erro ao atualizar'):alert(`${arg.type} atualizado com sucesso!`))     
+        .then(cleanTables)     
+        .then(getall)
+        .catch(e => alert(`Erro atualizar`));        
     }
 
     function remove(args){
@@ -183,5 +210,5 @@
         console.log(args);
     }
 
-    window.onload = getall;
+    window.onload = getall;    
 </script>
