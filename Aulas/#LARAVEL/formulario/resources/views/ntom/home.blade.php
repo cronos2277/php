@@ -34,6 +34,9 @@
     var motoristas = null;
     var veiculos = null;
     const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};
+    const ullist = document.createElement('tr');
+    ullist.setAttribute('id','ullist');
+    ullist.setAttribute('class','bg-primary py-5');    
     function cleanTables(){
         document.getElementById('motoristas').innerHTML = "";
         document.getElementById('veiculos').innerHTML = "";
@@ -206,7 +209,78 @@
         console.log(args);
     }
 
-    function show(args){
+    function show(args){            
+        ullist.innerHTML = "";    
+        if(args.type === "motorista"){
+            let veiculos_motoristas = motoristas.filter(m => m.id === args.id);            
+            veiculos_motoristas = veiculos_motoristas.flatMap(m => m.veiculos);
+            const m_id = document.getElementById(`m-${args.id}`);                                    
+            veiculos_motoristas.forEach(v => {                
+                const uncouple = document.createElement('td');
+                const span = document.createElement('span');
+                span.innerText = `ID: ${v.id}`;
+                span.setAttribute('class','mx-3')
+                uncouple.setAttribute('width','10%');
+                uncouple.setAttribute('colspan','1');
+                const vei_des = document.createElement('button');
+                vei_des.innerText = "Desassociar";
+                vei_des.setAttribute('class','btn btn-warning');
+                vei_des.setAttribute('onclick',`uncouple({type:'veiculo',m_id:${args.id},v_id:${v.id}})`);
+                uncouple.appendChild(span);
+                uncouple.appendChild(vei_des);
+                ullist.appendChild(uncouple);
+                const placa = document.createElement('td');
+                placa.innerText = `Placa: ${v.placa}`;
+                placa.setAttribute('width',"20%");
+                placa.setAttribute('colspan','1');
+                ullist.appendChild(placa);
+                const cor = document.createElement('td');
+                cor.setAttribute('width',"20%");
+                cor.setAttribute('colspan','1');
+                cor.innerText = `Cor: ${v.cor}`
+                ullist.appendChild(cor);
+                const luxo = document.createElement('td');
+                luxo.setAttribute('width',"20%");
+                luxo.setAttribute('colspan','1');
+                luxo.innerText = `LUXO? ${(v.luxo)?'Sim':'Não'}`;
+                ullist.appendChild(luxo);
+            });
+            m_id.parentNode.insertBefore(ullist,m_id.nextSibling);            
+        }else if(args.type === "veiculo"){
+            const v_id = document.getElementById(`v-${args.id}`);  
+            let motoristas_veiculos = veiculos.filter(v => v.id === args.id);
+            motoristas_veiculos = motoristas_veiculos.flatMap(v => v.motoristas);
+            motoristas_veiculos.forEach(m => {
+                const uncouple = document.createElement('td');
+                const span = document.createElement('span');
+                span.innerText = `ID: ${m.id}`;
+                span.setAttribute('class','mx-3')
+                uncouple.setAttribute('width','10%');
+                uncouple.setAttribute('colspan','1');
+                const vei_des = document.createElement('button');
+                vei_des.innerText = "Desassociar";
+                vei_des.setAttribute('class','btn btn-warning');
+                vei_des.setAttribute('onclick',`uncouple({type:'motorista',m_id:${m.id},v_id:${args.id}})`);
+                uncouple.appendChild(span);
+                uncouple.appendChild(vei_des);
+                ullist.appendChild(uncouple);
+                const nome = document.createElement('td');
+                nome.innerText = `Nome: ${m.nome}`;
+                nome.setAttribute('width','50%');
+                nome.setAttribute('colspan','2');
+                ullist.appendChild(nome);
+                const cpf = document.createElement('td');
+                cpf.innerText = `CPF: ${m.cpf}`;
+                cpf.setAttribute('colspan','2');
+                ullist.appendChild(cpf);
+            });
+            v_id.parentNode.insertBefore(ullist,v_id.nextSibling);
+        }else{
+            throw new Error("Operação inválida")
+        }        
+    }
+
+    function uncouple(args){
         console.log(args);
     }
 
