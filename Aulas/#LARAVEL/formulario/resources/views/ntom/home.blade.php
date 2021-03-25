@@ -69,7 +69,7 @@
         out.setAttribute('id',`m-${id}`);       
         const td_id = document.createElement('td');
         td_id.innerText = id;
-        td_id.setAttribute('width','5%');
+        td_id.setAttribute('width','5%');        
         const td_nome = document.createElement('td');
         td_nome.setAttribute('width','50%');
         const input_nome = document.createElement('input');
@@ -89,19 +89,25 @@
         const td_veic = document.createElement('button');
         td_veic.innerText = 'Veiculos';        
         td_veic.setAttribute('onclick',`show({type:'motorista',name:'${nome}',id:${id}})`);
-        td_veic.setAttribute('class','btn btn-info mx-1');        
-        td_btns.appendChild(td_veic);
+        td_veic.setAttribute('class','btn btn-info mx-1');   
+        td_btns.appendChild(td_veic);             
 
         const td_rem = document.createElement('button');
         td_rem.innerText = 'Remover';
         td_rem.setAttribute('class','btn btn-danger');   
         td_rem.setAttribute('onclick',`remove({type:'motorista',id:${id},name:'${nome}'})`);     
-        td_btns.appendChild(td_rem);
+        td_btns.appendChild(td_rem);        
 
         const span_val = document.createElement('span');
         span_val.setAttribute('class','mx-2')
         span_val.innerText = `${veiculos.length} veiculo(s)`;
         td_btns.appendChild(span_val);    
+
+        const assoc = document.createElement('button');
+        assoc.innerText = '+ Veiculo';
+        assoc.setAttribute('class','mx-3 p-1 btn btn-success');
+        assoc.setAttribute('onclick',`assoc({origin:'motorista',type:'assoc',id:${id}})`)        
+        td_btns.appendChild(assoc);
 
         out.appendChild(td_id);
         out.appendChild(td_nome);
@@ -162,11 +168,18 @@
         btn_rem.setAttribute('onclick',`remove({type:'veiculo',id:${id},placa:'${placa}'})`);
         btn_rem.innerText = 'Remover';
         td_btns.appendChild(btn_rem);
+        
 
         const span_val = document.createElement('span');
         span_val.setAttribute('class','mx-2')
         span_val.innerText = `${motoristas.length} motorista(s)`;
-        td_btns.appendChild(span_val);    
+        td_btns.appendChild(span_val);            
+
+        const assoc = document.createElement('button');
+        assoc.innerText = '+ Motorista';
+        assoc.setAttribute('class','mx-3 p-1 btn btn-success');
+        assoc.setAttribute('onclick',`assoc({origin:'veiculo',type:'assoc',id:${id}})`)
+        td_btns.appendChild(assoc);
 
         out.appendChild(td_id);
         out.appendChild(td_placa);
@@ -281,6 +294,10 @@
     }
 
     function uncouple(args){
+        console.log(args);
+    }
+
+    function assoc(args){
         console.log(args);
     }
 
