@@ -1,7 +1,9 @@
 @extends('template')
 @section('section')  
-<div class="mt-5">
-    <h1 class="text-center mt-3">Motoristas</h1>
+<div class="mt-5 bg-dark text-white">
+    <div class="row">
+        <h1 class="text-center mt-3">Motoristas</h1>        
+    </div>
     <table class="table table-bordered border-white text-white">
         <thead class="bg-dark">
             <th>ID</th>
@@ -11,10 +13,18 @@
         </thead>
         <tbody id="motoristas">
             
-        </tbody>
+        </tbody>        
     </table>
+    <div class="row">
+        <button 
+            type="button" 
+            class="btn btn-secondary border-dark border-5" 
+            data-bs-toggle="modal" 
+            data-bs-target="#modal" 
+            onclick="add({'type':'motorista','action':'create'})">Adicionar Motorista</button>
+    </div>
 </div>
-<div class="mt-5">
+<div class="mt-5 bg-dark text-white">
     <h1 class="text-center mt-3">Veiculos</h1>
     <table class="table table-bordered border-white text-white">
         <thead class="bg-dark">
@@ -28,19 +38,49 @@
             
         </tbody>
     </table>
+    <div class="row">
+        <button 
+            type="button"
+            class="btn btn-secondary border-dark border-5"
+            data-bs-toggle="modal"
+            data-bs-target="#modal"
+            onclick="add({'type':'veiculo','action':'create'})">Adicionar Veiculo</button>
+    </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="clearModal()"></button>
+        </div>
+        <div class="modal-body" id="frame">
+            
+        </div>
+        <div class="modal-footer" id="buttons">
+            <button 
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onclick="clearModal()">Close</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+        </div>
+    </div>
 </div>
 @endsection
 <script>
     var motoristas = null;
     var veiculos = null;
     const headers = {'X-CSFR-TOKEN':'{{csrf_token()}}'};
+    const clearModal = () => document.getElementById('frame').innerHTML = "";
     const ullist = document.createElement('tr');
     ullist.setAttribute('id','ullist');
     ullist.setAttribute('class','bg-primary py-5');    
     function cleanTables(){
         document.getElementById('motoristas').innerHTML = "";
         document.getElementById('veiculos').innerHTML = "";
-    }
+    }    
     function getall(){
         fetch('http://127.0.0.1:8000/api/muitos-para-muitos/m')
             .then(data => data.text())
@@ -59,6 +99,8 @@
 
             .then(data => veiculos = data)            
             .catch(_ => console.error('Não foi possível carregar Veículos'));
+
+            document.getElementsByTagName('body')[0]?.setAttribute('class','bg-dark');
     }
 
     function setMotorista(id,nome,cpf,veiculos){
@@ -106,7 +148,7 @@
         const assoc = document.createElement('button');
         assoc.innerText = '+ Veiculo';
         assoc.setAttribute('class','mx-3 p-1 btn btn-success');
-        assoc.setAttribute('onclick',`assoc({origin:'motorista',type:'assoc',id:${id}})`)        
+        assoc.setAttribute('onclick',`relationship({action:'assoc',type:'veiculo',id:${id}})`)        
         td_btns.appendChild(assoc);
 
         out.appendChild(td_id);
@@ -178,7 +220,7 @@
         const assoc = document.createElement('button');
         assoc.innerText = '+ Motorista';
         assoc.setAttribute('class','mx-3 p-1 btn btn-success');
-        assoc.setAttribute('onclick',`assoc({origin:'veiculo',type:'assoc',id:${id}})`)
+        assoc.setAttribute('onclick',`relationship({action:'assoc',type:'motorista',id:${id}})`)
         td_btns.appendChild(assoc);
 
         out.appendChild(td_id);
@@ -238,7 +280,7 @@
                 const vei_des = document.createElement('button');
                 vei_des.innerText = "Desassociar";
                 vei_des.setAttribute('class','btn btn-warning');
-                vei_des.setAttribute('onclick',`uncouple({type:'veiculo',m_id:${args.id},v_id:${v.id}})`);
+                vei_des.setAttribute('onclick',`relationship({action:'uncouple',type:'motorista',m_id:${args.id},v_id:${v.id}})`);
                 uncouple.appendChild(span);
                 uncouple.appendChild(vei_des);
                 ullist.appendChild(uncouple);
@@ -273,7 +315,7 @@
                 const vei_des = document.createElement('button');
                 vei_des.innerText = "Desassociar";
                 vei_des.setAttribute('class','btn btn-warning');
-                vei_des.setAttribute('onclick',`uncouple({type:'motorista',m_id:${m.id},v_id:${args.id}})`);
+                vei_des.setAttribute('onclick',`relationship({action:'uncouple',type:'veiculo',m_id:${m.id},v_id:${args.id}})`);
                 uncouple.appendChild(span);
                 uncouple.appendChild(vei_des);
                 ullist.appendChild(uncouple);
@@ -293,13 +335,78 @@
         }        
     }
 
-    function uncouple(args){
+    function relationship(args){
         console.log(args);
-    }
+    }    
 
-    function assoc(args){
-        console.log(args);
-    }
-
+    function add(args){        
+        const frame = document.getElementById('frame');
+        const title = document.getElementById('exampleModalLabel');
+        if(args.action === "create" && args.type === "motorista"){
+            title.innerText = "Adicionar Motorista";
+            const div = document.createElement('div'); 
+            div.setAttribute('class','container');                     
+            const nome_input = document.createElement('input');
+            nome_input.setAttribute('id','nome');
+            nome_input.setAttribute('class','form-control');
+            const nome_label = document.createElement('label');
+            nome_label.setAttribute('class','form-label');
+            nome_label.setAttribute('for','nome');
+            nome_label.innerText = "Informe o nome: ";
+            const cpf_input = document.createElement('input');
+            cpf_input.setAttribute('class','form-control');
+            cpf_input.setAttribute('id','cpf');
+            const cpf_label = document.createElement('label');
+            cpf_label.setAttribute('class','form-label');
+            cpf_label.setAttribute('for','cpf');
+            cpf_label.innerText = "Informe o CPF";
+            div.appendChild(nome_label);
+            div.appendChild(nome_input);
+            div.appendChild(cpf_label);
+            div.appendChild(cpf_input);
+            frame.appendChild(div);
+        }else if(args.action === "create" && args.type === "veiculo"){
+            title.innerText = "Adicionar Veiculo";
+            const div = document.createElement('div');
+            div.setAttribute('class','container');
+            placa_input = document.createElement('input');
+            placa_input.setAttribute('id','placa');
+            placa_input.setAttribute('class','form-control');
+            const placa_label = document.createElement('label');
+            placa_label.setAttribute('for','placa');
+            placa_label.setAttribute('class','form-label');
+            placa_label.innerText = "Informe a Placa:";
+            div.appendChild(placa_label);
+            div.appendChild(placa_input);
+            frame.appendChild(div);
+            const row = document.createElement('div');
+            row.setAttribute('class','row');
+            const col1 = document.createElement('td');
+            col1.setAttribute('class','col-6');
+            const cor = document.createElement('input');
+            cor.setAttribute('type','color');
+            cor.setAttribute('class','col-6');
+            cor.setAttribute('id','cor');
+            const label_cor = document.createElement('label');
+            label_cor.innerText = "Cor do Veículo: ";
+            label_cor.setAttribute('class','form-label');
+            col1.appendChild(label_cor);
+            col1.appendChild(cor);
+            const luxo = document.createElement('input');
+            luxo.setAttribute('type','checkbox');
+            luxo.setAttribute('class','form-check-input p-2 mx-1');
+            luxo.setAttribute('id','luxo');
+            const isLuxo = document.createElement('label');
+            isLuxo.setAttribute('class','form-check-label');
+            isLuxo.innerText = 'É um veículo de luxo? ';
+            const col2 = document.createElement('td');
+            col2.setAttribute('class','col-6 p-3');            
+            col2.appendChild(isLuxo);
+            col2.appendChild(luxo);
+            row.appendChild(col1);
+            row.appendChild(col2);            
+            div.appendChild(row);
+        }
+    }    
     window.onload = getall;    
 </script>
