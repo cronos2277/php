@@ -54,4 +54,32 @@ class ManyController extends Controller
             }        
     }
     
+    public function newMotorista(Request $request){
+        try{
+            $motorista = new Motorista();
+            $motorista->nome = $request->input('nome');
+            $motorista->cpf = $request->input('cpf');
+            $motorista->save();
+            return response('CREATED',201);
+        }catch(Exception $e){
+            echo $e->getMessage();
+            echo "\n";
+            return response("BAD REQUEST ON UPDATE",401);
+        }
+    }
+
+    public function newVeiculo(Request $request){
+        try{
+            $veiculo = new Veiculo();
+            $veiculo->placa = $request->input('placa');
+            $veiculo->cor = $request->input('cor');
+            $veiculo->luxo = ($request->input('luxo') == 'on') ? true : false;
+            $veiculo->save();
+            return response('CREATED',201);
+        }catch(Exception $e){
+            echo $e->getMessage();
+            echo "\n";
+            return response("BAD REQUEST ON UPDATE",401);
+        }
+    }
 }

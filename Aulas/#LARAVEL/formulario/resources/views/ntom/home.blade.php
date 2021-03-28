@@ -62,8 +62,7 @@
                 type="button"
                 class="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onclick="clearModal()">Close</button>
-            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                onclick="clearModal()">Close</button>            
         </div>
         </div>
     </div>
@@ -342,12 +341,14 @@
     function add(args){        
         const frame = document.getElementById('frame');
         const title = document.getElementById('exampleModalLabel');
+        const btns = document.getElementById('buttons');
+        document.getElementById('sbtm')?.remove();
         if(args.action === "create" && args.type === "motorista"){
             title.innerText = "Adicionar Motorista";
             const div = document.createElement('div'); 
             div.setAttribute('class','container');                     
             const nome_input = document.createElement('input');
-            nome_input.setAttribute('id','nome');
+            nome_input.setAttribute('id','nome');            
             nome_input.setAttribute('class','form-control');
             const nome_label = document.createElement('label');
             nome_label.setAttribute('class','form-label');
@@ -365,6 +366,17 @@
             div.appendChild(cpf_label);
             div.appendChild(cpf_input);
             frame.appendChild(div);
+            const submit = document.createElement('submit');
+            submit.innerText = "Enviar!";
+            submit.setAttribute('class','btn btn-primary');
+            submit.setAttribute('onclick',`
+                    postSubmit({type:"${args.type}",
+                    action:"${args.action}",
+                    payload:['nome','cpf']
+                })
+            `);
+            submit.setAttribute('id','sbtm');
+            btns.appendChild(submit);
         }else if(args.action === "create" && args.type === "veiculo"){
             title.innerText = "Adicionar Veiculo";
             const div = document.createElement('div');
@@ -406,7 +418,44 @@
             row.appendChild(col1);
             row.appendChild(col2);            
             div.appendChild(row);
+            const submit = document.createElement('submit');
+            submit.innerText = "Enviar!";
+            submit.setAttribute('class','btn btn-primary');
+            submit.setAttribute('onclick',`
+            postSubmit({
+                    type:"${args.type}",
+                    action:"${args.action}",
+                    payload:['placa','cor','luxo']
+                })                
+            `);
+            submit.setAttribute('id','sbtm');
+            btns.appendChild(submit);
         }
     }    
+
+    function postSubmit(args){
+        const body = new FormData();
+        const method = (args.action === "create")?'POST':'PUT';
+        let url = `http://127.0.0.1:8000/api/muitos-para-muitos/`;
+
+        args.payload.forEach(function(element){
+            let value = document.getElementById(element)?.value;                        
+            body.append(element,value);
+        });     
+
+        if(args.type === "veiculo"){
+            url += 'v';
+        }else if(args.type === "motorista"){
+            url += 'm';
+        }else{
+            throw new Error('Operação inválida!');
+        }
+
+        fetch(url,{method,headers,body})
+        .then(r => r.text())
+        .then(console.log)
+        .catch(console.error);
+    }
+
     window.onload = getall;    
 </script>
