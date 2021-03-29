@@ -7,6 +7,7 @@ use App\Models\UsoMotoristaVeiculo;
 use Illuminate\Http\Request;
 use App\Models\Veiculo;
 use Exception;
+use Illuminate\Support\Facades\Date;
 
 class ManyController extends Controller
 {
@@ -102,4 +103,30 @@ class ManyController extends Controller
             return response($e->getMessage(),401);
         }
     }
+
+    public function assocMotorista(Request $request, $id){
+        try{
+            $motorista = Motorista::find($id);
+            $veiculo_id = $request->input('id');            
+            $motorista->veiculos()->attach($veiculo_id);
+            $motorista->save();
+            return response('ASSOCIATED',202);
+        }catch(Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
+    public function assocVeiculo(Request $request, $id){
+        try{           
+            $veiculo = Veiculo::find($id);
+            $motorista_id = $request->input('id');
+            $veiculo->motoristas()->attach($motorista_id);
+            $veiculo->save();
+            return response('ASSOCIATED',202);
+        }catch(Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
+    
 }

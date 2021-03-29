@@ -147,7 +147,9 @@
         const assoc = document.createElement('button');
         assoc.innerText = '+ Veiculo';
         assoc.setAttribute('class','mx-3 p-1 btn btn-success');
-        assoc.setAttribute('onclick',`relationship({action:'assoc',type:'veiculo',id:${id}})`)        
+        assoc.setAttribute('onclick',`relationship({action:'assoc',type:'veiculo',id:${id}})`);  
+        assoc.setAttribute('data-bs-toggle','modal');
+        assoc.setAttribute('data-bs-target','#modal');
         td_btns.appendChild(assoc);
 
         out.appendChild(td_id);
@@ -219,7 +221,9 @@
         const assoc = document.createElement('button');
         assoc.innerText = '+ Motorista';
         assoc.setAttribute('class','mx-3 p-1 btn btn-success');
-        assoc.setAttribute('onclick',`relationship({action:'assoc',type:'motorista',id:${id}})`)
+        assoc.setAttribute('onclick',`relationship({action:'assoc',type:'motorista',id:${id}})`);
+        assoc.setAttribute('data-bs-toggle','modal');
+        assoc.setAttribute('data-bs-target','#modal');
         td_btns.appendChild(assoc);
 
         out.appendChild(td_id);
@@ -351,8 +355,77 @@
     }
 
     function relationship(args){
-        console.log(args);
-    }    
+        const method = (args.action === "assoc") ? 'POST' : 'DELETE';
+        const frame = document.getElementById('frame');
+        const title = document.getElementById('exampleModalLabel');
+        const btns = document.getElementById('buttons');
+        document.getElementById('sbtm')?.remove();
+        if(args.action === "assoc"){
+            title.innerText = `Associar ${args.type}`;
+            const div = document.createElement('div');
+            const label = document.createElement('label');
+            label.setAttribute('class','form-label');
+            const select = document.createElement('select');
+            select.setAttribute('class','form-control');
+            select.setAttribute('id','select');
+            const dft = document.createElement('option');
+            dft.setAttribute('value',null);
+            dft.selected = true;
+            dft.innerText = "Selecione uma opção";
+            select.appendChild(dft);
+            if(args.type === "motorista" && motoristas){
+                motoristas.forEach(function(element){                                           
+                    let opt = document.createElement('option');
+                    opt.setAttribute('value',element.id);
+                    opt.innerText = element.nome;                                  
+                    select.appendChild(opt);
+                });
+            }else if(args.type === "veiculo" && veiculos){
+                veiculos.forEach(function(element){
+                    let opt = document.createElement('option');
+                    opt.setAttribute('value',element.id);
+                    opt.innerText = element.placa;
+                    select.appendChild(opt);
+                });
+            }
+            div.appendChild(label);
+            div.appendChild(select);
+            frame.appendChild(div);
+            const submit = document.createElement('button');
+            submit.innerText = "Associar!";
+            submit.setAttribute('class','btn btn-primary');
+            submit.setAttribute('onclick',`assoc({type:"${args.type}",id:${args.id}})`)
+            submit.setAttribute('id','sbtm');
+            btns.appendChild(submit);
+        }else if(args.action === "uncouple"){
+
+        }else{
+            throw new Error('Operação Inválida!');
+        }   
+        console.log(args)     
+    }  
+    
+    function assoc(args){
+        
+        const selected = document.getElementById('select');
+        let url = `http://127.0.0.1:8000/api/muitos-para-muitos/`;        
+        const body = new FormData();
+        body.append('id',selected.value); 
+        body.append('_method','PATCH');
+        console.log(args.id,selected.value);       
+        if(args.type === "motorista"){
+            url += `v/${args.id}`;            
+        }else if(args.type === "veiculo"){
+            url += `m/${args.id}`;            
+        }else{
+            throw new Error('Operação Ilegal');
+        }
+        fetch(url,{method:"POST",body,headers})
+        .then(r => r.text())
+        .then(cleanTables)
+        .then(getall)
+        .catch(console.error);
+    }
 
     function add(args){        
         const frame = document.getElementById('frame');
