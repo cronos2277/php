@@ -136,7 +136,7 @@
         const td_rem = document.createElement('button');
         td_rem.innerText = 'Remover';
         td_rem.setAttribute('class','btn btn-danger');   
-        td_rem.setAttribute('onclick',`remove({type:'motorista',id:${id},name:'${nome}'})`);     
+        td_rem.setAttribute('onclick',`remove({type:'motorista',id:${id},nome:'${nome}'})`);     
         td_btns.appendChild(td_rem);        
 
         const span_val = document.createElement('span');
@@ -260,7 +260,23 @@
     }
 
     function remove(args){
-        console.log(args);
+        let url = `http://127.0.0.1:8000/api/muitos-para-muitos/`;
+        if(args.type === "veiculo"){
+            url += `v/${args.id}`;
+        }else if(args.type === "motorista"){
+            url += `m/${args.id}`;
+        }else{
+            throw new Error('Operação inválida!');
+        }
+        
+        if(confirm(`Você deseja excluir o ${args.type} ${(args.nome)?args.nome:args.placa}`)){
+            fetch(url,{method:'DELETE',headers})
+            .then(e => {(e.status == 401) && alert(`Esse ${args.type} não pode ser excluído, devido a associações!`); return e;})
+            .then(r => r.text())
+            .then(getall)
+            .then(cleanTables)
+            .catch(console.error);
+        }  
     }
 
     function show(args){            
@@ -452,8 +468,10 @@
         }
 
         fetch(url,{method,headers,body})
+        .then(r => {(r.status === 401) && alert('todos os campos devem ser válidos');return r})
         .then(r => r.text())
-        .then(console.log)
+        .then(cleanTables)
+        .then(getall)
         .catch(console.error);
     }
 

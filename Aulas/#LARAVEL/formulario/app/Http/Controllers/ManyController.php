@@ -82,4 +82,24 @@ class ManyController extends Controller
             return response("BAD REQUEST ON UPDATE",401);
         }
     }
+
+    public function deleteMotorista($id){
+        try{
+            $motorista = Motorista::find($id);
+            $motorista->delete();
+            return response('Deleted',204);
+        }catch(Exception $e){
+            return response($e->getMessage(),401);
+        }
+    }
+
+    public function deleteVeiculo($id){
+        try{
+            $veiculo = Veiculo::find($id);
+            $veiculo->delete();
+            return response('Deleted',204);
+        }catch(Exception $e){
+            return response($e->getMessage(),401);
+        }
+    }
 }

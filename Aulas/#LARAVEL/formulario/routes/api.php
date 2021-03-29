@@ -40,7 +40,9 @@ Route::post('/um-para-muitos/p','App\Http\Controllers\ProdutoCategoriaController
 Route::get('muitos-para-muitos/m','App\Http\Controllers\ManyController@getAllMotorista');
 Route::post('muitos-para-muitos/m','App\Http\Controllers\ManyController@newMotorista');
 Route::put('muitos-para-muitos/m/{id}','App\Http\Controllers\ManyController@updateMotorista');
+Route::delete('muitos-para-muitos/m/{id}','App\Http\Controllers\ManyController@deleteMotorista');
 Route::get('muitos-para-muitos/v','App\Http\Controllers\ManyController@getAllVeiculo');
 Route::post('muitos-para-muitos/v','App\Http\Controllers\ManyController@newVeiculo');
 Route::put('muitos-para-muitos/v/{id}','App\Http\Controllers\ManyController@updateVeiculo');
+Route::delete('muitos-para-muitos/v/{id}','App\Http\Controllers\ManyController@deleteVeiculo');
 
