@@ -108,7 +108,7 @@ class ManyController extends Controller
         try{
             $motorista = Motorista::find($id);
             $veiculo_id = $request->input('id');            
-            $motorista->veiculos()->attach($veiculo_id);
+            $motorista->veiculos()->attach([$veiculo_id => ["ultimo_uso" => date("Y-m-d")]]);
             $motorista->save();
             return response('ASSOCIATED',202);
         }catch(Exception $e){
@@ -120,7 +120,7 @@ class ManyController extends Controller
         try{           
             $veiculo = Veiculo::find($id);
             $motorista_id = $request->input('id');
-            $veiculo->motoristas()->attach($motorista_id);
+            $veiculo->motoristas()->attach([$motorista_id => ["ultimo_uso" => date("Y-m-d")]]);
             $veiculo->save();
             return response('ASSOCIATED',202);
         }catch(Exception $e){

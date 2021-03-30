@@ -652,3 +652,48 @@ Nessa migration estamos criando uma tabela com chave composta `$table->primary([
     }
 
 Até agora estamos usando a mesma estratégia **EAGER** que foi usanda no *1* para *N*. Porém dentro de veículo por exemplo `$veiculos = Veiculo::with('motoristas')->get();`, terá um array de [Motoristas](#classe-motorista), e dentro desse array dentro de cada [Motoristas](#classe-motorista), você também terá um objeto chamado [pivot](#withpivot) dentro de cada elemento desse array, e o mesmo vale para a classe [Motoristas](#classe-motorista) que contém um array de [Veículos](#classe-veículo) que também contém um [pivot](#withpivot) dentro de cada elemento.
+
+### Associação Básica
+[ManyController](./app/Http/Controllers/ManyController.php)
+###### Associação Motoristas -> Veiculos
+    public function assocMotorista(Request $request, $id){
+        try{
+            $motorista = Motorista::find($id);
+            $veiculo_id = $request->input('id');            
+            $motorista->veiculos()->attach($veiculo_id);
+            $motorista->save();
+            return response('ASSOCIATED',202);
+        }catch(Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
+###### Associação Veiculos -> Motoristas
+    public function assocVeiculo(Request $request, $id){
+        try{           
+            $veiculo = Veiculo::find($id);
+            $motorista_id = $request->input('id');
+            $veiculo->motoristas()->attach($motorista_id);
+            $veiculo->save();
+            return response('ASSOCIATED',202);
+        }catch(Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
+A lógica se encontra aqui `$motorista->veiculos()->attach($veiculo_id);` e `$veiculo->motoristas()->attach($motorista_id);`, no caso `$[tabela dona do relacionamento]->[retorno do metodo belongsToMany em forma de metodo]()->attach([id da outra tabela]` ou `->attach([id da outra tabela => [array com campos e os seus valores da tabela intermediária]])`. O método *attach* com apenas um parametro recebe apenas o id da outra tabela no relacionamento, porém quando recebe um array, esse array que deve conter em forma como chave o *ID* da outra parte da relação cujo o valor seja um array contendo todas informações dos campos.
+
+### Associação mais avançada
+
+###### Motorista
+    ...
+        $motorista->veiculos()->attach([$veiculo_id => ["ultimo_uso" => date("Y-m-d")]]);
+    ...    
+
+**Nesse segundo exemplo `->attach([$veiculo_id => ["ultimo_uso" => date("Y-m-d")]]);` você usa o id da tabela veiculo associando um array com os dados da tabela intermediaria.**
+###### Veiculo
+    ...
+        $veiculo->motoristas()->attach([$motorista_id => ["ultimo_uso" => date("Y-m-d")]]);
+    ...
+
+**Nesse segundo exemplo `->attach([$motorista_id => ["ultimo_uso" => date("Y-m-d")]]);` você usa o id da tabela veiculo associando um array com os dados da tabela intermediaria.**
