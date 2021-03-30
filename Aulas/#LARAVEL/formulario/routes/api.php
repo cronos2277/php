@@ -47,4 +47,5 @@ Route::post('muitos-para-muitos/v','App\Http\Controllers\ManyController@newVeicu
 Route::put('muitos-para-muitos/v/{id}','App\Http\Controllers\ManyController@updateVeiculo');
 Route::patch('muitos-para-muitos/v/{id}','App\Http\Controllers\ManyController@assocVeiculo');
 Route::delete('muitos-para-muitos/v/{id}','App\Http\Controllers\ManyController@deleteVeiculo');
+Route::delete('muitos-para-muitos/d','App\Http\Controllers\ManyController@desassociar');
 

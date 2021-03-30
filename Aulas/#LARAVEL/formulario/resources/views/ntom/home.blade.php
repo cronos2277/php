@@ -398,11 +398,20 @@
             submit.setAttribute('id','sbtm');
             btns.appendChild(submit);
         }else if(args.action === "uncouple"){
-
+            let url = `http://127.0.0.1:8000/api/muitos-para-muitos/d`;
+            const body = new FormData();            
+            body.append('type',args.type);
+            body.append('_method',method);              
+            body.append('veiculo_id',args.v_id);
+            body.append('motorista_id',args.m_id);      
+            fetch(url,{method:"POST",body,headers})
+                .then(r => r.text())
+                .then(cleanTables)
+                .then(getall)
+                .catch(console.error);
         }else{
             throw new Error('Operação Inválida!');
-        }   
-        console.log(args)     
+        }              
     }  
     
     function assoc(args){

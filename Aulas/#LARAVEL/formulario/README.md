@@ -697,3 +697,26 @@ A lógica se encontra aqui `$motorista->veiculos()->attach($veiculo_id);` e `$ve
     ...
 
 **Nesse segundo exemplo `->attach([$motorista_id => ["ultimo_uso" => date("Y-m-d")]]);` você usa o id da tabela veiculo associando um array com os dados da tabela intermediaria.**
+
+### Desassociando
+
+    public function desassociar(Request $request){
+        try{
+            $veiculo_id = $request->input('veiculo_id');
+            $motorista_id = $request->input('motorista_id');
+            $type = $request->input('type');
+            if($type === "motorista"){
+                $veiculo = Veiculo::find($veiculo_id);
+                $veiculo->motoristas()->detach([$motorista_id]);
+            }else if($type === "veiculo"){
+                $motorista = Motorista::find($motorista_id);
+                $motorista->veiculos()->detach([$veiculo_id]);
+            }else{
+                return response('Invalid Operation',401);
+            }
+        }catch(Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
+No caso para fazer a desassociação, conforme visto aqui `$veiculo->motoristas()->detach([$motorista_id]);` e aqui `$motorista->veiculos()->detach([$veiculo_id]);`, a lógica é semelhanet ao método `attach`, porém diferente desse, esse método faz a operação contrária que é romper vínculos e além disso o método `detach` aceita como argumento um array com ids da entidade alvo da relação. Por exemplo aqui `$veiculo->motoristas()->detach([$motorista_id]);` estamos fazendo a desassociação através do veículo, logo o argumento que deve ser passado no método não deve ser os *ids* do veículo e sim os *ids* do motorista que é o outro lado do relacionamento com o motorista.

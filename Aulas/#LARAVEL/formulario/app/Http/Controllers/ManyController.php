@@ -128,5 +128,24 @@ class ManyController extends Controller
         }
     }
 
+    public function desassociar(Request $request){
+        try{
+            $veiculo_id = $request->input('veiculo_id');
+            $motorista_id = $request->input('motorista_id');
+            $type = $request->input('type');
+            if($type === "motorista"){
+                $veiculo = Veiculo::find($veiculo_id);
+                $veiculo->motoristas()->detach([$motorista_id]);
+            }else if($type === "veiculo"){
+                $motorista = Motorista::find($motorista_id);
+                $motorista->veiculos()->detach([$veiculo_id]);
+            }else{
+                return response('Invalid Operation',401);
+            }
+        }catch(Exception $e){
+            return response($e->getMessage(),500);
+        }
+    }
+
     
 }
