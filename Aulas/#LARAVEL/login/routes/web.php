@@ -16,3 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/middleware',"\App\Http\Controllers\ControladorController@index")
+    ->middleware(\App\Http\Middleware\Primeiro::class)
+    ->middleware('segundo');

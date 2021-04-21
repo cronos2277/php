@@ -28,7 +28,7 @@
 [Arquivo de rotas para API](./basico/routes/api.php)
 
 ### Instalando
-Para instalar use: `composer create-project laravel/laravel [nome]`, aonde `[nome]` deve corresponder ao nome do projeto, se faz necessário que tanto o *PHP*, quanto o *composer* estejam instalados.
+Para instalar use: `composer create-project laravel/laravel [nome]`, aonde `[nome]` deve corresponder ao nome do projeto, se faz necessário que tanto o *PHP*, quanto o *composer* estejam instalados. [Documentação](https://laravel.com/docs/8.x/installation)
 #### Explicando
 De forma prática, aqui você pode ajustar as rotas. Tudo que estiver configurado no web, refere-se ao diretório raiz, no caso o `/`. Se seu dominio for localhost, sera como nesse exemplo, ficaria `http://localhost/rotaexemplo` esse será a url, no caso com base na raiz. Diferente do arquivo *api.php* que coloca o */api* na frente ficando: `http://localhost/api/rotaexemplo/` , caso fosse configurado no arquivo *api.php* por exemplo:
 
