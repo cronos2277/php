@@ -206,3 +206,7 @@ Nessa terceira forma você chama o middleware através do construtor, você pode
     ];
 
 Dessa forma tudo que você deve fazer é ir ao arquivo [Kernel.php](./app/Http/Kernel.php) e adicionar o middleware no array `$middlewareGroups` e mais nada, não precisa registrar em nenhum método middleware, porém nesse método o seu middleware será carregado junto com o Laravel e de maneira global, apenas faça isso se quiser que todas as rotas do Laravel possam ser interceptadas pelo middleware.
+
+**Se tudo funcionar corretamente:**
+
+![Rotas Funcionando](./.imgs/middles_rotas_funcionando.png)
