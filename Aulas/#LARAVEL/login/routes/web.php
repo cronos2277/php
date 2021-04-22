@@ -20,3 +20,10 @@ Route::get('/', function () {
 Route::get('/middleware',"\App\Http\Controllers\ControladorController@index")
     ->middleware(\App\Http\Middleware\Primeiro::class)
     ->middleware('segundo');
+
+Route::get('/controle',"\App\Http\Controllers\IndexCtrl@index")
+    ->middleware(
+        "\App\Http\Middleware\First:1",
+        "\App\Http\Middleware\Second:2,3",
+        "\App\Http\Middleware\Third"
+    );

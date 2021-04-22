@@ -1,6 +1,7 @@
 # Middleware com Gerenciamento de Login
 
 1. [Registrando Middlewares](#registrando-middlewares)
+2. [Entendendo o funcionamento de Middlewares](#entendendo-o-funcionamento-de-middlewares)
 
 ## Registrando Middlewares
 [Documentação](https://laravel.com/docs/8.x/middleware#introduction)
@@ -210,3 +211,128 @@ Dessa forma tudo que você deve fazer é ir ao arquivo [Kernel.php](./app/Http/K
 **Se tudo funcionar corretamente:**
 
 ![Rotas Funcionando](./.imgs/middles_rotas_funcionando.png)
+
+## Entendendo o funcionamento de Middlewares
+
+###### First.php
+[First.php](./app/Http/Middleware/First.php)
+
+    <?php
+
+        namespace App\Http\Middleware;
+        use Closure;
+        use Illuminate\Http\Request;
+
+        class First
+        {          
+            public function handle(Request $request, Closure $next, $param1)
+            {
+                echo "<p style='color:blue;font-size:18px'>Executando  middleware PRÉ CONTROLLER FIRST com parametro $param1</p>";
+                $req = $next($request);
+                echo "<p style='color:blue;font-size:18px'>Executando middleware FIRST PÓS CONTROLLER com parametro $param1</p>";
+                return $req;
+            }
+        }
+
+**Repare que a classe `first` recebe um parametro, conforme visto aqui `$param1`.**
+
+###### Second.php
+[Second](./app/Http/Middleware/Second.php)
+
+    <?php
+
+        namespace App\Http\Middleware;
+
+        use Closure;
+        use Illuminate\Http\Request;
+
+        class Second
+        {            
+            public function handle(Request $request, Closure $next, $param1, $param2)
+            {
+                echo "<p style='color:red;font-size:18px'>Executando middleware PRÉ CONTROLLER SECOND com parametros: [$param1,$param2]</p>";
+                $req = $next($request);
+                echo "<p style='color:red;font-size:18px'>Executando middleware SECOND PÓS CONTROLLER com parametros: [$param1,$param2]</p>";
+                return $req;
+            }
+        }
+
+**Repare que essa classe aceita 2 argumentos, conforme visto aqui `$param1, $param2`.**
+
+###### Third.php
+[Third.php](./app/Http/Middleware/Third.php)
+
+    <?php
+
+        namespace App\Http\Middleware;
+        use Closure;
+        use Illuminate\Http\Request;
+
+        class Third
+        {
+            public function handle(Request $request, Closure $next)
+            {
+                $numero = random_int(0,10);
+                if($numero >= 5){
+                    echo "<p style='color:green;font-size:18px'>Executando middleware THIRD PRÉ CONTROLLER sem parametros e podendo interceptar.</p>";
+                    $req = $next($request);
+                }else{
+                    echo "Valor de número = $numero, ou seja o MIDDLEWARE vai bloquear";
+                    return response("BLOQUEADO!!!!",403);
+                }
+                
+                echo "<p style='color:green;font-size:18px'>Executando middleware THIRD PÓS CONTROLLER sem parametros e podendo interceptar.</p>";
+                return $req;
+            }
+        }
+
+### Entendendo os Middlewares
+
+###### Registrando os Middlewares
+    Route::get('/controle',"\App\Http\Controllers\IndexCtrl@index")
+    ->middleware(
+        "\App\Http\Middleware\First:1",
+        "\App\Http\Middleware\Second:2,3",
+        "\App\Http\Middleware\Third"
+    );
+
+#### Sobre os parametros passados ao Middleware.
+Aqui está sendo registrado os middlewares, essa é uma forma possível quando você quer passar parametros ao middleware, você poderia nomear as rotas e colocar os dois pontos após o nome registrado no arquivo **Kernel.php**. Porém definido isso, conforme visto aqui `"\App\Http\Middleware\First:1"`, tudo que houver após os dois pontos, será passado como argumento. A exemplo dessa classe [FIRST](#firstphp), nesse caso tem como parametro `1` e será passado como argumento para `$param1`, se você quiser passar mais de um argumento, você pode usar a `,` como separador, conforme visto aqui `"\App\Http\Middleware\Second:2,3"`, no [SECOND](#secondphp), repare que em ambos, os parametros adicionais são informados na assinatura do método `handler`.
+
+#### Brecando o carregamento do indice:
+
+    public function handle(Request $request, Closure $next)
+        {
+            $numero = random_int(0,10);
+            if($numero >= 5){
+                echo "<p style='color:green;font-size:18px'>Executando middleware THIRD PRÉ CONTROLLER sem parametros e podendo interceptar.</p>";
+                $req = $next($request);
+            }else{
+                echo "Valor de número = $numero, ou seja o MIDDLEWARE vai bloquear";
+                return response("BLOQUEADO!!!!",403);
+            }
+            
+            echo "<p style='color:green;font-size:18px'>Executando middleware THIRD PÓS CONTROLLER sem parametros e podendo interceptar.</p>";
+            return $req;
+        }
+
+Nesse caso você se essa condição `if($numero >= 5)` for falsa, a execução será suspensa, devido ao visto aqui `return response("BLOQUEADO!!!!",403);`, no caso esse `$numero` recebe um número aleatório ente *1* e *10*, conforme esta expressão: `$numero = random_int(0,10);`. Abaixo um exemplo quando o middleware suspende a execução:
+
+![Interceptando o Middleware](./.imgs/interceptando_middleware.png)
+
+### ordem de execução dos Middlewares
+[IndexCtrl](./app/Http/Controllers/IndexCtrl.php)
+
+    <?php
+        namespace App\Http\Controllers;
+        use Illuminate\Http\Request;
+        class IndexCtrl extends Controller
+        {
+            public function index(){
+                return "<h1>Carregando indice</h1>";
+            }
+        }
+
+**Existe uma ordem para a execução de middlewares, inicialmente é executado do primeiro middleware até o ultimo sequencialmente, porém quando todos os middlewares são executados, a exibição passa a ocorre de maneira inversa, ou seja o ultimo middleware é executado antes do primeiro, em outras palavras: o primeiro middleware é executado, depois o segundo e por fim o terceiro, no caso todo o trecho antes da chamada do next, uma vez que todo o trecho da chamada do next é executado, começar a ser executado o trecho após a chamada do next, começando do terceiro, indo ao segundo e após isso voltando ao primeiro, lembrando que nessa rota de volta, a requisição já foi carregada e com isso é possível fazer pós processamento, e ai depois de todo esse processo de ida e volta gerado pelos middlewares, ai sim a requisição é carregada. Segue um print abaixo para clarificar isso:**
+
+![Middles Rotas Exec](.imgs/middles_rotas_exec.png)
