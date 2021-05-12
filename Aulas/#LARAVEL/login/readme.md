@@ -2,6 +2,7 @@
 
 1. [Registrando Middlewares](#registrando-middlewares)
 2. [Entendendo o funcionamento de Middlewares](#entendendo-o-funcionamento-de-middlewares)
+3. [Login no Laravel](#login-no-laravel)
 
 ## Registrando Middlewares
 [Documentação](https://laravel.com/docs/8.x/middleware#introduction)
@@ -336,3 +337,137 @@ Nesse caso você se essa condição `if($numero >= 5)` for falsa, a execução s
 **Existe uma ordem para a execução de middlewares, inicialmente é executado do primeiro middleware até o ultimo sequencialmente, porém quando todos os middlewares são executados, a exibição passa a ocorre de maneira inversa, ou seja o ultimo middleware é executado antes do primeiro, em outras palavras: o primeiro middleware é executado, depois o segundo e por fim o terceiro, no caso todo o trecho antes da chamada do next, uma vez que todo o trecho da chamada do next é executado, começar a ser executado o trecho após a chamada do next, começando do terceiro, indo ao segundo e após isso voltando ao primeiro, lembrando que nessa rota de volta, a requisição já foi carregada e com isso é possível fazer pós processamento, e ai depois de todo esse processo de ida e volta gerado pelos middlewares, ai sim a requisição é carregada. Segue um print abaixo para clarificar isso:**
 
 ![Middles Rotas Exec](.imgs/middles_rotas_exec.png)
+
+## Login no Laravel
+Para habilitar o login no Laravel 5 basta dar o comando `php artisan make:auth`, porém na atual versão (8.0), a maneira é um pouco diferente...
+
+### composer require laravel/ui "^[VERSAO]"
+    composer require laravel/ui "^1.0" --dev
+
+**OU**
+
+    composer require laravel/ui "^2.0"
+
+Repare que a flag `--dev` indica desenvolvimento e não deve ser usado em ambiente de produção, você precisa instalar o `laravel/ui` para ter acesso a um wizard nas novas versões do *Laravel*.
+
+#### Possível erro
+
+     Problem 1
+    - laravel/ui[v1.0.0, ..., 1.x-dev] require illuminate/console ~5.8|^6.0 -> found illuminate/console[v5.8.0, ..., 5.8.x-dev, v6.0.0, ..., 6.x-dev] but these were not loaded, likely because it conflicts with another require.
+    - Root composer.json requires laravel/ui ^1.0 -> satisfiable by laravel/ui[v1.0.0, ..., 1.x-dev].
+
+Se um erro semelhante ao informado acima, verifique as versões dos pacotes instalados no projeto, se você está usando a versão mais nova do `Laravel` convém usar a versão mais nova do `laravel/ui`. Além disso o `^` indica que será instalado o recurso entre a versão `2.0.0` e `2.9.9`.
+
+### Instalando o bootstrap
+    php artisan ui bootstrap
+
+Dessa forma você instala o bootstrap e é solicitado a rodar o *npm*: `Please run "npm install && npm run dev" to compile your fresh scaffolding.`    
+### ui com VUE
+Aqui usaremos o utilitário executando: `php artisan ui vue --auth`, uma vez que o mesmo seja instalado seguindo os [passos acima](#login-no-laravel). Após isso recomenda-se rodar o `npm i` e o `npm i -D`, ou seja atualizar os pacotes npm de produção e desenvolvimento. Nesse exemplo está sendo instalado o vue junto no front-end e é solicitado a rodar o *npm*: `Please run "npm install && npm run dev" to compile your fresh scaffolding.`.
+
+### ui auth
+
+    php artisan ui:auth
+
+Esse Script deve ser executado antes ou depois de instalar o `vue` ou o `bootstrap` caso você instale isso, esse script irá criar alguns arquivos:
+
+[web.php](routes/web.php)
+
+    Auth::routes();
+    Route::get('/home', 'HomeController@index')->name('home');
+
+Além disso irá criar os seguintes arquivos PHP: 
+
+[ConfirmPasswordController.php](app/Http/Controllers/Auth/ConfirmPasswordController.php) -> Confirmação de Senhas.
+
+[ForgotPasswordController.php](app/Http/Controllers/Auth/ForgotPasswordController.php) -> Página de registro para redefinição de uma nova senha.
+
+[LoginController.php](app/Http/Controllers/Auth/LoginController.php) -> Página para Login.
+
+[RegisterController.php](app/Http/Controllers/Auth/RegisterController.php) -> Página para registro de uma nova conta.
+
+[ResetPasswordController.php](app/Http/Controllers/Auth/ResetPasswordController.php) -> Página que irá proceder com o reset da senha.
+
+[VerificationController.php](app/Http/Controllers/Auth/VerificationController.php) -> Página que lida com verificação de e-mail.
+
+#### Home Controller
+[Arquivo](app/Http/Controllers/HomeController.php), Esse será o controller que o *Laravel* criará para acessar o login de usuário na aplicação.
+
+    <?php
+
+        namespace App\Http\Controllers;
+
+        use Illuminate\Http\Request;
+
+        class HomeController extends Controller
+        {
+            /**
+            * Create a new controller instance.
+            *
+            * @return void
+            */
+            public function __construct()
+            {
+                $this->middleware('auth');
+            }
+
+            /**
+            * Show the application dashboard.
+            *
+            * @return \Illuminate\Contracts\Support\Renderable
+            */
+            public function index()
+            {
+                return view('home');
+            }
+        }
+
+### Erros ao executar o "php artisan route:list"
+Se houver algum erro ao executar esse comando `php artisan route:list`, vai até o arquivo de rotas [web.php](routes/web.php), nesse arquivo você coloca o caminho absoluto a rota, no caso na rota de autenticação você deve encontrar algo como:
+###### Path para homeController errado:
+    Route::get('/home', 'HomeController@index')->name('home');
+
+**Sendo que o mesmo deve ficar:**
+
+###### Path para homeController Certo:
+    Route::get('/home', '\App\Http\Controllers\HomeController@index')->name('home');
+
+### Tabela de rotas
+Uma vez que o problema de rotas esteja resolvido o output deve ser algo como:
+
+    +--------+----------+------------------------+------------------+------------------------------------------------------------------------+---------------------------------+
+    | Domain | Method   | URI                    | Name             | Action                                                                 | Middleware                      |
+    +--------+----------+------------------------+------------------+------------------------------------------------------------------------+---------------------------------+
+    |        | GET|HEAD | /                      |                  | Closure                                                                | web                             |
+    |        | GET|HEAD | api/user               |                  | Closure                                                                | api                             |
+    |        |          |                        |                  |                                                                        | auth:api                        |
+    |        | GET|HEAD | controle               |                  | App\Http\Controllers\IndexCtrl@index                                   | web                             |
+    |        |          |                        |                  |                                                                        | \App\Http\Middleware\First:1    |
+    |        |          |                        |                  |                                                                        | \App\Http\Middleware\Second:2,3 |
+    |        |          |                        |                  |                                                                        | \App\Http\Middleware\Third      |
+    |        | GET|HEAD | home                   | home             | App\Http\Controllers\HomeController@index                              | web                             |
+    |        |          |                        |                  |                                                                        | auth                            |
+    |        | GET|HEAD | login                  | login            | App\Http\Controllers\Auth\LoginController@showLoginForm                | web                             |
+    |        |          |                        |                  |                                                                        | guest                           |
+    |        | POST     | login                  |                  | App\Http\Controllers\Auth\LoginController@login                        | web                             |
+    |        |          |                        |                  |                                                                        | guest                           |
+    |        | POST     | logout                 | logout           | App\Http\Controllers\Auth\LoginController@logout                       | web                             |
+    |        | GET|HEAD | middleware             |                  | App\Http\Controllers\ControladorController@index                       | web                             |
+    |        |          |                        |                  |                                                                        | App\Http\Middleware\Primeiro    |
+    |        |          |                        |                  |                                                                        | segundo                         |
+    |        |          |                        |                  |                                                                        | App\Http\Middleware\Terceiro    |
+    |        | GET|HEAD | password/confirm       | password.confirm | App\Http\Controllers\Auth\ConfirmPasswordController@showConfirmForm    | web                             |
+    |        |          |                        |                  |                                                                        | auth                            |
+    |        | POST     | password/confirm       |                  | App\Http\Controllers\Auth\ConfirmPasswordController@confirm            | web                             |
+    |        |          |                        |                  |                                                                        | auth                            |
+    |        | POST     | password/email         | password.email   | App\Http\Controllers\Auth\ForgotPasswordController@sendResetLinkEmail  | web                             |
+    |        | GET|HEAD | password/reset         | password.request | App\Http\Controllers\Auth\ForgotPasswordController@showLinkRequestForm | web                             |
+    |        | POST     | password/reset         | password.update  | App\Http\Controllers\Auth\ResetPasswordController@reset                | web                             |
+    |        | GET|HEAD | password/reset/{token} | password.reset   | App\Http\Controllers\Auth\ResetPasswordController@showResetForm        | web                             |
+    |        | GET|HEAD | register               | register         | App\Http\Controllers\Auth\RegisterController@showRegistrationForm      | web                             |
+    |        |          |                        |                  |                                                                        | guest                           |
+    |        | POST     | register               |                  | App\Http\Controllers\Auth\RegisterController@register                  | web                             |
+    |        |          |                        |                  |                                                                        | guest                           |
+    +--------+----------+------------------------+------------------+------------------------------------------------------------------------+---------------------------------+
+
+Essas rotas acima, são criados com base nos script [php artisan ui:auth](#ui-auth)

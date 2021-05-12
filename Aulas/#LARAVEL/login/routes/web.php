@@ -27,3 +27,6 @@ Route::get('/controle',"\App\Http\Controllers\IndexCtrl@index")
         "\App\Http\Middleware\Second:2,3",
         "\App\Http\Middleware\Third"
     );
+Auth::routes();
+
+Route::get('/home', '\App\Http\Controllers\HomeController@index')->name('home');
