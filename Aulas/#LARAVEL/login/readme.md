@@ -376,7 +376,9 @@ Esse Script deve ser executado antes ou depois de instalar o `vue` ou o `bootstr
     Auth::routes();
     Route::get('/home', 'HomeController@index')->name('home');
 
-Além disso irá criar os seguintes arquivos PHP: 
+Repare que o Laravel cria a rota **/home** na aplicação, você pode alterar isso se quiser, mas por padrão é o **/home** e caso haja algum problema, você pode definir o namespace completo dessa rota, conforme ilustrado [aqui](#erros-ao-executar-o-php-artisan-routelist)
+
+**Além disso irá criar os seguintes arquivos PHP:** 
 
 [ConfirmPasswordController.php](app/Http/Controllers/Auth/ConfirmPasswordController.php) -> Confirmação de Senhas.
 
@@ -422,7 +424,7 @@ Além disso irá criar os seguintes arquivos PHP:
             }
         }
 
-### Erros ao executar o "php artisan route:list"
+### Erros ao executar o php artisan route:list
 Se houver algum erro ao executar esse comando `php artisan route:list`, vai até o arquivo de rotas [web.php](routes/web.php), nesse arquivo você coloca o caminho absoluto a rota, no caso na rota de autenticação você deve encontrar algo como:
 ###### Path para homeController errado:
     Route::get('/home', 'HomeController@index')->name('home');
@@ -471,3 +473,16 @@ Uma vez que o problema de rotas esteja resolvido o output deve ser algo como:
     +--------+----------+------------------------+------------------+------------------------------------------------------------------------+---------------------------------+
 
 Essas rotas acima, são criados com base nos script [php artisan ui:auth](#ui-auth)
+
+#### Class App\User not found ao Registrar uma nova conta
+No caso por bug o laravel pode não colocar o path correto para o usuário, no arquivo [RegisterController.php](app/Http/Controllers/Auth/RegisterController.php) em [app\Http\Controllers\Auth\](./app/Http/Controllers/Auth), no começo, na parte de importação:
+
+    namespace App\Http\Controllers\Auth;
+    use App\Http\Controllers\Controller;
+    use App\Providers\RouteServiceProvider;
+    use App\User;
+    use Illuminate\Foundation\Auth\RegistersUsers;
+    use Illuminate\Support\Facades\Hash;
+    use Illuminate\Support\Facades\Validator;
+
+Mude `use App\User;` para `use App\Models\User;`
