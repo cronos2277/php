@@ -486,3 +486,65 @@ No caso por bug o laravel pode não colocar o path correto para o usuário, no a
     use Illuminate\Support\Facades\Validator;
 
 Mude `use App\User;` para `use App\Models\User;`
+
+### Arquivo Blade gerado
+[Arquivo não gerado](./resources/views/welcome.blade.php)
+
+[Arquivo gerado, app](./resources/views/layouts/app.blade.php)
+
+[Arquivo gerado, home](./resources/views/home.blade.php)
+
+Também tem os arquivos [gerados na pasta auth](./resources/views/auth).
+
+### @auth e @guest
+#### @auth
+    @auth                        
+        <div class="card-header">Usuário {{Auth::user()->id}}</div>
+        <div class="card-body">
+            <h5 class="card-title">
+                Nome: {{Auth::user()->name}}, 
+                <br> 
+                email: {{Auth::user()->email}}</h5>
+            </div>                                                        
+            <p class="card-text">
+                Conteúdo de: <strong>Auth::user()</strong>
+                <br />
+                {{dd(Auth::user())}}
+            </p>                            
+        </div>
+    @endauth
+
+**O parte do html dentro de `@auth` é exibido apenas aos usuários que estejam logados, caso o usuário não esteja logado, esse trecho será omitido.** Sintaxe inicia-se com `@auth` e termina com `@endauth`.
+
+##### Auth::user
+Esse método retorna um objeto `App\Models\User` com os dados do usuário logado, ou nulo caso o usuário não esteja logado.
+
+![Auth->user](./.imgs/Objeto_retornado_Auth-user.png)
+#### @guest
+    @guest
+    <div class="card-header">Visitante</div>
+    <div class="card-body">
+        <p class="card-text">
+            Conteúdo de: <strong>Auth::user()</strong>
+            <br />
+            {{dd(Auth::user())}}
+        </p>
+    </div>
+    @endguest       
+
+Esse método funciona de maneira oposta a `@auth`, ou seja o `@guest` apenas carrega o seu trecho de código **APENAS** se o usuário **NÃO** estiver logado, além disso o método `Auth::user()` retorna nulo.
+
+### Obrigando o usuário estar logado para acessar certas rotas
+Para que você obrigue o login no acesso de certas rotas, tudo que você precisa fazer é colocar o `"auth"` como `middleware` da rota. Por exemplo nessa rota abaixo:
+
+    Route::get('/middleware',"\App\Http\Controllers\ControladorController@index")
+        ->middleware(\App\Http\Middleware\Primeiro::class)
+        ->middleware('segundo');
+
+basta adicionar o middleware, ficando:
+
+    Route::get('/middleware',"\App\Http\Controllers\ControladorController@index")
+    ->middleware("auth")
+    ->middleware(\App\Http\Middleware\Primeiro::class)
+    ->middleware('segundo');
+
