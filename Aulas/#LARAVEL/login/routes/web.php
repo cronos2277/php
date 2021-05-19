@@ -30,3 +30,5 @@ Route::get('/controle',"\App\Http\Controllers\IndexCtrl@index")
 Auth::routes();
 
 Route::get('/home', '\App\Http\Controllers\HomeController@index')->name('home');
+
+Route::get('/admin','\App\Http\Controllers\AdminController@index')->name('homeadmin');

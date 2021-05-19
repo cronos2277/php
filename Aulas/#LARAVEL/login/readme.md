@@ -681,7 +681,7 @@ Aqui temos os provedores, ou seja quem irá nos fornecer os dados, em drivers te
             ],
         ],  
 
-Aqui é guardado informações, caso seja requerido um *reset* na senha, ou seja essa tabela gerencia os tokens para a criação de novas senhas caso o usuário solicite. Nessa parte `'users' =>` você cria um perfil para passwords, aqui `'provider' => 'users',` qual será o provedor a ser usado, para mais detalhes [aqui](#provedores). Aqui `'table' => 'password_resets',` a tabela aonde ficará armazenado os tokens, essa parte `'expire' => 60,` refere-se a quantidade de minutos que o link gerado será válido. Por fim `'throttle' => 60,`, permite que um usuário solicite 1 token por 60 segundos, ou seja a frequência em segundos que o token é válido e atualizado.
+Aqui é guardado informações, caso seja requerido um *reset* na senha, ou seja essa tabela gerencia os tokens para a criação de novas senhas caso o usuário solicite. Nessa parte `'users' =>` você cria um perfil para passwords, aqui `'provider' => 'users',` qual será o provedor a ser usado, para mais detalhes [aqui](#provedores). Aqui `'table' => 'password_resets',` a tabela aonde ficará armazenado os tokens, essa parte `'expire' => 60,` refere-se a quantidade de minutos que o link gerado será válido, passado esse tempo, o link criado para a redefinição de senha não será mais válido. Por fim `'throttle' => 60,`, permite que um usuário solicite 1 token por 60 segundos, ou seja a frequência em segundos que o token é válido e atualizado.
 
 `'password_timeout' => 10800,` => Quantidade de segundos que o password é válido, após esse tempo o usuário deve, fazer o login novamente. Nesse caso temos 3 horas, após isso o usuário deve fazer o login novamente.
 
@@ -693,3 +693,165 @@ Aqui é guardado informações, caso seja requerido um *reset* na senha, ou seja
     ],
 
 Aqui é a parte que informa, qual será o comportamento padrão do formulário, sendo o `'guard' => 'web',` o guard we quando não especificado nenhum conforme visto [aqui](#guardas) e usando as configurações para senha, conforme visto [aqui](#passwords)
+
+### Adicionando um novo adminstrador
+###### arquivo auth.php
+
+    <?php
+
+    return [   
+        'defaults' => [
+            'guard' => 'web',
+            'passwords' => 'users',
+        ],   
+
+        'guards' => [
+            'web' => [
+                'driver' => 'session',
+                'provider' => 'users',
+            ],
+
+            'api' => [
+                'driver' => 'token',
+                'provider' => 'users',
+                'hash' => false,
+            ],
+
+            'admin' => [ //Isso aqui deverá ser informado posteriormente em App\Models\Admin::class
+                'driver' => 'session',
+                'provider' => 'admins',
+            ],
+
+            'admin-api' => [ //Isso aqui deverá ser informado posteriormente em App\Models\Admin::class
+                'driver' => 'token',
+                'provider' => 'admins',
+                'hash' => false,
+            ],
+        ],    
+
+        'providers' => [
+            'users' => [
+                'driver' => 'eloquent',
+                'model' => App\Models\User::class,
+            ],
+
+            'admins' => [ //Aqui especificamos um provedor para o tipo de usuario Administrador
+                'driver' => 'eloquent',
+                'model' => App\Models\Admin::class, //O modelo mudou.
+            ],
+
+            // 'users' => [
+            //     'driver' => 'database',
+            //     'table' => 'users',
+            // ],
+        ],    
+
+        'passwords' => [
+            'users' => [
+                'provider' => 'users',
+                'table' => 'password_resets',
+                'expire' => 60,
+                'throttle' => 60,
+            ],
+            'admins' => [ //O administrador usuara a mesma tabela de senha 'password_resets' do usuario, mas o provider é diferente
+                'provider' => 'admins', //Provider do administrador
+                'table' => 'password_resets',
+                'expire' => 60,
+                'throttle' => 60,
+            ],
+        ],   
+
+        'password_timeout' => 10800,
+
+    ];
+
+###### Admin.php
+
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Contracts\Auth\MustVerifyEmail;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
+    use Illuminate\Notifications\Notifiable;
+
+    class Admin extends Authenticatable
+    {
+        use HasFactory, Notifiable;
+
+        protected $guard = "admin"; //Voce precisa informar o guard aqui.
+        
+        protected $fillable = [
+            'name',
+            'email',
+            'password',
+        ];
+
+        
+        protected $hidden = [
+            'password',
+            'remember_token',
+        ];
+
+        
+        protected $casts = [
+            'email_verified_at' => 'datetime',
+        ];
+    }
+
+Dessa classe acima, destaque para essa linha `protected $guard = "admin"; //Voce precisa informar o guard aqui.`, pois é nessa instrução que o arquivo de guard será lido esse:
+
+    'guards' => [
+           ...
+
+            'admin' => [ //Isso aqui deverá ser informado posteriormente em App\Models\Admin::class
+                'driver' => 'session',
+                'provider' => 'admins',
+            ],
+
+            ...
+        ],    
+
+Ao invés desse: 
+
+     'defaults' => [
+            'guard' => 'web',
+            'passwords' => 'users',
+    ],
+
+#### Prosseguindo na criação dos administradores
+Uma vez feito todo o procedimento acima, criaremos um controlador, através de: `php artisan make:controller AdminController`. Com isso criamos o arquivo [AdminController](./app/Http/Controllers/AdminController.php), sendo adicionado a esse arquivo o seguinte código:
+
+    <?php
+
+    namespace App\Http\Controllers;
+    use Illuminate\Http\Request;
+
+    class AdminController extends Controller
+    {
+        public function __construct()
+        {
+            $this->middleware('auth:admin');    
+        }
+
+        public function index()
+        {
+            return view('admin');
+        }
+    }
+
+Aqui indicamos o middleware `$this->middleware('auth:admin');`, o *auth* seria para o guard padrão, no caso esse `admin`, seria para esse guard:
+
+    'guards' => [
+           ...
+
+            'admin' => [ //Isso aqui deverá ser informado posteriormente em App\Models\Admin::class
+                'driver' => 'session',
+                'provider' => 'admins',
+            ],
+
+            ...
+        ],    
+
+Após isso é definido a rota, no arquivo de rotas [web.php](./routes/web.php): `Route::get('/admin','\App\Http\Controllers\AdminController@index')->name('homeadmin');`, passando o nome dessa rota a ser **homeadmin** e carregando o arquivo [admin.blade.php](./resources/views/admin.blade.php) quando o usuário estiver logado.
