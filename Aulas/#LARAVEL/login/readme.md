@@ -782,7 +782,7 @@ Aqui é a parte que informa, qual será o comportamento padrão do formulário, 
 
         protected $guard = "admin"; //Voce precisa informar o guard aqui.
         
-        protected $fillable = [
+        protected $fillable = [ //Os campos que esse modelo deve conter
             'name',
             'email',
             'password',
@@ -820,6 +820,26 @@ Ao invés desse:
             'passwords' => 'users',
     ],
 
+#### Campos que todo administrador deve ter
+
+    protected $fillable = [ //Os campos que esse modelo deve conter
+            'name',
+            'email',
+            'password',
+        ];
+
+No caso o administrador deve ser como campo, conforme informado acima `name`, `email`, `password`, que são os preenchíveis, além disso temos, dois campos ocultos:
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+E mais um campo que deve ser convertido corretamente para `datetime` antes de ser salvo no banco de dados: 
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 #### Prosseguindo na criação dos administradores
 Uma vez feito todo o procedimento acima, criaremos um controlador, através de: `php artisan make:controller AdminController`. Com isso criamos o arquivo [AdminController](./app/Http/Controllers/AdminController.php), sendo adicionado a esse arquivo o seguinte código:
 
