@@ -3,6 +3,7 @@
 1. [Registrando Middlewares](#registrando-middlewares)
 2. [Entendendo o funcionamento de Middlewares](#entendendo-o-funcionamento-de-middlewares)
 3. [Login no Laravel](#login-no-laravel)
+4. [Login Multiusuário no Laravel](#login-multiusuário-no-laravel)
 
 ## Registrando Middlewares
 [Documentação](https://laravel.com/docs/8.x/middleware#introduction)
@@ -548,3 +549,147 @@ basta adicionar o middleware, ficando:
     ->middleware(\App\Http\Middleware\Primeiro::class)
     ->middleware('segundo');
 
+## Login Multiusuário no Laravel
+
+### Classe User Dentro de models
+[Classe User que extende Authenticatable](./app/Models/User.php)
+###### Classe User que extende Authenticatable
+    <?php
+
+    namespace App\Models;
+    use Illuminate\Contracts\Auth\MustVerifyEmail;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Foundation\Auth\User as Authenticatable;
+    use Illuminate\Notifications\Notifiable;
+
+    class User extends Authenticatable
+    {
+        use HasFactory, Notifiable;        
+        protected $fillable = [
+            'name',
+            'email',
+            'password',
+        ];
+
+        protected $hidden = [
+            'password',
+            'remember_token',
+        ];
+
+        protected $casts = [
+            'email_verified_at' => 'datetime',
+        ];
+    }
+
+#### Explicação sobre a Classe dentro User.php
+***`php artisan make:auth` você precisa desse comando antes de começar, ou `composer require laravel/ui "^1.0"` ou `composer require laravel/ui "^2.0"`, mais informação [aqui](#login-no-laravel).***
+
+Como você pode ver nesse trecho `class User extends Authenticatable`, essa interface **Authenticatable**, como você pode ver aqui `use Illuminate\Foundation\Auth\User as Authenticatable;`, extende da classe **User** e é referenciada como `Authenticatable`. Ou seja essa classe seria parecida com a classe **Model**, mas com alguns incrementos a mais. Essa é a classe que o Laravel usa para gerenciar os usuários logados, caso você queira criar diferente níveis de permissões, inicialmente você deve duplicar essa classe, se por exemplo você quiser criar diferente níveis de permissão, por exemplo, uma permissão para um usuário comum e outra para administrador, se faz necessário duplicar essa classe e criar uma classe com o seu respectivo migration. ***Nesse exemplo será criado a Classe [Admin.php](./app/Models/Admin.php) que será um clone dessa [User.php](./app/Models/User.php).***
+
+    php artisan make:migration create_admins_table --create=admins
+
+***A migration em questão é criada com o comando acima, com o procedimento acima concluído, logo o foco passa a ser outro arquivo: [auth.php](./config/auth.php).*** 
+
+    <?php
+
+        return [
+            'defaults' => [
+                'guard' => 'web',
+                'passwords' => 'users',
+            ],
+
+            'guards' => [
+                'web' => [
+                    'driver' => 'session',
+                    'provider' => 'users',
+                ]
+            ],
+
+            'api' => [
+                    'driver' => 'token',
+                    'provider' => 'users',
+                    'hash' => false,
+                ],
+            ],   
+
+            'providers' => [
+                'users' => [
+                    'driver' => 'eloquent',
+                    'model' => App\Models\User::class,
+                ],
+
+                // 'users' => [
+                //     'driver' => 'database',
+                //     'table' => 'users',
+                // ],
+            ],   
+
+            'passwords' => [
+                'users' => [
+                    'provider' => 'users',
+                    'table' => 'password_resets',
+                    'expire' => 60,
+                    'throttle' => 60,
+                ],
+            ],  
+
+            'password_timeout' => 10800,
+
+        ];
+
+##### Guardas
+
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+            ]
+        ],
+
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+    ],   
+
+Essa parte diz respeito a forma de autenticação, no caso temos o web, que é quando o cliente acessa pelo navegador e api, que seria uma forma de acesso por `AJAX` ou `CURL`, por exemplo. O `driver` é o modo aonde essa autenticação será mantida, se será na sessão, ou em token, nesse caso o acesso via navegador é sessão e a api é via token. O `provider` é aonde estará armazenado os usuários, nesse exemplo ambos estarão dentro do provedor `users`, que por padrão pode ser um model, ou uma tabela de banco de dados.
+##### Provedores
+
+    'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+
+        // 'users' => [
+        //     'driver' => 'database',
+        //     'table' => 'users',
+        // ],
+    ],   
+
+Aqui temos os provedores, ou seja quem irá nos fornecer os dados, em drivers temos a princípio duas opções sendo `Eloquent` ou o `Query Builder`, esse segundo caso seja informado `database` como driver. No caso aqui, especificamos a forma como o *Laravel* fará acesso aos dados, caso seja `eloquent` devemos informar qual é o *Model* correspondente, caso seja database, devemos informar o nome da tabela do banco de dados, ao qual o laravel se conecta através do arquivo [.env](.env).
+
+##### Passwords
+
+     'passwords' => [
+            'users' => [
+                'provider' => 'users',
+                'table' => 'password_resets',
+                'expire' => 60,
+                'throttle' => 60,
+            ],
+        ],  
+
+Aqui é guardado informações, caso seja requerido um *reset* na senha, ou seja essa tabela gerencia os tokens para a criação de novas senhas caso o usuário solicite. Nessa parte `'users' =>` você cria um perfil para passwords, aqui `'provider' => 'users',` qual será o provedor a ser usado, para mais detalhes [aqui](#provedores). Aqui `'table' => 'password_resets',` a tabela aonde ficará armazenado os tokens, essa parte `'expire' => 60,` refere-se a quantidade de minutos que o link gerado será válido. Por fim `'throttle' => 60,`, permite que um usuário solicite 1 token por 60 segundos, ou seja a frequência em segundos que o token é válido e atualizado.
+
+`'password_timeout' => 10800,` => Quantidade de segundos que o password é válido, após esse tempo o usuário deve, fazer o login novamente. Nesse caso temos 3 horas, após isso o usuário deve fazer o login novamente.
+
+##### Comportamento padrão
+
+    'defaults' => [
+            'guard' => 'web',
+            'passwords' => 'users',
+    ],
+
+Aqui é a parte que informa, qual será o comportamento padrão do formulário, sendo o `'guard' => 'web',` o guard we quando não especificado nenhum conforme visto [aqui](#guardas) e usando as configurações para senha, conforme visto [aqui](#passwords)
