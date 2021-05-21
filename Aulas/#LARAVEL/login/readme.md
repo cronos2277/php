@@ -915,7 +915,7 @@ ele funciona de maneira oposta ao *guard do admin*, [conforme visto aqui](#admin
 Uma vez concluído o processo acima, podemos continuar informando a rota, ficando no arquivo [web.php](./routes/web.php):
 
     Route::get('/admin','\App\Http\Controllers\AdminController@index')->name('admin.dashboard');
-    Route::get('/admin/login','\App\Http\Controllers\AdminController@login')->name('admin.login');
+    Route::get('/admin/login','\App\Http\Controllers\AdminLoginController@login')->name('admin.login');
     Route::post('/admin/login','\App\Http\Controllers\AdminController@login')->name('admin.login.submit');
 
 **Claro que você precisa ter as rotas de autenticação também `Auth::routes();`. Algo que você consegue fazendo [isso aqui](#login-no-laravel).**
