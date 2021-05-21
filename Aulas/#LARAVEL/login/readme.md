@@ -919,3 +919,67 @@ Uma vez concluído o processo acima, podemos continuar informando a rota, ficand
     Route::post('/admin/login','\App\Http\Controllers\AdminController@login')->name('admin.login.submit');
 
 **Claro que você precisa ter as rotas de autenticação também `Auth::routes();`. Algo que você consegue fazendo [isso aqui](#login-no-laravel).**
+
+### Aplicando regras de login
+[AdminLoginController](.\app\Http\Controllers\Auth\AdminLoginController.php)
+
+    class AdminLoginController extends Controller
+    {
+        public function __construct() {
+            $this->middleware('guest:admin');            
+        }
+
+        public function index() {
+            return view('auth.admin-login');
+        }
+
+        public function login(Request $request) {            
+            $this->validate($request, [
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);           
+            
+            $credentials = [ 'email'    => $request->email,'password' => $request->password ];                       
+            $authOk = Auth::guard('admin')->attempt($credentials, $request->remember);
+
+
+            // se ok, então direcionar para a localização interna
+            if ($authOk) {                
+                return redirect()->intended(route('admin.dashboard'));
+            }
+            
+            // se não, redirecionar novamente para o login, passando novamente os parametros do request
+            return redirect()->back()->withInput($request->only('email','remember'));
+        }
+    }
+
+###### somente quem não estiver logado como admin terá acesso ao login
+    public function __construct() 
+    {
+        $this->middleware('guest:admin');            
+    }
+
+###### validar o dado que vem do formulario 
+    $this->validate($request,
+    [
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+
+###### Utilizando o guard do admin.
+`Auth::attempt($credentials, $remember);`  **=>** *se eu utilizar assim, utilizarei o 'default' e nao o novo, admin.*
+
+    $authOk = Auth::guard('admin')->attempt($credentials, $request->remember);
+
+###### se ok, então direcionar para a localização interna
+**Quando um usuário tenta acessar uma página que necessita de login e o Laravel redireciona direto pro login, essa página é mantida pelo framework e pode ser chamada através do método `redirect()->intended()`. Se nao houver nenhuma página requisitada anterior ao login, o Laravel redireciona para a rota passada por parâmetro:**
+
+    if ($authOk) {                
+        return redirect()->intended(route('admin.dashboard'));
+    }
+
+Válido ressaltar que o método *intent*, analisa as rotas filhos, como por exemplo: `/admin/qualquercoisa/qualquercoisa`.
+###### se não, redirecionar novamente para o login, passando novamente os parametros do request
+    return redirect()->back()->withInput($request->only('email','remember'));
+
+No caso esse método `->back()` faz o redirecionamento para aonde o usuário estava, ao passo que este `->withInput($request->only('email','remember'))`, transmite os dados informados pelos usuários, para que ele não precise digitar novamente, no caso esse `'email'` faz referenciar ao objeto `Request` do input `email`, no caso: `$request->input('email')` e `$request->input('remember')`, respectivamente.
