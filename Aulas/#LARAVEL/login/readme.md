@@ -875,3 +875,47 @@ Aqui indicamos o middleware `$this->middleware('auth:admin');`, o *auth* seria p
         ],    
 
 Após isso é definido a rota, no arquivo de rotas [web.php](./routes/web.php): `Route::get('/admin','\App\Http\Controllers\AdminController@index')->name('homeadmin');`, passando o nome dessa rota a ser **homeadmin** e carregando o arquivo [admin.blade.php](./resources/views/admin.blade.php) quando o usuário estiver logado.
+
+### Ajustando a página para Login
+Você pode criar um controlador que irá alterar o comportamento de login do laravel, para isso, crie um arquivo controlador dentro da pasta [Auth](./app/Http/Controllers/Auth). Por padrão o `make:controller` cria os arquivos na pasta [Controllers](./app/Http/Controllers), para isso `php artisan make:controller Auth/AdminLoginController`. *Uma vez feito isso:*
+
+    <?php
+
+    namespace App\Http\Controllers\Auth;
+    use App\Http\Controllers\Controller;
+    use Illuminate\Http\Request;
+
+    class AdminLoginController extends Controller
+    {
+        public function __construct()
+        {
+            $this->middleware('guest:admin');
+        }
+        
+        public function login(Request $request){
+            return true;
+        }
+
+        public function index(){
+            return view('auth.admin-login');
+        }
+
+    }
+
+**Sobre o código adicionado acima, a parte mais relevante é essa:**
+
+    public function __construct()
+    {
+        $this->middleware('guest:admin');
+    }
+
+ele funciona de maneira oposta ao *guard do admin*, [conforme visto aqui](#adminphp). No caso se o usuário não estiver logado com o Guard admin o acesso não segue.
+
+#### Criando rotas e o arquivo Blade
+Uma vez concluído o processo acima, podemos continuar informando a rota, ficando no arquivo [web.php](./routes/web.php):
+
+    Route::get('/admin','\App\Http\Controllers\AdminController@index')->name('admin.dashboard');
+    Route::get('/admin/login','\App\Http\Controllers\AdminController@login')->name('admin.login');
+    Route::post('/admin/login','\App\Http\Controllers\AdminController@login')->name('admin.login.submit');
+
+**Claro que você precisa ter as rotas de autenticação também `Auth::routes();`. Algo que você consegue fazendo [isso aqui](#login-no-laravel).**
