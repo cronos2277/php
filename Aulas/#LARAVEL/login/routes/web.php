@@ -31,6 +31,8 @@ Auth::routes();
 
 Route::get('/home', '\App\Http\Controllers\HomeController@index')->name('home');
 
-Route::get('/admin','\App\Http\Controllers\Auth\AdminController@index')->name('admin.dashboard');
-Route::get('/admin/login','\App\Http\Controllers\Auth\AdminLoginController@index')->name('admin.login');
-Route::post('/admin/login','\App\Http\Controllers\Auth\AdminLoginController@login')->name('admin.login.submit');
+Route::prefix('/admin')->group(function() {
+    Route::get('/login', '\App\Http\Controllers\Auth\AdminLoginController@index')->name('admin.login');
+    Route::post('/login', '\App\Http\Controllers\Auth\AdminLoginController@login')->name('admin.login.submit');
+    Route::get('/', '\App\Http\Controllers\AdminController@index')->name('admin.dashboard');
+});
