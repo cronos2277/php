@@ -983,3 +983,64 @@ Válido ressaltar que o método *intent*, analisa as rotas filhos, como por exem
     return redirect()->back()->withInput($request->only('email','remember'));
 
 No caso esse método `->back()` faz o redirecionamento para aonde o usuário estava, ao passo que este `->withInput($request->only('email','remember'))`, transmite os dados informados pelos usuários, para que ele não precise digitar novamente, no caso esse `'email'` faz referenciar ao objeto `Request` do input `email`, no caso: `$request->input('email')` e `$request->input('remember')`, respectivamente.
+
+### especificando a pagina para logins
+Para que o usuário possa logar como um usuário comum ou administrador, dependendo da url informada, se faz necessário alterar esse arquivo [app\Exceptions\Handler.php](.\app\Exceptions\Handler.php), no caso, adicionando ao arquivo esse método abaixo, que originalmente não existia no arquivo:
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {        
+        if($request->expectsJson()){
+            return response()->json(
+                [
+                    'message' => $exception->getMessage()
+                ], 401
+            );
+        }
+
+        $guard = \Illuminate\Support\Arr::get($exception->guards(),0);
+        switch($guard){
+            case "admin": $login = "admin.login";
+                break;
+            case "web": $login = "login";
+                break;
+            default: $login = "login";
+        }
+
+        return redirect()->guest(route($login));
+    }
+
+Nesse código acima será analisado duas coisas, caso o usuário não esteja logado e tente acessar o dashboard do usuário ou administrador, no caso isso dará um erro do tipo `AuthenticationException`, que por sua vez será intercptado aqui, podendo acontecer uma de três coisas:
+
+     if($request->expectsJson()){
+            return response()->json(
+                [
+                    'message' => $exception->getMessage()
+                ], 401
+            );
+        }
+
+#### Requisição JSON
+Se ocorrer uma requisição que pede o retorno de um *json*, esse desvio condicional é executado e com isso o erro *401* é retornado ao cliente.
+
+     if($request->expectsJson()){
+            return response()->json(
+                [
+                    'message' => $exception->getMessage()
+                ], 401
+            );
+        }
+
+#### Outras requisições
+
+    $guard = \Illuminate\Support\Arr::get($exception->guards(),0);
+        switch($guard){
+            case "admin": $login = "admin.login";
+                break;
+            case "web": $login = "login";
+                break;
+            default: $login = "login";
+        }
+
+        return redirect()->guest(route($login));
+
+Caso a requisição seja por navegador, a lógica será essa, se for administrador essa váriavel `$login` recebe a rota de login do administrador, do contrário segue para a rota de login para usuários comuns se autenticarem e prosseguirem com o login.
