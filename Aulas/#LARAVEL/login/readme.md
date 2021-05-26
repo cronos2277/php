@@ -1044,3 +1044,52 @@ Se ocorrer uma requisição que pede o retorno de um *json*, esse desvio condici
         return redirect()->guest(route($login));
 
 Caso a requisição seja por navegador, a lógica será essa, se for administrador essa váriavel `$login` recebe a rota de login do administrador, do contrário segue para a rota de login para usuários comuns se autenticarem e prosseguirem com o login.
+
+#### Verificando quem está logado
+[Arquivo RedirectIfAuthenticated.php](.\app\Http\Middleware\RedirectIfAuthenticated.php)
+
+
+    class RedirectIfAuthenticated
+    {
+        /**
+        * Handle an incoming request.
+        *
+        * @param  \Illuminate\Http\Request  $request
+        * @param  \Closure  $next
+        * @param  string|null  ...$guards
+        * @return mixed
+        */
+        public function handle(Request $request, Closure $next, ...$guards)
+        {
+            $guards = empty($guards) ? [null] : $guards;
+
+            foreach ($guards as $guard) {
+                if (Auth::guard($guard)->check()) {
+                    return redirect(RouteServiceProvider::HOME);
+                }
+            }
+
+            return $next($request);
+        }
+    }
+
+Nesse código acima, idependente de quem está logado, o dashboard a ser direcionado será o do usuário comum, para evitar esse bug, precisa também verificar aqui se o mesmo não é administrador e caso seja direcionar o administrador ao dashboard do administrador e o do usuário comum ao seu respectivo, e não ambos ao mesmo como é feito aqui.
+
+##### Resolvendo a questão dos dashboards.
+
+    ...
+    foreach ($guards as $guard) {
+            if (Auth::guard($guard)->check()) {
+                if($guard == "admin"){
+                    return redirect()->route('admin.dashboard');
+                }
+                return redirect(RouteServiceProvider::HOME);
+            }
+        }
+    ...
+
+No caso basta colocar um desvio condicional para verificar se o usuário é um administrador no arquivo [app\Http\Middleware\RedirectIfAuthenticated.php](.\app\Http\Middleware\RedirectIfAuthenticated.php).
+
+    if($guard == "admin"){
+        return redirect()->route('admin.dashboard');
+    }
